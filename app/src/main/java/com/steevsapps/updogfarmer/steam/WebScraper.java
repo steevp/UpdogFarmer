@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
  * Scrapes card drop info from Steam website
  */
 public class WebScraper {
-    private final static String BADGE_URL = "http://steamcommunity.com/my/badges";
+    private final static String BADGE_URL = "http://steamcommunity.com/my/badges?l=english";
 
     // Pattern to match app ID
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
