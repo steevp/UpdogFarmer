@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.steevsapps.updogfarmer.steam.SteamCallback;
-import com.steevsapps.updogfarmer.steam.SteamSession;
+import com.steevsapps.updogfarmer.steam.SteamService;
 import com.steevsapps.updogfarmer.utils.Prefs;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
@@ -17,7 +17,7 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 public class LoginActivity extends AppCompatActivity implements SteamCallback {
     private final static String TAG = "ywtag";
 
-    private SteamSession steamSession;
+    private SteamService steamService;
     private boolean twoFactorRequired;
 
     // Views
@@ -38,14 +38,14 @@ public class LoginActivity extends AppCompatActivity implements SteamCallback {
         passwordInput = (TextInputLayout) findViewById(R.id.password);
         twoFactorInput = (TextInputLayout) findViewById(R.id.two_factor);
 
-        steamSession = SteamSession.getInstance();
-        steamSession.setListener(this);
+        steamService = SteamService.getInstance();
+        steamService.setListener(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        steamSession.setListener(null);
+        steamService.setListener(null);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements SteamCallback {
                 details.twoFactorCode(twoFactorInput.getEditText().getText().toString());
             }
             details.shouldRememberPassword = true;
-            steamSession.login(details);
+            steamService.login(details);
         }
     }
 }
