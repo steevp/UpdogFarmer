@@ -6,12 +6,17 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.RemoteViews;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.NotificationTarget;
 import com.steevsapps.updogfarmer.LoginActivity;
 import com.steevsapps.updogfarmer.R;
 import com.steevsapps.updogfarmer.utils.Prefs;
@@ -24,6 +29,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
@@ -37,6 +46,7 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.MachineAuthDetails
 import uk.co.thomasc.steamkit.steam3.steamclient.SteamClient;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.CallbackMsg;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.JobCallback;
+import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.CMListCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
 import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
@@ -64,10 +74,49 @@ public class SteamService extends Service {
     private String sentryHash;
     private boolean authenticated;
 
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> farmHandle;
+    private int currentAppId  = 0;
+
     private static SteamService ourInstance;
 
     public static SteamService getInstance() {
         return ourInstance;
+    }
+
+    private void startFarming() {
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                farm();
+            }
+        };
+        farmHandle = scheduler.scheduleAtFixedRate(runnable, 0, 10 * 60, TimeUnit.SECONDS);
+    }
+
+    private void farm() {
+        final List<WebScraper.Badge> badges = WebScraper.getRemainingGames(generateWebCookies());
+        if (badges.isEmpty()) {
+            Log.i(TAG, "Finished idling");
+            stopPlaying();
+            updateNotification("Finished idling!");
+            farmHandle.cancel(true);
+            return;
+        }
+
+        final WebScraper.Badge b = badges.get(0);
+        if (b.appId != currentAppId) {
+            Log.i(TAG, "Now idling " + b.name);
+            playGame(b.appId);
+            //updateNotification("Now playing " + b.name);
+
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    buildIdleNotification(b);
+                }
+            });
+        }
     }
 
     @Nullable
@@ -100,6 +149,9 @@ public class SteamService extends Service {
     public void onDestroy() {
         Log.i(TAG, "Service destroyed");
         super.onDestroy();
+        if (farmHandle != null) {
+            farmHandle.cancel(true);
+        }
         stopForeground(true);
         running = false;
     }
@@ -113,6 +165,41 @@ public class SteamService extends Service {
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(text)
                 .setContentIntent(pendingIntent).build();
+    }
+
+    /**
+     * Build custom idling notification
+     */
+    private void buildIdleNotification(WebScraper.Badge badge) {
+        Log.i(TAG, "Idle notification");
+        final RemoteViews rv = new RemoteViews(getPackageName(), R.layout.idle_notification);
+        rv.setImageViewResource(R.id.remoteview_notification_icon, R.mipmap.ic_launcher);
+        rv.setTextViewText(R.id.remoteview_notification_headline, getString(R.string.app_name));
+        rv.setTextViewText(R.id.remoteview_notification_short_message, "Now playing " + badge.name);
+
+        // build notification
+        final Notification notification =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContent(rv)
+                        .setCustomBigContentView(rv)
+                        .build();
+
+        final NotificationTarget target = new NotificationTarget(
+                this,
+                rv,
+                R.id.remoteview_notification_icon,
+                notification,
+                NOTIF_ID);
+
+        // Load game icon into notication
+        Glide.with(getApplicationContext())
+                .load(badge.iconUrl)
+                .asBitmap()
+                .into(target);
+
+        final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIF_ID, notification);
     }
 
     /**
@@ -152,6 +239,18 @@ public class SteamService extends Service {
         }).start();
     }
 
+    public void logoff() {
+        Log.i(TAG, "logging off");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                steamUser.logOff();
+                Prefs.writeLoginKey("");
+                steamClient.disconnect();
+            }
+        }).start();
+    }
+
     /**
      * Try to login using saved details in prefs
      */
@@ -163,6 +262,7 @@ public class SteamService extends Service {
         final String loginKey = Prefs.getLoginKey();
         final byte[] sentryData = readSentryFile();
         if (username.isEmpty() || password.isEmpty() || loginKey.isEmpty()) {
+            updateNotification("Click here to login to Steam");
             return;
         }
         Log.i(TAG, "Restoring login");
@@ -220,6 +320,10 @@ public class SteamService extends Service {
             public void call(DisconnectedCallback callback) {
                 Log.i(TAG, "Disconnected()");
                 connected = false;
+                currentAppId = 0;
+                if (farmHandle != null) {
+                    farmHandle.cancel(true);
+                }
                 if (running) {
                     try {
                         Thread.sleep(5000);
@@ -237,13 +341,28 @@ public class SteamService extends Service {
                 Log.i(TAG, result.toString());
 
                 if (result == EResult.OK) {
-                    final boolean gotAuth = authenticate(steamClient, callback);
-                    Log.i(TAG, "Got auth? " + gotAuth);
-
+                    Log.i(TAG, "Attempting to get auth...");
+                    int tries = 0;
+                    while (tries < 3) {
+                        final boolean gotAuth = authenticate(steamClient, callback);
+                        if (gotAuth) {
+                            Log.i(TAG, "Success!");
+                            break;
+                        }
+                        if (tries + 1 == 3) {
+                            Log.i(TAG, "Failed");
+                        } else {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        tries++;
+                    }
                     steamFriends.setPersonaState(EPersonaState.Online);
-                    Log.i(TAG, "playing sonic");
-                    updateNotification("Playing Sonic Adventure DX");
-                    playGame();
+
+                    startFarming();
                 } else {
                     if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
                         // Probably no longer valid
@@ -292,21 +411,35 @@ public class SteamService extends Service {
 
                     sentryHash = Utils.bytesToHex(sha1);
                     Prefs.writeSentryHash(sentryHash);
-
-                    List<WebScraper.Badge> badges = WebScraper.getRemainingGames(generateWebCookies());
-                    for (WebScraper.Badge b: badges) {
-                        Log.i(TAG, "bagde " + b.name);
+                }
+            }
+        });
+        msg.handle(CMListCallback.class, new ActionT<CMListCallback>() {
+            @Override
+            public void call(CMListCallback callback) {
+                final String[] servers = callback.getServerList();
+                if (servers.length > 0) {
+                    Log.i(TAG, "Saving CM servers");
+                    final StringBuilder serverString = new StringBuilder();
+                    for (int i=0,size=servers.length;i<size;i++) {
+                        serverString.append(servers[i]);
+                        if (i + 1 < size) {
+                            serverString.append(",");
+                        }
                     }
+                    Prefs.writeCmServers(serverString.toString());
                 }
             }
         });
     }
 
-    private void playGame() {
-        steamUser.setPlayingGame(71250);
+    private void playGame(int appId) {
+        currentAppId = appId;
+        steamUser.setPlayingGame(appId);
     }
 
     private void stopPlaying() {
+        currentAppId = 0;
         steamUser.setPlayingGame(0);
     }
 

@@ -15,6 +15,7 @@ public class Prefs {
     private final static String LOGIN_KEY = "login_key";
     private final static String MACHINE_ID = "machine_id";
     private final static String SENTRY_HASH = "sentry_hash";
+    private final static String CM_SERVERS = "cm_servers";
 
     private static SharedPreferences prefs;
 
@@ -48,6 +49,10 @@ public class Prefs {
         writePref(SENTRY_HASH, sentryHash);
     }
 
+    public static void writeCmServers(String servers) {
+        writePref(CM_SERVERS, servers);
+    }
+
     public static String getUsername() {
         return prefs.getString(USERNAME, "");
     }
@@ -66,6 +71,10 @@ public class Prefs {
 
     public static String getSentryHash() {
         return prefs.getString(SENTRY_HASH, "");
+    }
+
+    public static String getCmServers() {
+        return prefs.getString(CM_SERVERS, "");
     }
 
     private static void writePref(String key, String value) {

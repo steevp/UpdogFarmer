@@ -26,11 +26,13 @@ public class WebScraper {
     public static class Badge {
         int appId;
         String name;
+        String iconUrl;
         int hoursPlayed;
         int dropsRemaining;
         private Badge(int appId, String name, int hoursPlayed, int dropsRemaining) {
             this.appId = appId;
             this.name = name;
+            this.iconUrl = "http://cdn.akamai.steamstatic.com/steam/apps/" + appId + "/header_292x136.jpg";
             this.hoursPlayed = hoursPlayed;
             this.dropsRemaining = dropsRemaining;
         }
@@ -51,7 +53,7 @@ public class WebScraper {
                     .get();
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return badgeList;
         }
 
         final Elements badges = doc.select("div.badge_title_row");
