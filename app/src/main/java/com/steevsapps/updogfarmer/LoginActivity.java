@@ -1,21 +1,26 @@
 package com.steevsapps.updogfarmer;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.steevsapps.updogfarmer.steam.SteamCallback;
 import com.steevsapps.updogfarmer.steam.SteamService;
 import com.steevsapps.updogfarmer.utils.Prefs;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 
-public class LoginActivity extends AppCompatActivity implements SteamCallback {
+public class LoginActivity extends AppCompatActivity {
     private final static String TAG = "ywtag";
+
+    public final static String LOGIN_INTENT = ".LoginActivity.LOGIN_INTENT";
+    public final static String RESULT = ".LoginActivity.RESULT";
 
     private SteamService steamService;
     private boolean twoFactorRequired;
@@ -24,6 +29,35 @@ public class LoginActivity extends AppCompatActivity implements SteamCallback {
     private TextInputLayout usernameInput;
     private TextInputLayout passwordInput;
     private TextInputLayout twoFactorInput;
+
+    // Used to receive messages from SteamService
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(LOGIN_INTENT)) {
+                final EResult result = (EResult) intent.getSerializableExtra(RESULT);
+                if (result != EResult.OK) {
+                    usernameInput.setErrorEnabled(false);
+                    passwordInput.setErrorEnabled(false);
+                    twoFactorInput.setErrorEnabled(false);
+
+                    if (result == EResult.InvalidPassword) {
+                        passwordInput.setError("Invalid password");
+                    } else if (result == EResult.AccountLoginDeniedNeedTwoFactor) {
+                        twoFactorRequired = true;
+                        twoFactorInput.setVisibility(View.VISIBLE);
+                        twoFactorInput.setError("Two factor code required");
+                        twoFactorInput.getEditText().requestFocus();
+                    }
+                } else {
+                    // Save username and password
+                    Prefs.writeUsername(usernameInput.getEditText().getText().toString());
+                    Prefs.writePassword(passwordInput.getEditText().getText().toString());
+                    finish();
+                }
+            }
+        }
+    };
 
     public static Intent createIntent(Context c) {
         return new Intent(c, LoginActivity.class);
@@ -47,40 +81,14 @@ public class LoginActivity extends AppCompatActivity implements SteamCallback {
     @Override
     protected void onPause() {
         super.onPause();
-        steamService.setListener(null);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        steamService.setListener(this);
-    }
-
-    @Override
-    public void onResponse(EResult result) {
-        if (result != EResult.OK) {
-            usernameInput.setErrorEnabled(false);
-            passwordInput.setErrorEnabled(false);
-            twoFactorInput.setErrorEnabled(false);
-
-            if (result == EResult.InvalidPassword) {
-                passwordInput.setError("Invalid password");
-            } else if (result == EResult.AccountLoginDeniedNeedTwoFactor) {
-                twoFactorRequired = true;
-                twoFactorInput.setVisibility(View.VISIBLE);
-                twoFactorInput.setError("Two factor code required");
-                twoFactorInput.getEditText().requestFocus();
-            }
-        } else {
-            // Login successful
-            setResult(RESULT_OK);
-
-            // Save username and password
-            Prefs.writeUsername(usernameInput.getEditText().getText().toString());
-            Prefs.writePassword(passwordInput.getEditText().getText().toString());
-
-            finish();
-        }
+        final IntentFilter filter = new IntentFilter(LOGIN_INTENT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
 
     public void doLogin(View v) {

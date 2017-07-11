@@ -6,11 +6,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.steevsapps.updogfarmer.LoginActivity;
@@ -64,8 +63,6 @@ public class SteamService extends Service {
     private String tokenSecure;
     private String sentryHash;
     private boolean authenticated;
-
-    private SteamCallback listener;
 
     private static SteamService ourInstance;
 
@@ -191,10 +188,6 @@ public class SteamService extends Service {
         }
     }
 
-    public void setListener(SteamCallback callback) {
-        listener = callback;
-    }
-
     private void update() {
         while (true) {
             final CallbackMsg msg = steamClient.getCallback(true);
@@ -260,15 +253,10 @@ public class SteamService extends Service {
                     steamClient.disconnect();
                 }
 
-                if (listener != null) {
-                    // Needs to run on ui thread
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            listener.onResponse(result);
-                        }
-                    });
-                }
+                // Tell LoginActivity the result
+                final Intent intent = new Intent(LoginActivity.LOGIN_INTENT);
+                intent.putExtra(LoginActivity.RESULT, result);
+                LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(intent);
             }
         });
         msg.handle(LoginKeyCallback.class, new ActionT<LoginKeyCallback>() {
