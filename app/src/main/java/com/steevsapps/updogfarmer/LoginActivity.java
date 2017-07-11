@@ -9,6 +9,8 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ProgressBar;
 
 import com.steevsapps.updogfarmer.steam.SteamService;
 import com.steevsapps.updogfarmer.utils.Prefs;
@@ -29,12 +31,16 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputLayout usernameInput;
     private TextInputLayout passwordInput;
     private TextInputLayout twoFactorInput;
+    private Button loginButton;
+    private ProgressBar progress;
 
     // Used to receive messages from SteamService
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(LOGIN_INTENT)) {
+                loginButton.setEnabled(true);
+                progress.setVisibility(View.GONE);
                 final EResult result = (EResult) intent.getSerializableExtra(RESULT);
                 if (result != EResult.OK) {
                     usernameInput.setErrorEnabled(false);
@@ -71,6 +77,9 @@ public class LoginActivity extends AppCompatActivity {
         usernameInput = (TextInputLayout) findViewById(R.id.username);
         passwordInput = (TextInputLayout) findViewById(R.id.password);
         twoFactorInput = (TextInputLayout) findViewById(R.id.two_factor);
+        loginButton = (Button) findViewById(R.id.login);
+        progress = (ProgressBar) findViewById(R.id.progress);
+
         steamService = SteamService.getInstance();
 
         // Restore saved password if any
@@ -95,6 +104,8 @@ public class LoginActivity extends AppCompatActivity {
         final String username = usernameInput.getEditText().getText().toString();
         final String password = passwordInput.getEditText().getText().toString();
         if (!username.isEmpty() && !password.isEmpty()) {
+            loginButton.setEnabled(false);
+            progress.setVisibility(View.VISIBLE);
             final LogOnDetails details = new LogOnDetails();
             details.username(username);
             details.password(password);

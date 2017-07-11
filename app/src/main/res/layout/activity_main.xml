@@ -9,18 +9,49 @@
 
     <include layout="@layout/toolbar" />
 
-    <Button
-        android:id="@+id/start_service"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/start_service"
-        android:onClick="clickHandler"/>
+        android:layout_height="match_parent"
+        android:padding="@dimen/activity_horizontal_margin">
 
-    <Button
-        android:id="@+id/stop_service"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/stop_service"
-        android:onClick="clickHandler"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/welcome"
+            android:textSize="@dimen/text_size_large" />
+
+        <Button
+            android:textSize="@dimen/text_size_default"
+            android:layout_marginTop="4dp"
+            android:id="@+id/start_service"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/start_service"
+            android:onClick="clickHandler"/>
+
+        <TextView
+            android:textSize="@dimen/text_size_default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_start"/>
+
+        <Button
+            android:textSize="@dimen/text_size_default"
+            android:layout_marginTop="4dp"
+            android:id="@+id/stop_service"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/stop_service"
+            android:onClick="clickHandler"/>
+
+        <TextView
+            android:textSize="@dimen/text_size_default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_stop"/>
+
+    </LinearLayout>
 
 </LinearLayout>

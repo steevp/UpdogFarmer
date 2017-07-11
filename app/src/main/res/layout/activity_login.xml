@@ -8,10 +8,17 @@
     tools:context="com.steevsapps.updogfarmer.LoginActivity"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login_to_steam"
+        android:textSize="@dimen/text_size_large" />
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/username"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp">
 
         <android.support.design.widget.TextInputEditText
             android:layout_width="match_parent"
@@ -49,12 +56,27 @@
 
     </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:id="@+id/login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:onClick="doLogin"
-        android:text="@string/login" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp">
+
+        <Button
+            android:id="@+id/login"
+            android:textSize="@dimen/text_size_default"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="doLogin"
+            android:text="@string/login" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
 
 </LinearLayout>
