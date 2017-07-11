@@ -1,17 +1,29 @@
 package com.steevsapps.updogfarmer.steam;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.steevsapps.updogfarmer.LoginActivity;
+import com.steevsapps.updogfarmer.R;
 import com.steevsapps.updogfarmer.utils.Prefs;
 import com.steevsapps.updogfarmer.utils.Utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
@@ -38,6 +50,7 @@ import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
 
 public class SteamService extends Service {
     private final static String TAG = "ywtag";
+    private final static int NOTIF_ID = 6896; // Ongoing notification ID
 
     private SteamClient steamClient;
     private SteamUser steamUser;
@@ -74,7 +87,7 @@ public class SteamService extends Service {
         steamClient = new SteamClient();
         steamUser = steamClient.getHandler(SteamUser.class);
         steamFriends = steamClient.getHandler(SteamFriends.class);
-        attemptRestoreLogin();
+        startForeground(NOTIF_ID, buildNotification("Steam service started"));
     }
 
     @Override
@@ -90,7 +103,28 @@ public class SteamService extends Service {
     public void onDestroy() {
         Log.i(TAG, "Service destroyed");
         super.onDestroy();
+        stopForeground(true);
         running = false;
+    }
+
+    private Notification buildNotification(String text) {
+        final Intent notificationIntent = new Intent(this, LoginActivity.class);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+        return new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(text)
+                .setContentIntent(pendingIntent).build();
+    }
+
+    /**
+     * Used to update the notification
+     * @param text the text to display
+     */
+    private void updateNotification(String text) {
+        final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIF_ID, buildNotification(text));
     }
 
     public void start() {
@@ -105,12 +139,9 @@ public class SteamService extends Service {
                 }
 
                 Log.i(TAG, "thread stopping");
+                steamClient.disconnect();
             }
         }).start();
-    }
-
-    public void stop() {
-        running = false;
     }
 
     public void login(final LogOnDetails details) {
@@ -133,18 +164,24 @@ public class SteamService extends Service {
         final String username = Prefs.getUsername();
         final String password = Prefs.getPassword();
         final String loginKey = Prefs.getLoginKey();
+        final byte[] sentryData = readSentryFile();
         if (username.isEmpty() || password.isEmpty() || loginKey.isEmpty()) {
             return;
         }
+        Log.i(TAG, "Restoring login");
         final LogOnDetails details = new LogOnDetails();
         details.username(username);
         details.loginkey = loginKey;
+        if (sentryData != null) {
+            details.sentryFileHash = CryptoHelper.SHAHash(sentryData);
+            sentryHash = Utils.bytesToHex(details.sentryFileHash);
+        }
         details.shouldRememberPassword = true;
         login(details);
     }
 
     private void waitForConnection() {
-        while(!connected) {
+        while(running && !connected) {
             try {
                 Log.i(TAG, "Waiting for connection...");
                 Thread.sleep(500);
@@ -182,6 +219,7 @@ public class SteamService extends Service {
             public void call(ConnectedCallback callback) {
                 Log.i(TAG, "Connected()");
                 connected = true;
+                attemptRestoreLogin();
             }
         });
         msg.handle(DisconnectedCallback.class, new ActionT<DisconnectedCallback>() {
@@ -190,6 +228,11 @@ public class SteamService extends Service {
                 Log.i(TAG, "Disconnected()");
                 connected = false;
                 if (running) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     steamClient.connect();
                 }
             }
@@ -197,25 +240,32 @@ public class SteamService extends Service {
         msg.handle(LoggedOnCallback.class, new ActionT<LoggedOnCallback>() {
             @Override
             public void call(final LoggedOnCallback callback) {
-                Log.i(TAG, callback.getResult().toString());
+                final EResult result = callback.getResult();
+                Log.i(TAG, result.toString());
 
-                if (callback.getResult() == EResult.OK) {
+                if (result == EResult.OK) {
                     final boolean gotAuth = authenticate(steamClient, callback);
                     Log.i(TAG, "Got auth? " + gotAuth);
 
                     steamFriends.setPersonaState(EPersonaState.Online);
                     Log.i(TAG, "playing sonic");
+                    updateNotification("Playing Sonic Adventure DX");
                     playGame();
                 } else {
+                    if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
+                        // Probably no longer valid
+                        Prefs.writeLoginKey("");
+                        updateNotification("Login failed! Click here to try again.");
+                    }
                     steamClient.disconnect();
                 }
 
                 if (listener != null) {
-                    // Needs to run on main thread
+                    // Needs to run on ui thread
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            listener.onResponse(callback.getResult());
+                            listener.onResponse(result);
                         }
                     });
                 }
@@ -224,6 +274,7 @@ public class SteamService extends Service {
         msg.handle(LoginKeyCallback.class, new ActionT<LoginKeyCallback>() {
             @Override
             public void call(LoginKeyCallback callback) {
+                Log.i(TAG, "Saving loginkey");
                 Prefs.writeLoginKey(callback.getLoginKey());
             }
         });
@@ -235,6 +286,8 @@ public class SteamService extends Service {
                     final UpdateMachineAuthCallback authCallback = (UpdateMachineAuthCallback) callback.getCallback();
                     final byte[] data = authCallback.getData();
                     final byte[] sha1 = CryptoHelper.SHAHash(data);
+
+                    writeSentryFile(data);
 
                     final MachineAuthDetails auth = new MachineAuthDetails();
                     auth.jobId = callback.getJobId().getValue();
@@ -251,6 +304,11 @@ public class SteamService extends Service {
 
                     sentryHash = Utils.bytesToHex(sha1);
                     Prefs.writeSentryHash(sentryHash);
+
+                    List<WebScraper.Badge> badges = WebScraper.getRemainingGames(generateWebCookies());
+                    for (WebScraper.Badge b: badges) {
+                        Log.i(TAG, "bagde " + b.name);
+                    }
                 }
             }
         });
@@ -273,12 +331,61 @@ public class SteamService extends Service {
             return null;
         }
 
-        final Map<String,String> cookies = new HashMap<>();
+        final Map<String, String> cookies = new HashMap<>();
         cookies.put("sessionid", sessionId);
         cookies.put("steamLogin", token);
         cookies.put("steamLoginSecure", tokenSecure);
         cookies.put("steamMachineAuth" + steamClient.getSteamId().convertToLong(), sentryHash);
         return cookies;
+    }
+
+    private void writeSentryFile(byte[] data) {
+        final File sentryFolder = new File(getFilesDir(), "sentry");
+        if (sentryFolder.exists() || sentryFolder.mkdir()) {
+            final File sentryFile = new File(sentryFolder, Prefs.getUsername() + ".sentry");
+            FileOutputStream fos = null;
+            try {
+                Log.i(TAG, "Writing sentry file to " + sentryFile.getAbsolutePath());
+                fos = new FileOutputStream(sentryFile);
+                fos.write(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fos != null) {
+                    try {
+                        fos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    private byte[] readSentryFile() {
+        final File sentryFolder = new File(getFilesDir(), "sentry");
+        final File sentryFile = new File(sentryFolder, Prefs.getUsername() + ".sentry");
+        if (sentryFile.exists()) {
+            Log.i(TAG, "Reading sentry file " + sentryFile.getAbsolutePath());
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(sentryFile);
+                final byte[] data = new byte[fis.available()];
+                fis.read(data);
+                return data;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (fis != null) {
+                    try {
+                        fis.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**

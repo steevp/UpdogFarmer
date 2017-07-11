@@ -37,15 +37,23 @@ public class LoginActivity extends AppCompatActivity implements SteamCallback {
         usernameInput = (TextInputLayout) findViewById(R.id.username);
         passwordInput = (TextInputLayout) findViewById(R.id.password);
         twoFactorInput = (TextInputLayout) findViewById(R.id.two_factor);
-
         steamService = SteamService.getInstance();
-        steamService.setListener(this);
+
+        // Restore saved password if any
+        usernameInput.getEditText().setText(Prefs.getUsername());
+        passwordInput.getEditText().setText(Prefs.getPassword());
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onPause() {
+        super.onPause();
         steamService.setListener(null);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        steamService.setListener(this);
     }
 
     @Override

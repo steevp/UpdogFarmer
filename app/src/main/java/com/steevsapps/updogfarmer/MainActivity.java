@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.steevsapps.updogfarmer.steam.SteamService;
 
@@ -18,11 +19,26 @@ public class MainActivity extends AppCompatActivity {
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
 
-        if (savedInstanceState == null) {
-            // Start Steam Service
-            final Intent serviceIntent = new Intent(this, SteamService.class);
-            startService(serviceIntent);
+    public void clickHandler(View v) {
+        switch (v.getId()) {
+            case R.id.start_service:
+                startSteam();
+                break;
+            case R.id.stop_service:
+                stopSteam();
+                break;
         }
+    }
+
+    private void startSteam() {
+        final Intent intent = new Intent(this, SteamService.class);
+        startService(intent);
+    }
+
+    private void stopSteam() {
+        final Intent intent = new Intent(this, SteamService.class);
+        stopService(intent);
     }
 }

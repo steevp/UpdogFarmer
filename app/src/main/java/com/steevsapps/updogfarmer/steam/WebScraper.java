@@ -25,10 +25,12 @@ public class WebScraper {
 
     public static class Badge {
         int appId;
+        String name;
         int hoursPlayed;
         int dropsRemaining;
-        private Badge(int appId, int hoursPlayed, int dropsRemaining) {
+        private Badge(int appId, String name, int hoursPlayed, int dropsRemaining) {
             this.appId = appId;
+            this.name = name;
             this.hoursPlayed = hoursPlayed;
             this.dropsRemaining = dropsRemaining;
         }
@@ -39,7 +41,7 @@ public class WebScraper {
      * @param cookies Steam cookies
      * @return list of games with remaining drops
      */
-    public static List<Badge> getRemainingDrops(Map<String,String> cookies) {
+    public static List<Badge> getRemainingGames(Map<String,String> cookies) {
         final List<Badge> badgeList = new ArrayList<>();
         Document doc;
         try {
@@ -52,34 +54,39 @@ public class WebScraper {
             return null;
         }
 
-        final Elements badges = doc.select("div.badge_title_stats");
+        final Elements badges = doc.select("div.badge_title_row");
         Matcher m;
         for (Element b: badges) {
+            // Get app id
             final Element playGame = b.select("div.badge_title_playgame").first();
             if (playGame == null) {
                 continue;
             }
-
             m = playPattern.matcher(playGame.select("a[href]").first().attr("href"));
             if (!m.find()) {
                 continue;
             }
-
             final int appId = Integer.parseInt(m.group(1));
 
+            // Get remaining card drops
             final Element progressInfo = b.select("span.progress_info_bold").first();
             if (progressInfo == null) {
                 continue;
             }
-
             m = dropPattern.matcher(progressInfo.text());
             if (!m.find()) {
                 continue;
             }
-
             final int drops = Integer.parseInt(m.group(1));
 
-            badgeList.add(new Badge(appId, 0, drops));
+            // Get app name
+            final Element badgeTitle = b.select("div.badge_title").first();
+            if (badgeTitle == null) {
+                continue;
+            }
+            final String name = badgeTitle.ownText().trim();
+
+            badgeList.add(new Badge(appId, name, 0, drops));
         }
 
         return badgeList;
