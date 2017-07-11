@@ -149,6 +149,7 @@ public class SteamService extends Service {
     public void onDestroy() {
         Log.i(TAG, "Service destroyed");
         super.onDestroy();
+        ourInstance = null;
         if (farmHandle != null) {
             farmHandle.cancel(true);
         }
@@ -290,6 +291,7 @@ public class SteamService extends Service {
 
     private void update() {
         while (true) {
+            Log.i(TAG, "updating");
             final CallbackMsg msg = steamClient.getCallback(true);
 
             if (msg == null) {
@@ -325,12 +327,17 @@ public class SteamService extends Service {
                     farmHandle.cancel(true);
                 }
                 if (running) {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    steamClient.connect();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(5000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            steamClient.connect();
+                        }
+                    }).start();
                 }
             }
         });
@@ -341,35 +348,34 @@ public class SteamService extends Service {
                 Log.i(TAG, result.toString());
 
                 if (result == EResult.OK) {
-                    Log.i(TAG, "Attempting to get auth...");
-                    int tries = 0;
-                    while (tries < 3) {
-                        final boolean gotAuth = authenticate(steamClient, callback);
-                        if (gotAuth) {
-                            Log.i(TAG, "Success!");
-                            break;
-                        }
-                        if (tries + 1 == 3) {
-                            Log.i(TAG, "Failed");
-                        } else {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            final boolean gotAuth = authenticate(callback);
+                            Log.i(TAG, "Got auth? "  + gotAuth);
+
+                            if (gotAuth) {
+                                startFarming();
+                            } else {
+                                updateNotification("Unable to get Steam web authentication!");
                             }
                         }
-                        tries++;
-                    }
-                    steamFriends.setPersonaState(EPersonaState.Online);
+                    }).start();
 
-                    startFarming();
+                    steamFriends.setPersonaState(EPersonaState.Online);
                 } else {
                     if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
                         // Probably no longer valid
                         Prefs.writeLoginKey("");
                         updateNotification("Login failed! Click here to try again.");
                     }
-                    steamClient.disconnect();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            steamClient.disconnect();
+                        }
+                    }).start();
                 }
 
                 // Tell LoginActivity the result
@@ -514,7 +520,7 @@ public class SteamService extends Service {
      * but without contacting the Steam Website.
      * Should this one stop working, use SteamWeb.DoLogin().
      */
-    public boolean authenticate(SteamClient steamClient, LoggedOnCallback callback) {
+    public boolean authenticate(LoggedOnCallback callback) {
         authenticated = false;
 
         //sessionId = Base64.encodeToString(String.valueOf(callback.getUniqueId()).getBytes(), Base64.DEFAULT);
