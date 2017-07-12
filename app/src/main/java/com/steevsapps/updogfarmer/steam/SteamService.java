@@ -34,6 +34,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
+import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EMsg;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
@@ -366,7 +369,7 @@ public class SteamService extends Service {
                     if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
                         // Probably no longer valid
                         Prefs.writeLoginKey("");
-                        updateNotification("Login failed! Click here to try again.");
+                        updateNotification("Login key expired! Click here to login again");
                     }
 
                     new Thread(new Runnable() {
@@ -438,9 +441,37 @@ public class SteamService extends Service {
         });
     }
 
+    /**
+     * Idle a game
+     * @param appId game to idle
+     */
     private void playGame(int appId) {
         currentAppId = appId;
         steamUser.setPlayingGame(appId);
+    }
+
+
+    /**
+     * Idle multiple games at once
+     * @param appIds the games to idle
+     */
+    private void playGames(int...appIds) {
+        // Array of games played
+        final SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[] gamesPlayed =
+                new SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[appIds.length];
+
+        for (int i=0;i<gamesPlayed.length;i++) {
+            // A single game played
+            final SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed gp =
+                    new SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed();
+            gp.gameId = appIds[i];
+            gamesPlayed[i] = gp;
+        }
+
+        final ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed> playGame;
+        playGame = new ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed>(SteammessagesClientserver.CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
+        playGame.getBody().gamesPlayed = gamesPlayed;
+        steamClient.send(playGame);
     }
 
     private void stopPlaying() {
