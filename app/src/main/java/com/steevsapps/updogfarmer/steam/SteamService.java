@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -82,11 +83,19 @@ public class SteamService extends Service {
     private ScheduledFuture<?> farmHandle;
     private int currentAppId  = 0;
 
-    private static SteamService ourInstance;
-
-    public static SteamService getInstance() {
-        return ourInstance;
+    /**
+     * Class for clients to access.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with
+     * IPC.
+     */
+    public class LocalBinder extends Binder {
+        public SteamService getService() {
+            return SteamService.this;
+        }
     }
+
+    // This is the object that receives interactions from clients.
+    private final IBinder binder = new LocalBinder();
 
     private void startFarming() {
         final Runnable runnable = new Runnable() {
@@ -126,14 +135,13 @@ public class SteamService extends Service {
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
 
     @Override
     public void onCreate() {
         Log.i(TAG, "Service created");
         super.onCreate();
-        ourInstance = this;
         steamClient = new SteamClient();
         steamUser = steamClient.getHandler(SteamUser.class);
         steamFriends = steamClient.getHandler(SteamFriends.class);
@@ -153,7 +161,6 @@ public class SteamService extends Service {
     public void onDestroy() {
         Log.i(TAG, "Service destroyed");
         super.onDestroy();
-        ourInstance = null;
         if (farmHandle != null) {
             farmHandle.cancel(true);
         }

@@ -1,10 +1,13 @@
 package com.steevsapps.updogfarmer;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,7 +27,20 @@ public class LoginActivity extends AppCompatActivity {
     public final static String LOGIN_INTENT = ".LoginActivity.LOGIN_INTENT";
     public final static String RESULT = ".LoginActivity.RESULT";
 
+    boolean isBound;
     private SteamService steamService;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            steamService = ((SteamService.LocalBinder) service).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            steamService = null;
+        }
+    };
+
     private boolean twoFactorRequired;
 
     // Views
@@ -65,6 +81,20 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
+    private void doBindService() {
+        bindService(new Intent(LoginActivity.this, SteamService.class),
+                connection, Context.BIND_AUTO_CREATE);
+        isBound = true;
+    }
+
+    private void doUnbindService() {
+        if (isBound) {
+            // Detach our existing connection
+            unbindService(connection);
+            isBound = false;
+        }
+    }
+
     public static Intent createIntent(Context c) {
         return new Intent(c, LoginActivity.class);
     }
@@ -80,8 +110,6 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = (Button) findViewById(R.id.login);
         progress = (ProgressBar) findViewById(R.id.progress);
 
-        steamService = SteamService.getInstance();
-
         // Restore saved password if any
         usernameInput.getEditText().setText(Prefs.getUsername());
         passwordInput.getEditText().setText(Prefs.getPassword());
@@ -90,12 +118,14 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        doUnbindService();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        doBindService();
         final IntentFilter filter = new IntentFilter(LOGIN_INTENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
