@@ -291,7 +291,6 @@ public class SteamService extends Service {
 
     private void update() {
         while (true) {
-            Log.i(TAG, "updating");
             final CallbackMsg msg = steamClient.getCallback(true);
 
             if (msg == null) {
@@ -462,7 +461,9 @@ public class SteamService extends Service {
         cookies.put("sessionid", sessionId);
         cookies.put("steamLogin", token);
         cookies.put("steamLoginSecure", tokenSecure);
-        cookies.put("steamMachineAuth" + steamClient.getSteamId().convertToLong(), sentryHash);
+        if (sentryHash != null) {
+            cookies.put("steamMachineAuth" + steamClient.getSteamId().convertToLong(), sentryHash);
+        }
         return cookies;
     }
 

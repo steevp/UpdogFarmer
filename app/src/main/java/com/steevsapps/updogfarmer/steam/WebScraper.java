@@ -57,6 +57,26 @@ public class WebScraper {
         }
 
         final Elements badges = doc.select("div.badge_title_row");
+
+        final Element pages = doc.select("a.pagelink").last();
+        if (pages != null) {
+            // Multiple pages
+            final int p = Integer.parseInt(pages.text());
+            // Try to combine all the pages
+            for (int i=2;i<=p;i++) {
+                try {
+                    final  Document doc2 = Jsoup.connect(BADGE_URL + "&p=" + i)
+                            .followRedirects(true)
+                            .cookies(cookies)
+                            .get();
+                    final Elements badges2 = doc2.select("div.badge_title_row");
+                    badges.addAll(badges2);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         Matcher m;
         for (Element b: badges) {
             // Get app id
