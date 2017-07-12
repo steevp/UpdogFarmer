@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logout:
-                SteamService.getInstance().logoff();
                 return true;
         }
         return false;
