@@ -18,6 +18,7 @@ import android.widget.RemoteViews;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
 import com.steevsapps.updogfarmer.LoginActivity;
+import com.steevsapps.updogfarmer.MainActivity;
 import com.steevsapps.updogfarmer.R;
 import com.steevsapps.updogfarmer.utils.Prefs;
 import com.steevsapps.updogfarmer.utils.Utils;
@@ -181,12 +182,17 @@ public class SteamService extends Service {
         rv.setTextViewText(R.id.remoteview_notification_headline, getString(R.string.app_name));
         rv.setTextViewText(R.id.remoteview_notification_short_message, "Now playing " + badge.name);
 
+        final Intent notificationIntent = new Intent(this, MainActivity.class);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
         // build notification
         final Notification notification =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContent(rv)
                         .setCustomBigContentView(rv)
+                        .setContentIntent(pendingIntent)
                         .build();
 
         final NotificationTarget target = new NotificationTarget(

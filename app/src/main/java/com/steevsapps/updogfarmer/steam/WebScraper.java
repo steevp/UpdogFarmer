@@ -21,7 +21,7 @@ public class WebScraper {
     // Pattern to match app ID
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
     // Pattern to match card drops remaining
-    private final static Pattern dropPattern = Pattern.compile("^(\\d+) card drops remaining$");
+    private final static Pattern dropPattern = Pattern.compile("^(\\d+) card drops? remaining$");
 
     public static class Badge {
         int appId;
