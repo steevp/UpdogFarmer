@@ -21,11 +21,10 @@ import com.steevsapps.updogfarmer.utils.Prefs;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 
+import static com.steevsapps.updogfarmer.steam.SteamService.LOGIN_INTENT;
+
 public class LoginActivity extends AppCompatActivity {
     private final static String TAG = "ywtag";
-
-    public final static String LOGIN_INTENT = ".LoginActivity.LOGIN_INTENT";
-    public final static String RESULT = ".LoginActivity.RESULT";
 
     boolean isBound;
     private SteamService steamService;
@@ -54,10 +53,10 @@ public class LoginActivity extends AppCompatActivity {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(LOGIN_INTENT)) {
+            if (intent.getAction().equals(SteamService.LOGIN_INTENT)) {
                 loginButton.setEnabled(true);
                 progress.setVisibility(View.GONE);
-                final EResult result = (EResult) intent.getSerializableExtra(RESULT);
+                final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
                 if (result != EResult.OK) {
                     usernameInput.setErrorEnabled(false);
                     passwordInput.setErrorEnabled(false);

@@ -66,6 +66,10 @@ public class SteamService extends Service {
     private final static String TAG = "ywtag";
     private final static int NOTIF_ID = 6896; // Ongoing notification ID
 
+    // Used to tell activities when login state has changed
+    public final static String LOGIN_INTENT = "LOGIN_INTENT";
+    public final static String RESULT = "RESULT";
+
     private SteamClient steamClient;
     private SteamUser steamUser;
     private SteamFriends steamFriends;
@@ -137,6 +141,11 @@ public class SteamService extends Service {
         return binder;
     }
 
+
+    public static Intent createIntent(Context c) {
+        return new Intent(c, SteamService.class);
+    }
+
     @Override
     public void onCreate() {
         Log.i(TAG, "Service created");
@@ -153,7 +162,7 @@ public class SteamService extends Service {
             Log.i(TAG, "Command starting");
             start();
         }
-        return Service.START_STICKY;
+        return Service.START_NOT_STICKY;
     }
 
     @Override
@@ -167,6 +176,13 @@ public class SteamService extends Service {
         running = false;
     }
 
+    /**
+     * Check if user is logged in
+     */
+    public boolean isLoggedIn() {
+        return steamClient.getSteamId() != null;
+    }
+
     private Notification buildNotification(String text) {
         final Intent notificationIntent = new Intent(this, LoginActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -175,7 +191,8 @@ public class SteamService extends Service {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(text)
-                .setContentIntent(pendingIntent).build();
+                .setContentIntent(pendingIntent)
+                .build();
     }
 
     /**
@@ -376,7 +393,9 @@ public class SteamService extends Service {
                         }
                     }).start();
 
-                    steamFriends.setPersonaState(EPersonaState.Online);
+                    if (!Prefs.getOffline()) {
+                        steamFriends.setPersonaState(EPersonaState.Online);
+                    }
                 } else {
                     if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
                         // Probably no longer valid
@@ -393,8 +412,8 @@ public class SteamService extends Service {
                 }
 
                 // Tell LoginActivity the result
-                final Intent intent = new Intent(LoginActivity.LOGIN_INTENT);
-                intent.putExtra(LoginActivity.RESULT, result);
+                final Intent intent = new Intent(LOGIN_INTENT);
+                intent.putExtra(RESULT, result);
                 LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(intent);
             }
         });

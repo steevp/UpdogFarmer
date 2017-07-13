@@ -16,6 +16,7 @@ public class Prefs {
     private final static String MACHINE_ID = "machine_id";
     private final static String SENTRY_HASH = "sentry_hash";
     private final static String CM_SERVERS = "cm_servers";
+    private final static String OFFLINE = "offline";
 
     private static SharedPreferences prefs;
 
@@ -75,6 +76,10 @@ public class Prefs {
 
     public static String getCmServers() {
         return prefs.getString(CM_SERVERS, "");
+    }
+
+    public static boolean getOffline() {
+        return prefs.getBoolean(OFFLINE, false);
     }
 
     private static void writePref(String key, String value) {

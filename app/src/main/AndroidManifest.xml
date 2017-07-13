@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service android:name=".steam.SteamService" />
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,8 +20,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".LoginActivity" android:launchMode="singleTop" />
+        <activity android:name=".SettingsActivity" />
     </application>
 
 </manifest>
