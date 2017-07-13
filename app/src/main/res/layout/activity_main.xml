@@ -41,19 +41,20 @@
                     android:paddingTop="8dp"
                     android:paddingBottom="8dp">
 
-                    <TextView
-                        android:textSize="@dimen/text_size_default"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/status"
-                        android:gravity="center" />
-
                     <LinearLayout
                         android:id="@+id/status_logged_in"
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone">
+
+                        <TextView
+                            android:textSize="@dimen/text_size_default"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/status"
+                            android:gravity="center" />
+
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
@@ -76,7 +77,16 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:onClick="clickHandler"
                         android:visibility="gone">
+
+                        <TextView
+                            android:textSize="@dimen/text_size_default"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/status"
+                            android:gravity="center" />
+
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="48dp"
@@ -128,7 +138,7 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
+            <!--<android.support.v7.widget.CardView
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_gravity="center"
                 android:layout_width="match_parent"
@@ -156,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/desc_idle_to_ready" />
                 </LinearLayout>
-            </android.support.v7.widget.CardView>
+            </android.support.v7.widget.CardView>-->
 
             <android.support.v7.widget.CardView
                 xmlns:card_view="http://schemas.android.com/apk/res-auto"

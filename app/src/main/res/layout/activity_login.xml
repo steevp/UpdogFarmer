@@ -50,12 +50,12 @@
         android:visibility="gone">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/two_factor_edittext"
+            android:id="@+id/steamguard_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapCharacters"
             android:maxLength="5"
-            android:hint="@string/twofactor" />
+            android:hint="@string/steamguard" />
 
     </android.support.design.widget.TextInputLayout>
 

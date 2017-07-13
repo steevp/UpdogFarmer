@@ -3,11 +3,11 @@
     <string name="welcome">Welcome to Idle Daddy!</string>
     <string name="status">Status</string>
     <string name="logged_in">Logged in</string>
-    <string name="not_logged_in">Not logged in</string>
+    <string name="not_logged_in">Tap here to login</string>
     <string name="login_to_steam">Login to Steam</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
-    <string name="twofactor">Two factor code</string>
+    <string name="steamguard">Steam Guard code</string>
     <string name="login">Login</string>
     <string name="start_idling">Start idling</string>
     <string name="desc_start">Idles your games one by one until all trading cards have dropped.</string>

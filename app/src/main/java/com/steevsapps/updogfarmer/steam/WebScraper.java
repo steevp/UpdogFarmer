@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
  */
 public class WebScraper {
     private final static String BADGE_URL = "http://steamcommunity.com/my/badges?l=english";
+    private final static String GAMECARDS_URL = "http://steamcommunity.com/my/gamecards/";
 
     // Pattern to match app ID
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
@@ -112,5 +113,26 @@ public class WebScraper {
         }
 
         return badgeList;
+    }
+
+    public static boolean hasRemainingDrops(int appId, Map<String,String> cookies) {
+        Document doc;
+        try {
+            doc = Jsoup.connect(GAMECARDS_URL + appId + "?l=english")
+                    .followRedirects(true)
+                    .cookies(cookies)
+                    .get();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        final Element progressInfo = doc.select("span.progress_info_bold").first();
+        if (progressInfo == null) {
+            return false;
+        }
+
+        final Matcher m = dropPattern.matcher(progressInfo.text());
+        return m.find();
     }
 }

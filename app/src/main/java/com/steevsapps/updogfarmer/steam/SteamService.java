@@ -18,7 +18,6 @@ import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
-import com.steevsapps.updogfarmer.LoginActivity;
 import com.steevsapps.updogfarmer.MainActivity;
 import com.steevsapps.updogfarmer.R;
 import com.steevsapps.updogfarmer.utils.Prefs;
@@ -76,6 +75,7 @@ public class SteamService extends Service {
 
     private volatile boolean running;
     private volatile boolean connected;
+    private volatile boolean resumeFarming;
 
     private String sessionId;
     private String token;
@@ -101,7 +101,8 @@ public class SteamService extends Service {
     // This is the object that receives interactions from clients.
     private final IBinder binder = new LocalBinder();
 
-    private void startFarming() {
+    public void startFarming() {
+        resumeFarming = true;
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -112,6 +113,7 @@ public class SteamService extends Service {
     }
 
     private void farm() {
+        // TODO: be smarter
         final List<WebScraper.Badge> badges = WebScraper.getRemainingGames(generateWebCookies());
         if (badges.isEmpty()) {
             Log.i(TAG, "Finished idling");
@@ -174,6 +176,7 @@ public class SteamService extends Service {
         }
         stopForeground(true);
         running = false;
+        resumeFarming = false;
     }
 
     /**
@@ -184,7 +187,7 @@ public class SteamService extends Service {
     }
 
     private Notification buildNotification(String text) {
-        final Intent notificationIntent = new Intent(this, LoginActivity.class);
+        final Intent notificationIntent = new Intent(this, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
         return new NotificationCompat.Builder(this)
@@ -278,8 +281,11 @@ public class SteamService extends Service {
             @Override
             public void run() {
                 steamUser.logOff();
+                Prefs.writeUsername("");
+                Prefs.writePassword("");
                 Prefs.writeLoginKey("");
                 steamClient.disconnect();
+                updateNotification("Logged out");
             }
         }).start();
     }
@@ -295,7 +301,6 @@ public class SteamService extends Service {
         final String loginKey = Prefs.getLoginKey();
         final byte[] sentryData = readSentryFile();
         if (username.isEmpty() || password.isEmpty() || loginKey.isEmpty()) {
-            updateNotification("Click here to login to Steam");
             return;
         }
         Log.i(TAG, "Restoring login");
@@ -379,14 +384,29 @@ public class SteamService extends Service {
                 Log.i(TAG, result.toString());
 
                 if (result == EResult.OK) {
+                    updateNotification("Logged in");
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            final boolean gotAuth = authenticate(callback);
-                            Log.i(TAG, "Got auth? "  + gotAuth);
+                            boolean gotAuth = false;
+                            for (int i=0;i<3;i++) {
+                                gotAuth = authenticate(callback);
+                                Log.i(TAG, "Got auth? "  + gotAuth);
+                                if (gotAuth) {
+                                    break;
+                                }
+                                Log.i(TAG, "retrying...");
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
 
                             if (gotAuth) {
-                                startFarming();
+                                if (resumeFarming) {
+                                    startFarming();
+                                }
                             } else {
                                 updateNotification("Unable to get Steam web authentication!");
                             }
@@ -400,7 +420,7 @@ public class SteamService extends Service {
                     if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
                         // Probably no longer valid
                         Prefs.writeLoginKey("");
-                        updateNotification("Login key expired! Click here to login again");
+                        updateNotification("Login key expired!");
                     }
 
                     new Thread(new Runnable() {

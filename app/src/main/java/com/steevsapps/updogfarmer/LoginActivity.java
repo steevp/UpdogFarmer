@@ -64,16 +64,18 @@ public class LoginActivity extends AppCompatActivity {
 
                     if (result == EResult.InvalidPassword) {
                         passwordInput.setError("Invalid password");
-                    } else if (result == EResult.AccountLoginDeniedNeedTwoFactor) {
-                        twoFactorRequired = true;
+                    } else if (result == EResult.AccountLoginDeniedNeedTwoFactor || result == EResult.AccountLogonDenied || result == EResult.AccountLogonDeniedNoMail || result == EResult.AccountLogonDeniedVerifiedEmailRequired) {
+                        twoFactorRequired = result == EResult.AccountLoginDeniedNeedTwoFactor;
                         twoFactorInput.setVisibility(View.VISIBLE);
-                        twoFactorInput.setError("Two factor code required");
+                        twoFactorInput.setError("Steam Guard code required");
                         twoFactorInput.getEditText().requestFocus();
+                    } else if (result == EResult.TwoFactorCodeMismatch || result == EResult.InvalidLoginAuthCode) {
+                        twoFactorInput.setError("Invalid Code");
                     }
                 } else {
                     // Save username and password
-                    Prefs.writeUsername(usernameInput.getEditText().getText().toString());
-                    Prefs.writePassword(passwordInput.getEditText().getText().toString());
+                    Prefs.writeUsername(usernameInput.getEditText().getText().toString().trim());
+                    Prefs.writePassword(passwordInput.getEditText().getText().toString().trim());
                     finish();
                 }
             }
@@ -130,8 +132,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void doLogin(View v) {
-        final String username = usernameInput.getEditText().getText().toString();
-        final String password = passwordInput.getEditText().getText().toString();
+        final String username = usernameInput.getEditText().getText().toString().trim();
+        final String password = passwordInput.getEditText().getText().toString().trim();
         if (!username.isEmpty() && !password.isEmpty()) {
             loginButton.setEnabled(false);
             progress.setVisibility(View.VISIBLE);
@@ -140,6 +142,8 @@ public class LoginActivity extends AppCompatActivity {
             details.password(password);
             if (twoFactorRequired) {
                 details.twoFactorCode(twoFactorInput.getEditText().getText().toString());
+            } else {
+                details.authCode(twoFactorInput.getEditText().getText().toString().trim());
             }
             details.shouldRememberPassword = true;
             steamService.login(details);

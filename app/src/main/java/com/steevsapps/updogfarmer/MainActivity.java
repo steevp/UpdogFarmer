@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Buttons
     private Button startIdling;
-    private Button idleToReady;
+    //private Button idleToReady;
     private Button stopIdling;
 
     // Service connection
@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private void doLogout() {
         if (steamService != null) {
             steamService.logoff();
+            startActivity(LoginActivity.createIntent(this));
         }
     }
 
@@ -91,11 +92,11 @@ public class MainActivity extends AppCompatActivity {
         statusLoggedIn.setVisibility(View.GONE);
         statusLoggedOff.setVisibility(View.GONE);
         startIdling.setEnabled(false);
-        idleToReady.setEnabled(false);
+        //idleToReady.setEnabled(false);
         if (steamService != null && steamService.isLoggedIn()) {
             statusLoggedIn.setVisibility(View.VISIBLE);
             startIdling.setEnabled(true);
-            idleToReady.setEnabled(true);
+            //idleToReady.setEnabled(true);
         } else {
             statusLoggedOff.setVisibility(View.VISIBLE);
         }
@@ -113,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         statusLoggedIn = findViewById(R.id.status_logged_in);
         statusLoggedOff = findViewById(R.id.status_not_logged_in);
         startIdling = (Button) findViewById(R.id.start_idling);
-        idleToReady = (Button) findViewById(R.id.idle_to_ready);
+        //idleToReady = (Button) findViewById(R.id.idle_to_ready);
         stopIdling = (Button) findViewById(R.id.stop_idling);
 
         if (savedInstanceState == null) {
@@ -166,15 +167,21 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     public void clickHandler(View v) {
         switch (v.getId()) {
             case R.id.start_idling:
-                startSteam();
-                break;
-            case R.id.idle_to_ready:
+                steamService.startFarming();
                 break;
             case R.id.stop_idling:
                 stopSteam();
+                break;
+            case R.id.status_not_logged_in:
+                startActivity(LoginActivity.createIntent(this));
                 break;
         }
     }
