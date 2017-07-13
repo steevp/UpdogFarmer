@@ -15,8 +15,8 @@
         android:layout_height="match_parent"
         android:padding="@dimen/activity_horizontal_margin">
 
-
         <TextView
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/welcome"
@@ -32,10 +32,26 @@
             android:onClick="clickHandler"/>
 
         <TextView
-            android:textSize="@dimen/text_size_default"
+            android:gravity="center"
+            android:textSize="@dimen/text_size_small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/desc_start"/>
+
+        <Button
+            android:id="@+id/idle_to_ready"
+            android:textSize="@dimen/text_size_default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/idle_to_ready"
+            android:onClick="clickHandler" />
+
+        <TextView
+            android:gravity="center"
+            android:textSize="@dimen/text_size_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/desc_idle_to_ready" />
 
         <Button
             android:textSize="@dimen/text_size_default"
@@ -47,7 +63,8 @@
             android:onClick="clickHandler"/>
 
         <TextView
-            android:textSize="@dimen/text_size_default"
+            android:gravity="center"
+            android:textSize="@dimen/text_size_small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/desc_stop"/>

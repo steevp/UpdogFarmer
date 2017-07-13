@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.settings:
+                startActivity(SettingsActivity.createIntent(this));
+                break;
             case R.id.logout:
                 return true;
         }
@@ -42,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         switch (v.getId()) {
             case R.id.start_service:
                 startSteam();
+                break;
+            case R.id.idle_to_ready:
                 break;
             case R.id.stop_service:
                 stopSteam();

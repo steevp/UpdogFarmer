@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/cat_idle">
+        <CheckBoxPreference
+            android:key="@string/key_offline"
+            android:title="@string/pref_offline"
+            android:summary="@string/sum_offline"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

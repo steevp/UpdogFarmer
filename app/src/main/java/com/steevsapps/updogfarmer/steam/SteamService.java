@@ -112,7 +112,7 @@ public class SteamService extends Service {
         if (badges.isEmpty()) {
             Log.i(TAG, "Finished idling");
             stopPlaying();
-            updateNotification("Finished idling!");
+            updateNotification(getString(R.string.idling_finished));
             farmHandle.cancel(true);
             return;
         }
@@ -121,7 +121,6 @@ public class SteamService extends Service {
         if (b.appId != currentAppId) {
             Log.i(TAG, "Now idling " + b.name);
             playGame(b.appId);
-            //updateNotification("Now playing " + b.name);
 
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
