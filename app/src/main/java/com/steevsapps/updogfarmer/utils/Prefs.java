@@ -17,6 +17,7 @@ public class Prefs {
     private final static String SENTRY_HASH = "sentry_hash";
     private final static String CM_SERVERS = "cm_servers";
     private final static String OFFLINE = "offline";
+    private final static String STAY_AWAKE = "stay_awake";
 
     private static SharedPreferences prefs;
 
@@ -80,6 +81,10 @@ public class Prefs {
 
     public static boolean getOffline() {
         return prefs.getBoolean(OFFLINE, false);
+    }
+
+    public static boolean stayAwake() {
+        return prefs.getBoolean(STAY_AWAKE, false);
     }
 
     private static void writePref(String key, String value) {

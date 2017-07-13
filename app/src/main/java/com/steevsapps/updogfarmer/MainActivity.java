@@ -15,9 +15,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.steevsapps.updogfarmer.steam.SteamService;
+import com.steevsapps.updogfarmer.utils.Prefs;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -116,6 +118,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             startSteam();
+        }
+
+        if (Prefs.stayAwake()) {
+            // Don't let the screen turn off
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
 

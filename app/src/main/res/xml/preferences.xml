@@ -7,5 +7,9 @@
             android:title="@string/pref_offline"
             android:summary="@string/sum_offline"
             android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="@string/key_stay_awake"
+            android:title="@string/pref_stay_awake"
+            android:summary="@string/sum_stay_awake" />
     </PreferenceCategory>
 </PreferenceScreen>
