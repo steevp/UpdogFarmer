@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.settings:
                 startActivity(SettingsActivity.createIntent(this));
-                break;
+                return true;
             case R.id.logout:
                 return true;
         }
