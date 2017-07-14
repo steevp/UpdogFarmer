@@ -1,4 +1,4 @@
-package com.steevsapps.updogfarmer.utils;
+package com.steevsapps.idledaddy.utils;
 
 public class Utils {
 

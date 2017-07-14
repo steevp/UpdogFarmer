@@ -1,4 +1,4 @@
-package com.steevsapps.updogfarmer.utils;
+package com.steevsapps.idledaddy.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -33,6 +33,10 @@ public class Prefs {
                 writePref(MACHINE_ID, UUID.randomUUID().toString());
             }
         }
+    }
+
+    public static SharedPreferences getPrefs() {
+        return prefs;
     }
 
     public static void writeUsername(String username) {

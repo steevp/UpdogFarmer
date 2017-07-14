@@ -1,4 +1,4 @@
-package com.steevsapps.updogfarmer.steam;
+package com.steevsapps.idledaddy.steam;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -18,10 +18,10 @@ import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
-import com.steevsapps.updogfarmer.MainActivity;
-import com.steevsapps.updogfarmer.R;
-import com.steevsapps.updogfarmer.utils.Prefs;
-import com.steevsapps.updogfarmer.utils.Utils;
+import com.steevsapps.idledaddy.MainActivity;
+import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.utils.Prefs;
+import com.steevsapps.idledaddy.utils.Utils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -126,7 +126,6 @@ public class SteamService extends Service {
         final WebScraper.Badge b = badges.get(0);
         if (b.appId != currentAppId) {
             Log.i(TAG, "Now idling " + b.name);
-            playGame(b.appId);
 
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -135,6 +134,8 @@ public class SteamService extends Service {
                 }
             });
         }
+
+        playGame(b.appId);
     }
 
     @Nullable
@@ -405,6 +406,7 @@ public class SteamService extends Service {
 
                             if (gotAuth) {
                                 if (resumeFarming) {
+                                    Log.i(TAG, "Resume farming");
                                     startFarming();
                                 }
                             } else {

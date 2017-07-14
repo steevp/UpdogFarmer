@@ -1,8 +1,8 @@
-package com.steevsapps.updogfarmer;
+package com.steevsapps.idledaddy;
 
 import android.app.Application;
 
-import com.steevsapps.updogfarmer.utils.Prefs;
+import com.steevsapps.idledaddy.utils.Prefs;
 
 import uk.co.thomasc.steamkit.steam3.CMClient;
 

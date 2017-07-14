@@ -1,4 +1,4 @@
-package com.steevsapps.updogfarmer;
+package com.steevsapps.idledaddy;
 
 import org.junit.Test;
 

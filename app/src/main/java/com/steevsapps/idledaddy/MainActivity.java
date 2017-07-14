@@ -1,4 +1,4 @@
-package com.steevsapps.updogfarmer;
+package com.steevsapps.idledaddy;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -18,8 +18,11 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import com.steevsapps.updogfarmer.steam.SteamService;
-import com.steevsapps.updogfarmer.utils.Prefs;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.steevsapps.idledaddy.steam.SteamService;
+import com.steevsapps.idledaddy.utils.Prefs;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
     private Button startIdling;
     //private Button idleToReady;
     private Button stopIdling;
+
+    // Ads
+    private AdView adView;
 
     // Service connection
     private boolean isBound;
@@ -121,9 +127,22 @@ public class MainActivity extends AppCompatActivity {
             startSteam();
         }
 
+        applySettings();
+
+        // Bads
+        MobileAds.initialize(this, "ca-app-pub-6413501894389361~6190763130");
+        adView = (AdView) findViewById(R.id.adView);
+        final AdRequest adRequest = new AdRequest.Builder().build();
+        //final AdRequest adRequest = new AdRequest.Builder().addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99").build();
+        adView.loadAd(adRequest);
+    }
+
+    private void applySettings() {
         if (Prefs.stayAwake()) {
             // Don't let the screen turn off
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
     }
 
@@ -158,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.settings:
-                startActivity(SettingsActivity.createIntent(this));
+                startActivityForResult(SettingsActivity.createIntent(this), 0);
                 return true;
             case R.id.logout:
                 doLogout();
@@ -169,6 +188,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == SettingsActivity.SETTINGS_CHANGED) {
+            applySettings();
+        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
