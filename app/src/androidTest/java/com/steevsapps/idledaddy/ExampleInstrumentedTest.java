@@ -1,4 +1,4 @@
-package com.steevsapps.updogfarmer;
+package com.steevsapps.idledaddy;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

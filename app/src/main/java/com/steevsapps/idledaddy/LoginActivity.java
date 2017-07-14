@@ -1,4 +1,4 @@
-package com.steevsapps.updogfarmer;
+package com.steevsapps.idledaddy;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -15,13 +15,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.steevsapps.updogfarmer.steam.SteamService;
-import com.steevsapps.updogfarmer.utils.Prefs;
+import com.steevsapps.idledaddy.steam.SteamService;
+import com.steevsapps.idledaddy.utils.Prefs;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 
-import static com.steevsapps.updogfarmer.steam.SteamService.LOGIN_INTENT;
+import static com.steevsapps.idledaddy.steam.SteamService.LOGIN_INTENT;
 
 public class LoginActivity extends AppCompatActivity {
     private final static String TAG = "ywtag";

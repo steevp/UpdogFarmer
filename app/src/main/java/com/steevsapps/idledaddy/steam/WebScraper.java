@@ -1,4 +1,4 @@
-package com.steevsapps.updogfarmer.steam;
+package com.steevsapps.idledaddy.steam;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
