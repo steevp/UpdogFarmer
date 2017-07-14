@@ -15,6 +15,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
@@ -114,7 +115,31 @@ public class SteamService extends Service {
 
     private void farm() {
         // TODO: be smarter
-        final List<WebScraper.Badge> badges = WebScraper.getRemainingGames(generateWebCookies());
+        Log.i(TAG, "Trying to get remaining badges:");
+        List<WebScraper.Badge> badges = null;
+        for (int i=0;i<3;i++) {
+            badges = WebScraper.getRemainingGames(generateWebCookies());
+            if (badges != null) {
+                Log.i(TAG, "gotem");
+                break;
+            }
+            if (i + 1 < 3) {
+                Log.i(TAG, "retrying...");
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (badges == null) {
+            Toast.makeText(getApplicationContext(),
+                    "Idle Daddy: Unable to get drop info, trying again later", Toast.LENGTH_LONG)
+                    .show();
+            return;
+        }
+
         if (badges.isEmpty()) {
             Log.i(TAG, "Finished idling");
             stopPlaying();
@@ -124,16 +149,13 @@ public class SteamService extends Service {
         }
 
         final WebScraper.Badge b = badges.get(0);
-        if (b.appId != currentAppId) {
-            Log.i(TAG, "Now idling " + b.name);
-
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    buildIdleNotification(b);
-                }
-            });
-        }
+        Log.i(TAG, "Now idling " + b.name);
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                buildIdleNotification(b);
+            }
+        });
 
         playGame(b.appId);
     }
