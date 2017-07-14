@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * Scrapes card drop info from Steam website
  */
-public class WebScraper {
+class WebScraper {
     private final static String BADGE_URL = "http://steamcommunity.com/my/badges?l=english";
     private final static String GAMECARDS_URL = "http://steamcommunity.com/my/gamecards/";
 
@@ -24,7 +24,7 @@ public class WebScraper {
     // Pattern to match card drops remaining
     private final static Pattern dropPattern = Pattern.compile("^(\\d+) card drops? remaining$");
 
-    public static class Badge {
+    static class Badge {
         int appId;
         String name;
         String iconUrl;
@@ -44,7 +44,7 @@ public class WebScraper {
      * @param cookies Steam cookies
      * @return list of games with remaining drops
      */
-    public static List<Badge> getRemainingGames(Map<String,String> cookies) {
+    static List<Badge> getRemainingGames(Map<String,String> cookies) {
         final List<Badge> badgeList = new ArrayList<>();
         Document doc;
         try {
@@ -52,9 +52,9 @@ public class WebScraper {
                     .followRedirects(true)
                     .cookies(cookies)
                     .get();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return badgeList;
+            return null;
         }
 
         final Elements badges = doc.select("div.badge_title_row");
@@ -72,7 +72,7 @@ public class WebScraper {
                             .get();
                     final Elements badges2 = doc2.select("div.badge_title_row");
                     badges.addAll(badges2);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -115,7 +115,7 @@ public class WebScraper {
         return badgeList;
     }
 
-    public static boolean hasRemainingDrops(int appId, Map<String,String> cookies) {
+    static boolean hasRemainingDrops(int appId, Map<String,String> cookies) {
         Document doc;
         try {
             doc = Jsoup.connect(GAMECARDS_URL + appId + "?l=english")
