@@ -16,8 +16,9 @@ import java.util.regex.Pattern;
  * Scrapes card drop info from Steam website
  */
 class WebScraper {
-    private final static String BADGE_URL = "http://steamcommunity.com/my/badges?l=english";
-    private final static String GAMECARDS_URL = "http://steamcommunity.com/my/gamecards/";
+    private final static String BADGES = "http://steamcommunity.com/my/badges?l=english";
+    private final static String GAMECARDS = "http://steamcommunity.com/my/gamecards/";
+    private final static String INVENTORY = "http://steamcommunity.com/my/inventory";
 
     // Pattern to match app ID
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
@@ -48,12 +49,18 @@ class WebScraper {
         final List<Badge> badgeList = new ArrayList<>();
         Document doc;
         try {
-            doc = Jsoup.connect(BADGE_URL)
+            doc = Jsoup.connect(BADGES)
                     .followRedirects(true)
                     .cookies(cookies)
                     .get();
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
+        }
+
+        final Element userAvatar = doc.select("a.user_avatar").first();
+        if (userAvatar == null) {
+            // Invalid cookie data
             return null;
         }
 
@@ -66,7 +73,7 @@ class WebScraper {
             // Try to combine all the pages
             for (int i=2;i<=p;i++) {
                 try {
-                    final  Document doc2 = Jsoup.connect(BADGE_URL + "&p=" + i)
+                    final  Document doc2 = Jsoup.connect(BADGES + "&p=" + i)
                             .followRedirects(true)
                             .cookies(cookies)
                             .get();
@@ -118,7 +125,7 @@ class WebScraper {
     static boolean hasRemainingDrops(int appId, Map<String,String> cookies) {
         Document doc;
         try {
-            doc = Jsoup.connect(GAMECARDS_URL + appId + "?l=english")
+            doc = Jsoup.connect(GAMECARDS + appId + "?l=english")
                     .followRedirects(true)
                     .cookies(cookies)
                     .get();
@@ -134,5 +141,19 @@ class WebScraper {
 
         final Matcher m = dropPattern.matcher(progressInfo.text());
         return m.find();
+    }
+
+    /**
+     * View inventory to clear notifications
+     */
+    static void viewInventory(Map<String,String> cookies) {
+        try {
+            Jsoup.connect(INVENTORY)
+                    .followRedirects(true)
+                    .cookies(cookies)
+                    .get();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

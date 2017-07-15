@@ -15,7 +15,6 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.NotificationTarget;
@@ -31,10 +30,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
 import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver;
@@ -42,6 +37,8 @@ import uk.co.thomasc.steamkit.base.generated.steamlanguage.EMsg;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
+import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.callbacks.NotificationUpdateCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.types.NotificationType;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOnCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoginKeyCallback;
@@ -76,17 +73,14 @@ public class SteamService extends Service {
 
     private volatile boolean running;
     private volatile boolean connected;
-    private volatile boolean resumeFarming;
+    private volatile boolean farming;
 
+    private String webApiUserNonce;
     private String sessionId;
     private String token;
     private String tokenSecure;
     private String sentryHash;
     private boolean authenticated;
-
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private ScheduledFuture<?> farmHandle;
-    private int currentAppId  = 0;
 
     /**
      * Class for clients to access.  Because we know this service always
@@ -103,19 +97,18 @@ public class SteamService extends Service {
     private final IBinder binder = new LocalBinder();
 
     public void startFarming() {
-        resumeFarming = true;
-        final Runnable runnable = new Runnable() {
+        farming = true;
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 farm();
             }
-        };
-        farmHandle = scheduler.scheduleAtFixedRate(runnable, 0, 10 * 60, TimeUnit.SECONDS);
+        }).start();
     }
 
     private void farm() {
         // TODO: be smarter
-        Log.i(TAG, "Trying to get remaining badges:");
+        Log.i(TAG, "Checking remaining card drops");
         List<WebScraper.Badge> badges = null;
         for (int i=0;i<3;i++) {
             badges = WebScraper.getRemainingGames(generateWebCookies());
@@ -134,9 +127,8 @@ public class SteamService extends Service {
         }
 
         if (badges == null) {
-            Toast.makeText(getApplicationContext(),
-                    "Idle Daddy: Unable to get drop info, trying again later", Toast.LENGTH_LONG)
-                    .show();
+            Log.i(TAG, "Invalid cookie data or no internet, reconnecting");
+            steamClient.disconnect();
             return;
         }
 
@@ -144,7 +136,7 @@ public class SteamService extends Service {
             Log.i(TAG, "Finished idling");
             stopPlaying();
             updateNotification(getString(R.string.idling_finished));
-            farmHandle.cancel(true);
+            farming = false;
             return;
         }
 
@@ -194,12 +186,12 @@ public class SteamService extends Service {
     public void onDestroy() {
         Log.i(TAG, "Service destroyed");
         super.onDestroy();
-        if (farmHandle != null) {
-            farmHandle.cancel(true);
-        }
+        //if (farmHandle != null) {
+        //    farmHandle.cancel(true);
+        //}
         stopForeground(true);
         running = false;
-        resumeFarming = false;
+        farming = false;
     }
 
     /**
@@ -381,10 +373,6 @@ public class SteamService extends Service {
             public void call(DisconnectedCallback callback) {
                 Log.i(TAG, "Disconnected()");
                 connected = false;
-                currentAppId = 0;
-                if (farmHandle != null) {
-                    farmHandle.cancel(true);
-                }
                 if (running) {
                     new Thread(new Runnable() {
                         @Override
@@ -406,6 +394,8 @@ public class SteamService extends Service {
                 final EResult result = callback.getResult();
                 Log.i(TAG, result.toString());
 
+                webApiUserNonce = callback.getWebAPIUserNonce();
+
                 if (result == EResult.OK) {
                     updateNotification("Logged in");
                     new Thread(new Runnable() {
@@ -413,7 +403,7 @@ public class SteamService extends Service {
                         public void run() {
                             boolean gotAuth = false;
                             for (int i=0;i<3;i++) {
-                                gotAuth = authenticate(callback);
+                                gotAuth = authenticate();
                                 Log.i(TAG, "Got auth? "  + gotAuth);
                                 if (gotAuth) {
                                     break;
@@ -427,9 +417,16 @@ public class SteamService extends Service {
                             }
 
                             if (gotAuth) {
-                                if (resumeFarming) {
+                                if (farming) {
                                     Log.i(TAG, "Resume farming");
-                                    startFarming();
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            farm();
+                                            // Reset inventory notifications
+                                            WebScraper.viewInventory(generateWebCookies());
+                                        }
+                                    }).start();
                                 }
                             } else {
                                 updateNotification("Unable to get Steam web authentication!");
@@ -514,6 +511,26 @@ public class SteamService extends Service {
                 }
             }
         });
+        msg.handle(NotificationUpdateCallback.class, new ActionT<NotificationUpdateCallback>() {
+            @Override
+            public void call(NotificationUpdateCallback callback) {
+                Log.i(TAG, "New notifications " + callback.getNotificationCounts().toString());
+                for (Map.Entry<NotificationType,Integer> entry: callback.getNotificationCounts().entrySet()) {
+                    if (entry.getKey() == NotificationType.ITEMS && entry.getValue() > 0  && farming) {
+                        // Possible card drop
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                farm();
+                                // Reset inventory notifications
+                                WebScraper.viewInventory(generateWebCookies());
+                            }
+                        }).start();
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     /**
@@ -521,7 +538,6 @@ public class SteamService extends Service {
      * @param appId game to idle
      */
     private void playGame(int appId) {
-        currentAppId = appId;
         steamUser.setPlayingGame(appId);
     }
 
@@ -550,7 +566,6 @@ public class SteamService extends Service {
     }
 
     private void stopPlaying() {
-        currentAppId = 0;
         steamUser.setPlayingGame(0);
     }
 
@@ -627,13 +642,12 @@ public class SteamService extends Service {
      * but without contacting the Steam Website.
      * Should this one stop working, use SteamWeb.DoLogin().
      */
-    public boolean authenticate(LoggedOnCallback callback) {
+    public boolean authenticate() {
         authenticated = false;
 
         //sessionId = Base64.encodeToString(String.valueOf(callback.getUniqueId()).getBytes(), Base64.DEFAULT);
         sessionId = Utils.bytesToHex(CryptoHelper.GenerateRandomBlock(4));
 
-        final String webApiUserNonce = callback.getWebAPIUserNonce();
         final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);
         // generate an AES session key
         final byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);

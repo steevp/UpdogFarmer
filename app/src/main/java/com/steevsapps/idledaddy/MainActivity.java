@@ -132,8 +132,10 @@ public class MainActivity extends AppCompatActivity {
         // Bads
         MobileAds.initialize(this, "***REMOVED***");
         adView = (AdView) findViewById(R.id.adView);
-        final AdRequest adRequest = new AdRequest.Builder().build();
-        //final AdRequest adRequest = new AdRequest.Builder().addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99").build();
+        final AdRequest adRequest = new AdRequest.Builder()
+                // Seems ok to leave in production???
+                .addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99")
+                .build();
         adView.loadAd(adRequest);
     }
 
