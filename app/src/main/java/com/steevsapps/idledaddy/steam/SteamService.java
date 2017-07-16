@@ -201,6 +201,10 @@ public class SteamService extends Service {
         return steamClient.getSteamId() != null;
     }
 
+    public boolean isFarming() {
+        return farming;
+    }
+
     private Notification buildNotification(String text) {
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -222,6 +226,7 @@ public class SteamService extends Service {
         rv.setImageViewResource(R.id.remoteview_notification_icon, R.mipmap.ic_launcher);
         rv.setTextViewText(R.id.remoteview_notification_headline, getString(R.string.app_name));
         rv.setTextViewText(R.id.remoteview_notification_short_message, "Now playing " + badge.name);
+        rv.setTextViewText(R.id.remoteview_notification_drop_info, badge.dropsRemaining + (badge.dropsRemaining > 1 ? " card drops remaining" : " card drop remaining"));
 
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -233,6 +238,7 @@ public class SteamService extends Service {
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContent(rv)
                         .setCustomBigContentView(rv)
+                        .setPriority(Notification.PRIORITY_MAX)
                         .setContentIntent(pendingIntent)
                         .build();
 
