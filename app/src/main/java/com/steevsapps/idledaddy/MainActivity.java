@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         //idleToReady.setEnabled(false);
         if (steamService != null && steamService.isLoggedIn()) {
             statusLoggedIn.setVisibility(View.VISIBLE);
-            startIdling.setEnabled(true);
+            startIdling.setEnabled(!steamService.isFarming());
             //idleToReady.setEnabled(true);
         } else {
             statusLoggedOff.setVisibility(View.VISIBLE);
@@ -199,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
     public void clickHandler(View v) {
         switch (v.getId()) {
             case R.id.start_idling:
+                v.setEnabled(false);
                 steamService.startFarming();
                 break;
             case R.id.stop_idling:
