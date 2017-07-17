@@ -233,8 +233,7 @@ public class SteamService extends Service {
                 notificationIntent, 0);
 
         // build notification
-        final Notification notification =
-                new NotificationCompat.Builder(this)
+        final Notification notification = new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
                         .setContent(rv)
                         .setCustomBigContentView(rv)
