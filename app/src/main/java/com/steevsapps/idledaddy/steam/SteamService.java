@@ -27,9 +27,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
 import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver;
@@ -82,6 +87,9 @@ public class SteamService extends Service {
     private String sentryHash;
     private boolean authenticated;
 
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> farmHandle;
+
     /**
      * Class for clients to access.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with
@@ -107,7 +115,6 @@ public class SteamService extends Service {
     }
 
     private void farm() {
-        // TODO: be smarter
         Log.i(TAG, "Checking remaining card drops");
         List<WebScraper.Badge> badges = null;
         for (int i=0;i<3;i++) {
@@ -137,19 +144,62 @@ public class SteamService extends Service {
             stopPlaying();
             updateNotification(getString(R.string.idling_finished));
             farming = false;
+            stopFarmTask();
             return;
         }
 
+        // Sort by hours played descending
+        Collections.sort(badges, Collections.reverseOrder());
+
         final WebScraper.Badge b = badges.get(0);
-        Log.i(TAG, "Now idling " + b.name);
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
+
+        // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
+        if (b.hoursPlayed >= 2) {
+            // If a game has over 2 hrs we can just idle it
+            Log.i(TAG, "Now idling " + b.name);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    buildIdleNotification(b);
+                }
+            });
+            playGame(b.appId);
+            stopFarmTask();
+        } else {
+            // Idle multiple games (max 32) until one has reached 2 hrs
+            Log.i(TAG, "Idling multiple");
+            int size = badges.size();
+            if (size > 32) {
+                size = 32;
+            }
+            final int[] appIds = new int[size];
+            for (int i=0;i<size;i++) {
+                appIds[i] = badges.get(i).appId;
+            }
+            playGames(appIds);
+            updateNotification("Idling multiple");
+            startFarmTask();
+        }
+    }
+
+    private void startFarmTask() {
+        final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                buildIdleNotification(b);
+                farm();
             }
-        });
+        };
+        if (farmHandle == null || farmHandle.isCancelled()) {
+            Log.i(TAG, "Starting farmtask");
+            farmHandle = scheduler.scheduleAtFixedRate(runnable, 10, 10, TimeUnit.MINUTES);
+        }
+    }
 
-        playGame(b.appId);
+    private void stopFarmTask() {
+        if (farmHandle != null) {
+            Log.i(TAG, "Stopping farmtask");
+            farmHandle.cancel(true);
+        }
     }
 
     @Nullable
@@ -186,12 +236,10 @@ public class SteamService extends Service {
     public void onDestroy() {
         Log.i(TAG, "Service destroyed");
         super.onDestroy();
-        //if (farmHandle != null) {
-        //    farmHandle.cancel(true);
-        //}
         stopForeground(true);
         running = false;
         farming = false;
+        stopFarmTask();
     }
 
     /**

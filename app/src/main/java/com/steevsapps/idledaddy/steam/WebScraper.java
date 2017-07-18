@@ -1,5 +1,7 @@
 package com.steevsapps.idledaddy.steam;
 
+import android.support.annotation.NonNull;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -24,19 +26,29 @@ class WebScraper {
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
     // Pattern to match card drops remaining
     private final static Pattern dropPattern = Pattern.compile("^(\\d+) card drops? remaining$");
+    // Pattern to match play time
+    private final static Pattern timePattern = Pattern.compile("([0-9\\.]+) hrs on record");
 
-    static class Badge {
+    static class Badge implements Comparable<Badge> {
         int appId;
         String name;
         String iconUrl;
-        int hoursPlayed;
+        float hoursPlayed;
         int dropsRemaining;
-        private Badge(int appId, String name, int hoursPlayed, int dropsRemaining) {
+        private Badge(int appId, String name, float hoursPlayed, int dropsRemaining) {
             this.appId = appId;
             this.name = name;
             this.iconUrl = "http://cdn.akamai.steamstatic.com/steam/apps/" + appId + "/header_292x136.jpg";
             this.hoursPlayed = hoursPlayed;
             this.dropsRemaining = dropsRemaining;
+        }
+
+        @Override
+        public int compareTo(@NonNull Badge o) {
+            if (hoursPlayed == o.hoursPlayed) {
+                return 0;
+            }
+            return hoursPlayed < o.hoursPlayed ? -1 : 1;
         }
     }
 
@@ -116,7 +128,19 @@ class WebScraper {
             }
             final String name = badgeTitle.ownText().trim();
 
-            badgeList.add(new Badge(appId, name, 0, drops));
+            // Get play time
+            final Element playTime = b.select("div.badge_title_stats_playtime").first();
+            if (playTime == null) {
+                continue;
+            }
+            final String playTimeText = playTime.text().trim();
+            m = timePattern.matcher(playTimeText);
+            float time = 0;
+            if (m.find()) {
+                time = Float.parseFloat(m.group(1));
+            }
+
+            badgeList.add(new Badge(appId, name, time, drops));
         }
 
         return badgeList;
