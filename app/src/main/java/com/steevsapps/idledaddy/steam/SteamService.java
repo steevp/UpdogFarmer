@@ -45,6 +45,7 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
 import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.callbacks.NotificationUpdateCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.types.NotificationType;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
+import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOffCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOnCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoginKeyCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.UpdateMachineAuthCallback;
@@ -439,6 +440,17 @@ public class SteamService extends Service {
                         }
                     }).start();
                 }
+            }
+        });
+        msg.handle(LoggedOffCallback.class, new ActionT<LoggedOffCallback>() {
+            @Override
+            public void call(LoggedOffCallback callback) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        steamClient.disconnect();
+                    }
+                }).start();
             }
         });
         msg.handle(LoggedOnCallback.class, new ActionT<LoggedOnCallback>() {
