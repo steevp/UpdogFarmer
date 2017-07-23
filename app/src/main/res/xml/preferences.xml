@@ -12,5 +12,11 @@
             android:title="@string/pref_stay_awake"
             android:summary="@string/sum_stay_awake"
             android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="@string/key_simple"
+            android:title="@string/pref_simple"
+            android:summary="@string/sum_simple"
+            android:defaultValue="false" />
     </PreferenceCategory>
 </PreferenceScreen>

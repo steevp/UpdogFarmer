@@ -157,7 +157,7 @@ public class SteamService extends Service {
         final WebScraper.Badge b = badges.get(0);
 
         // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
-        if (b.hoursPlayed >= 2 || badges.size() == 1) {
+        if (b.hoursPlayed >= 2 || badges.size() == 1 || Prefs.simpleFarming()) {
             // If a game has over 2 hrs we can just idle it
             Log.i(TAG, "Now idling " + b.name);
             new Handler(Looper.getMainLooper()).post(new Runnable() {
