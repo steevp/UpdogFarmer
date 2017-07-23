@@ -72,6 +72,7 @@ public class SteamService extends Service {
     // Used to tell activities when login state has changed
     public final static String LOGIN_INTENT = "LOGIN_INTENT";
     public final static String RESULT = "RESULT";
+    public final static String LOGOUT_INTENT = "LOGOUT_INTENT";
 
     private SteamClient steamClient;
     private SteamUser steamUser;
@@ -87,6 +88,7 @@ public class SteamService extends Service {
     private String tokenSecure;
     private String sentryHash;
     private boolean authenticated;
+    private boolean loggedIn;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> farmHandle;
@@ -247,7 +249,7 @@ public class SteamService extends Service {
      * Check if user is logged in
      */
     public boolean isLoggedIn() {
-        return steamClient.getSteamId() != null;
+        return loggedIn;
     }
 
     public boolean isFarming() {
@@ -346,6 +348,8 @@ public class SteamService extends Service {
 
     public void logoff() {
         Log.i(TAG, "logging off");
+        farming = false;
+        stopFarmTask();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -427,6 +431,7 @@ public class SteamService extends Service {
             public void call(DisconnectedCallback callback) {
                 Log.i(TAG, "Disconnected()");
                 connected = false;
+                loggedIn = false;
                 if (running) {
                     new Thread(new Runnable() {
                         @Override
@@ -440,6 +445,8 @@ public class SteamService extends Service {
                         }
                     }).start();
                 }
+                // Notify the activity that user is logged out
+                LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(LOGOUT_INTENT));
             }
         });
         msg.handle(LoggedOffCallback.class, new ActionT<LoggedOffCallback>() {
@@ -462,6 +469,7 @@ public class SteamService extends Service {
                 webApiUserNonce = callback.getWebAPIUserNonce();
 
                 if (result == EResult.OK) {
+                    loggedIn = true;
                     updateNotification("Logged in");
                     new Thread(new Runnable() {
                         @Override
