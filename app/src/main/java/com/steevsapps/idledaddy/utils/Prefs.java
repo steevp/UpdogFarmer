@@ -19,6 +19,7 @@ public class Prefs {
     private final static String OFFLINE = "offline";
     private final static String STAY_AWAKE = "stay_awake";
     private final static String SIMPLE = "simple";
+    private final static String MINIMIZE_DATA = "minimize_data";
 
     private static SharedPreferences prefs;
 
@@ -93,6 +94,8 @@ public class Prefs {
     }
 
     public static boolean simpleFarming() { return  prefs.getBoolean(SIMPLE, false); }
+
+    public static boolean minimizeData() { return prefs.getBoolean(MINIMIZE_DATA, false); }
 
     private static void writePref(String key, String value) {
         final SharedPreferences.Editor editor = prefs.edit();
