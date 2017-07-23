@@ -24,4 +24,7 @@
     <string name="key_stay_awake">stay_awake</string>
     <string name="pref_stay_awake">Keep device awake</string>
     <string name="sum_stay_awake">Enable this if your device doesn\&apos;t keep WiFi on during sleep.</string>
+    <string name="key_simple">simple</string>
+    <string name="pref_simple">Simple farming</string>
+    <string name="sum_simple">Idles your games one-by-one until all cards have dropped, doesn\&apos;t try to bring them up to 2 hrs first. If unsure, leave this disabled.</string>
 </resources>

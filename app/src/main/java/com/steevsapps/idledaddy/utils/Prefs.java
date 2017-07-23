@@ -18,6 +18,7 @@ public class Prefs {
     private final static String CM_SERVERS = "cm_servers";
     private final static String OFFLINE = "offline";
     private final static String STAY_AWAKE = "stay_awake";
+    private final static String SIMPLE = "simple";
 
     private static SharedPreferences prefs;
 
@@ -90,6 +91,8 @@ public class Prefs {
     public static boolean stayAwake() {
         return prefs.getBoolean(STAY_AWAKE, false);
     }
+
+    public static boolean simpleFarming() { return  prefs.getBoolean(SIMPLE, false); }
 
     private static void writePref(String key, String value) {
         final SharedPreferences.Editor editor = prefs.edit();
