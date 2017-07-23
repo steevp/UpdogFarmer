@@ -299,11 +299,13 @@ public class SteamService extends Service {
                 notification,
                 NOTIF_ID);
 
-        // Load game icon into notication
-        Glide.with(getApplicationContext())
-                .load(badge.iconUrl)
-                .asBitmap()
-                .into(target);
+        if (!Prefs.minimizeData()) {
+            // Load game icon into notication
+            Glide.with(getApplicationContext())
+                    .load(badge.iconUrl)
+                    .asBitmap()
+                    .into(target);
+        }
 
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIF_ID, notification);
