@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
      * Update status message
      */
     private void updateStatus() {
-        Log.i(getClass().getSimpleName(), "updating status " + steamService.isLoggedIn());
         statusLoggedIn.setVisibility(View.GONE);
         statusLoggedOff.setVisibility(View.GONE);
         startIdling.setEnabled(false);
