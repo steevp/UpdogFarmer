@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
 
     // Buttons
     private Button startIdling;
-    //private Button idleToReady;
     private Button stopIdling;
 
     // Ads
@@ -60,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SteamService.LOGIN_INTENT)) {
+            final String action = intent.getAction();
+            if (action.equals(SteamService.LOGIN_INTENT) || action.equals(SteamService.LOGOUT_INTENT)) {
                 updateStatus();
             }
         }
@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private void doLogout() {
         if (steamService != null) {
             steamService.logoff();
-            startActivity(LoginActivity.createIntent(this));
+            //startActivity(LoginActivity.createIntent(this));
         }
     }
 
@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
      * Update status message
      */
     private void updateStatus() {
+        Log.i(getClass().getSimpleName(), "updating status " + steamService.isLoggedIn());
         statusLoggedIn.setVisibility(View.GONE);
         statusLoggedOff.setVisibility(View.GONE);
         startIdling.setEnabled(false);
@@ -102,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         if (steamService != null && steamService.isLoggedIn()) {
             statusLoggedIn.setVisibility(View.VISIBLE);
             startIdling.setEnabled(!steamService.isFarming());
-            //idleToReady.setEnabled(true);
         } else {
             statusLoggedOff.setVisibility(View.VISIBLE);
         }
@@ -151,7 +151,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(SteamService.LOGIN_INTENT));
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction(SteamService.LOGIN_INTENT);
+        filter.addAction(SteamService.LOGOUT_INTENT);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         doBindService();
     }
 
