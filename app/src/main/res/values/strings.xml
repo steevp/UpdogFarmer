@@ -10,7 +10,7 @@
     <string name="steamguard">Steam Guard code</string>
     <string name="login">Login</string>
     <string name="start_idling">Start farming</string>
-    <string name="desc_start">Idles your until all trading cards have dropped.</string>
+    <string name="desc_start">Idles your games until all trading cards have dropped.</string>
     <string name="idle_to_ready">Idle to ready</string>
     <string name="desc_idle_to_ready">Idles all games with &lt;2 hours play time until they reach 2 hours.</string>
     <string name="stop_idling">Stop farming</string>
