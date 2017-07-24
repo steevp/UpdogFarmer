@@ -4,20 +4,23 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.NotificationTarget;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.utils.Prefs;
@@ -74,9 +77,12 @@ public class SteamService extends Service {
     public final static String RESULT = "RESULT";
     public final static String LOGOUT_INTENT = "LOGOUT_INTENT";
 
+    private final static String SKIP_INTENT = "SKIP_INTENT";
+
     private SteamClient steamClient;
     private SteamUser steamUser;
     private SteamFriends steamFriends;
+    private int index = 0;
 
     private volatile boolean running;
     private volatile boolean connected;
@@ -106,6 +112,23 @@ public class SteamService extends Service {
 
     // This is the object that receives interactions from clients.
     private final IBinder binder = new LocalBinder();
+
+
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(SKIP_INTENT)) {
+                // Skip clicked
+                index++;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        farm();
+                    }
+                }).start();
+            }
+        }
+    };
 
     public void startFarming() {
         farming = true;
@@ -154,7 +177,10 @@ public class SteamService extends Service {
         // Sort by hours played descending
         Collections.sort(badges, Collections.reverseOrder());
 
-        final WebScraper.Badge b = badges.get(0);
+        if (index >= badges.size()) {
+            index = 0;
+        }
+        final WebScraper.Badge b = badges.get(index);
 
         // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
         if (b.hoursPlayed >= 2 || badges.size() == 1 || Prefs.simpleFarming()) {
@@ -232,6 +258,7 @@ public class SteamService extends Service {
             Log.i(TAG, "Command starting");
             start();
         }
+        registerReceiver(receiver, new IntentFilter(SKIP_INTENT));
         return Service.START_NOT_STICKY;
     }
 
@@ -243,6 +270,7 @@ public class SteamService extends Service {
         running = false;
         farming = false;
         stopFarmTask();
+        unregisterReceiver(receiver);
     }
 
     /**
@@ -269,46 +297,43 @@ public class SteamService extends Service {
     }
 
     /**
-     * Build custom idling notification
+     * Build idling notification
      */
     private void buildIdleNotification(WebScraper.Badge badge) {
         Log.i(TAG, "Idle notification");
-        final RemoteViews rv = new RemoteViews(getPackageName(), R.layout.idle_notification);
-        rv.setImageViewResource(R.id.remoteview_notification_icon, R.mipmap.ic_launcher);
-        rv.setTextViewText(R.id.remoteview_notification_headline, getString(R.string.app_name));
-        rv.setTextViewText(R.id.remoteview_notification_short_message, "Now playing " + badge.name);
-        rv.setTextViewText(R.id.remoteview_notification_drop_info, badge.dropsRemaining + (badge.dropsRemaining > 1 ? " card drops remaining" : " card drop remaining"));
-
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
-        // build notification
-        final Notification notification = new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContent(rv)
-                        .setCustomBigContentView(rv)
-                        .setPriority(Notification.PRIORITY_MAX)
-                        .setContentIntent(pendingIntent)
-                        .build();
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setStyle(new NotificationCompat.MediaStyle());
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle(getString(R.string.app_name));
+        builder.setContentText("Now playing " + badge.name);
+        builder.setSubText(badge.dropsRemaining + (badge.dropsRemaining > 1 ? " card drops remaining" : " card drop remaining"));
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
+        builder.setContentIntent(pendingIntent);
 
-        final NotificationTarget target = new NotificationTarget(
-                this,
-                rv,
-                R.id.remoteview_notification_icon,
-                notification,
-                NOTIF_ID);
+        // Add the skip action
+        final PendingIntent skipIntent = PendingIntent.getBroadcast(this, 0, new Intent(SKIP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.addAction(R.drawable.ic_skip_next_white_48dp, "Skip", skipIntent);
 
+        final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (!Prefs.minimizeData()) {
-            // Load game icon into notication
+            // Load game icon into notification
             Glide.with(getApplicationContext())
                     .load(badge.iconUrl)
                     .asBitmap()
-                    .into(target);
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            builder.setLargeIcon(resource);
+                            nm.notify(NOTIF_ID, builder.build());
+                        }
+                    });
+        } else {
+            nm.notify(NOTIF_ID, builder.build());
         }
-
-        final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIF_ID, notification);
     }
 
     /**
