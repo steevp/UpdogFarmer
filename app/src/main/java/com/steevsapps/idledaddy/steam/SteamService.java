@@ -82,7 +82,7 @@ public class SteamService extends Service {
     private SteamClient steamClient;
     private SteamUser steamUser;
     private SteamFriends steamFriends;
-    private int index = 0;
+    private int farmIndex = 0;
 
     private volatile boolean running;
     private volatile boolean connected;
@@ -119,7 +119,7 @@ public class SteamService extends Service {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(SKIP_INTENT)) {
                 // Skip clicked
-                index++;
+                farmIndex++;
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -177,13 +177,13 @@ public class SteamService extends Service {
         // Sort by hours played descending
         Collections.sort(badges, Collections.reverseOrder());
 
-        if (index >= badges.size()) {
-            index = 0;
+        if (farmIndex >= badges.size()) {
+            farmIndex = 0;
         }
-        final WebScraper.Badge b = badges.get(index);
+        final WebScraper.Badge b = badges.get(farmIndex);
 
         // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
-        if (b.hoursPlayed >= 2 || badges.size() == 1 || Prefs.simpleFarming()) {
+        if (b.hoursPlayed >= 2 || badges.size() == 1 || Prefs.simpleFarming() || farmIndex > 0) {
             // If a game has over 2 hrs we can just idle it
             Log.i(TAG, "Now idling " + b.name);
             new Handler(Looper.getMainLooper()).post(new Runnable() {
