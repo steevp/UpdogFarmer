@@ -84,17 +84,17 @@ public class SteamService extends Service {
     private SteamFriends steamFriends;
     private int farmIndex = 0;
 
-    private volatile boolean running;
-    private volatile boolean connected;
-    private volatile boolean farming;
+    private volatile boolean running = false;
+    private volatile boolean connected = false;
+    private volatile boolean farming = false;
 
     private String webApiUserNonce;
     private String sessionId;
     private String token;
     private String tokenSecure;
     private String sentryHash;
-    private boolean authenticated;
-    private boolean loggedIn;
+    private boolean authenticated = false;
+    private boolean loggedIn = false;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> farmHandle;
@@ -135,9 +135,14 @@ public class SteamService extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                farm();
+                    farm();
             }
         }).start();
+    }
+
+    private void stopFarming() {
+        farming = false;
+        stopFarmTask();
     }
 
     private void farm() {
@@ -169,8 +174,7 @@ public class SteamService extends Service {
             Log.i(TAG, "Finished idling");
             stopPlaying();
             updateNotification(getString(R.string.idling_finished));
-            farming = false;
-            stopFarmTask();
+            stopFarming();
             return;
         }
 
@@ -256,9 +260,9 @@ public class SteamService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!running) {
             Log.i(TAG, "Command starting");
+            registerReceiver(receiver, new IntentFilter(SKIP_INTENT));
             start();
         }
-        registerReceiver(receiver, new IntentFilter(SKIP_INTENT));
         return Service.START_NOT_STICKY;
     }
 
@@ -268,8 +272,7 @@ public class SteamService extends Service {
         super.onDestroy();
         stopForeground(true);
         running = false;
-        farming = false;
-        stopFarmTask();
+        stopFarming();
         unregisterReceiver(receiver);
     }
 
@@ -375,8 +378,7 @@ public class SteamService extends Service {
 
     public void logoff() {
         Log.i(TAG, "logging off");
-        farming = false;
-        stopFarmTask();
+        stopFarming();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -479,6 +481,12 @@ public class SteamService extends Service {
         msg.handle(LoggedOffCallback.class, new ActionT<LoggedOffCallback>() {
             @Override
             public void call(LoggedOffCallback callback) {
+                Log.i(TAG, "Logoff result " + callback.getResult().toString());
+                if (callback.getResult() == EResult.LoggedInElsewhere) {
+                    updateNotification("Logged in elsewhere");
+                    stopFarming();
+                }
+                // Reconnect
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
