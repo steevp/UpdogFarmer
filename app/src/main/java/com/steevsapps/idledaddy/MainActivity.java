@@ -87,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
     private void doLogout() {
         if (steamService != null) {
             steamService.logoff();
-            //startActivity(LoginActivity.createIntent(this));
         }
     }
 
@@ -98,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
         statusLoggedIn.setVisibility(View.GONE);
         statusLoggedOff.setVisibility(View.GONE);
         startIdling.setEnabled(false);
-        //idleToReady.setEnabled(false);
         if (steamService != null && steamService.isLoggedIn()) {
             statusLoggedIn.setVisibility(View.VISIBLE);
             startIdling.setEnabled(!steamService.isFarming());
@@ -119,12 +117,7 @@ public class MainActivity extends AppCompatActivity {
         statusLoggedIn = findViewById(R.id.status_logged_in);
         statusLoggedOff = findViewById(R.id.status_not_logged_in);
         startIdling = (Button) findViewById(R.id.start_idling);
-        //idleToReady = (Button) findViewById(R.id.idle_to_ready);
         stopIdling = (Button) findViewById(R.id.stop_idling);
-
-        if (savedInstanceState == null) {
-            startSteam();
-        }
 
         applySettings();
 
@@ -154,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(SteamService.LOGIN_INTENT);
         filter.addAction(SteamService.LOGOUT_INTENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
-        doBindService();
+        startSteam();
     }
 
     @Override
