@@ -269,11 +269,17 @@ public class SteamService extends Service {
     @Override
     public void onDestroy() {
         Log.i(TAG, "Service destroyed");
-        super.onDestroy();
         stopForeground(true);
         running = false;
         stopFarming();
-        unregisterReceiver(receiver);
+        // Somebody was getting IllegalArgumentException from this, possibly because I was calling
+        // super.onDestroy() at the beginning, but I'll still catch it just to be safe.
+        try {
+            unregisterReceiver(receiver);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+        super.onDestroy();
     }
 
     /**
