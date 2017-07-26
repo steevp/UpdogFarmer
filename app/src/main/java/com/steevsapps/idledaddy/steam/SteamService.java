@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
@@ -42,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
 import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EMsg;
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPaymentMethod;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
@@ -51,6 +53,7 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOffCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOnCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoginKeyCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.PurchaseResponseCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.UpdateMachineAuthCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.MachineAuthDetails;
@@ -398,6 +401,10 @@ public class SteamService extends Service {
         }).start();
     }
 
+    public void redeemKey(final String key) {
+        steamUser.registerProductKey(key);
+    }
+
     /**
      * Try to login using saved details in prefs
      */
@@ -642,6 +649,48 @@ public class SteamService extends Service {
                         }).start();
                         break;
                     }
+                }
+            }
+        });
+        msg.handle(PurchaseResponseCallback.class, new ActionT<PurchaseResponseCallback>() {
+            @Override
+            public void call(PurchaseResponseCallback callback) {
+
+                if (callback.getResult() == EResult.OK) {
+                    final KeyValue kv = callback.getPurchaseReceiptInfo().getKeyValues();
+                    if (kv.get("PaymentMethod").asInteger() == EPaymentMethod.ActivationCode.v()) {
+                        final StringBuilder products = new StringBuilder("Activated: ");
+                        final int size = kv.get("LineItemCount").asInteger();
+                        for (int i=0;i<size;i++) {
+                            products.append(kv.get("lineitems").get(i + "").get("ItemDescription").asString());
+                            if (i + 1 < size) {
+                                products.append(", ");
+                            }
+                        }
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(getApplicationContext(), products.toString(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                } else {
+                    final int purchaseResult = callback.getPurchaseResultDetails();
+
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            String error;
+                            if (purchaseResult == 9) {
+                                error = "Product already owned";
+                            } else if (purchaseResult == 14) {
+                                error = "Invalid key";
+                            } else {
+                                error = "Activation failed";
+                            }
+                            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             }
         });

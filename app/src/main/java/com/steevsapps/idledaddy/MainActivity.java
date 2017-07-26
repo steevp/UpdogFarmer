@@ -21,11 +21,13 @@ import android.widget.Button;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.steevsapps.idledaddy.dialogs.DialogListener;
+import com.steevsapps.idledaddy.dialogs.RedeemDialog;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.utils.Prefs;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DialogListener {
     private final static String TAG = "ywtag";
 
     // Status messages
@@ -160,7 +162,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         final MenuItem logOff = menu.findItem(R.id.logout);
-        logOff.setVisible(steamService != null && steamService.isLoggedIn());
+        final MenuItem redeem = menu.findItem(R.id.redeem);
+        final boolean loggedIn = steamService != null && steamService.isLoggedIn();
+        logOff.setVisible(loggedIn);
+        redeem.setVisible(loggedIn);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -175,6 +180,9 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.settings:
                 startActivityForResult(SettingsActivity.createIntent(this), 0);
+                return true;
+            case R.id.redeem:
+                RedeemDialog.newInstance().show(getSupportFragmentManager(), "redeem");
                 return true;
             case R.id.logout:
                 doLogout();
@@ -215,5 +223,13 @@ public class MainActivity extends AppCompatActivity {
         doUnbindService();
         stopService(SteamService.createIntent(this));
         finish();
+    }
+
+    @Override
+    public void onYesPicked(String text) {
+        final String key = text.toUpperCase().trim();
+        if (!key.isEmpty()) {
+            steamService.redeemKey(key);
+        }
     }
 }

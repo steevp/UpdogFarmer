@@ -11,12 +11,14 @@
     <string name="login">Login</string>
     <string name="start_idling">Start farming</string>
     <string name="desc_start">Idles your games until all trading cards have dropped.</string>
-    <string name="idle_to_ready">Idle to ready</string>
-    <string name="desc_idle_to_ready">Idles all games with &lt;2 hours play time until they reach 2 hours.</string>
     <string name="stop_idling">Stop farming</string>
     <string name="desc_stop">Stops the farming session.</string>
     <string name="idling_finished">No games left to idle.</string>
     <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="redeem">Activate Product</string>
+    <string name="redeem_msg">Enter your product code here:</string>
+    <string name="ok">OK</string>
     <string name="cat_idle">Idle settings</string>
     <string name="key_offline">offline</string>
     <string name="pref_offline">Offline Farming</string>
