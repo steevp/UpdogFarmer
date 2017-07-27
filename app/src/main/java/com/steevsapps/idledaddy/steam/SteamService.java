@@ -661,8 +661,11 @@ public class SteamService extends Service {
                     if (kv.get("PaymentMethod").asInteger() == EPaymentMethod.ActivationCode.v()) {
                         final StringBuilder products = new StringBuilder("Activated: ");
                         final int size = kv.get("LineItemCount").asInteger();
+                        Log.i(TAG, "LineItemCount " + size);
                         for (int i=0;i<size;i++) {
-                            products.append(kv.get("lineitems").get(i + "").get("ItemDescription").asString());
+                            final String lineItem = kv.get("lineitems").get(i + "").get("ItemDescription").asString();
+                            Log.i(TAG, "lineItem " + i + " " + lineItem);
+                            products.append(lineItem);
                             if (i + 1 < size) {
                                 products.append(", ");
                             }
