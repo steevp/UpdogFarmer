@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.listeners.DialogListener;
 
 public class RedeemDialog extends DialogFragment {
     private DialogListener callback;
