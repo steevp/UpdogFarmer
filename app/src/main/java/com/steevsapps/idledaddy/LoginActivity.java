@@ -21,10 +21,10 @@ import com.steevsapps.idledaddy.utils.Prefs;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 
-import static com.steevsapps.idledaddy.steam.SteamService.LOGIN_INTENT;
+import static com.steevsapps.idledaddy.steam.SteamService.LOGIN_EVENT;
 
 public class LoginActivity extends AppCompatActivity {
-    private final static String TAG = "ywtag";
+    private final static String TAG = LoginActivity.class.getSimpleName();
 
     boolean isBound;
     private SteamService steamService;
@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SteamService.LOGIN_INTENT)) {
+            if (intent.getAction().equals(SteamService.LOGIN_EVENT)) {
                 loginButton.setEnabled(true);
                 progress.setVisibility(View.GONE);
                 final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         doBindService();
-        final IntentFilter filter = new IntentFilter(LOGIN_INTENT);
+        final IntentFilter filter = new IntentFilter(LOGIN_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
 

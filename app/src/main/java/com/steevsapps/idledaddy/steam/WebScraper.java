@@ -1,15 +1,24 @@
 package com.steevsapps.idledaddy.steam;
 
-import android.support.annotation.NonNull;
+import com.steevsapps.idledaddy.Secrets;
+import com.steevsapps.idledaddy.steam.wrapper.Badge;
+import com.steevsapps.idledaddy.steam.wrapper.Game;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,10 +26,11 @@ import java.util.regex.Pattern;
 /**
  * Scrapes card drop info from Steam website
  */
-class WebScraper {
+public class WebScraper {
     private final static String BADGES = "http://steamcommunity.com/my/badges?l=english";
     private final static String GAMECARDS = "http://steamcommunity.com/my/gamecards/";
     private final static String INVENTORY = "http://steamcommunity.com/my/inventory";
+    private final static String GAMES_OWNED = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=1&format=json";
 
     // Pattern to match app ID
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
@@ -29,28 +39,7 @@ class WebScraper {
     // Pattern to match play time
     private final static Pattern timePattern = Pattern.compile("([0-9\\.]+) hrs on record");
 
-    static class Badge implements Comparable<Badge> {
-        int appId;
-        String name;
-        String iconUrl;
-        float hoursPlayed;
-        int dropsRemaining;
-        private Badge(int appId, String name, float hoursPlayed, int dropsRemaining) {
-            this.appId = appId;
-            this.name = name;
-            this.iconUrl = "http://cdn.akamai.steamstatic.com/steam/apps/" + appId + "/header_292x136.jpg";
-            this.hoursPlayed = hoursPlayed;
-            this.dropsRemaining = dropsRemaining;
-        }
 
-        @Override
-        public int compareTo(@NonNull Badge o) {
-            if (hoursPlayed == o.hoursPlayed) {
-                return 0;
-            }
-            return hoursPlayed < o.hoursPlayed ? -1 : 1;
-        }
-    }
 
     /**
      * Get a list of games with card drops remaining
@@ -178,6 +167,35 @@ class WebScraper {
                     .get();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public static List<Game> getGamesOwned(long steamId) {
+        HttpURLConnection conn = null;
+        try {
+            final URL url = new URL(String.format(Locale.US, GAMES_OWNED, Secrets.API_KEY, steamId));
+            conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            final StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+            }
+            final JSONObject json = new JSONObject(builder.toString());
+            final List<Game> games = new ArrayList<>();
+            final JSONArray arr = json.getJSONObject("response").getJSONArray("games");
+            for (int i=0,size=arr.length();i<size;i++) {
+                games.add(new Game(arr.getJSONObject(i)));
+            }
+            return games;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        } finally {
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
     }
 }

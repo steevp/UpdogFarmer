@@ -6,9 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,30 +25,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.steevsapps.idledaddy.dialogs.DialogListener;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
+import com.steevsapps.idledaddy.fragments.GamesFragment;
+import com.steevsapps.idledaddy.fragments.HomeFragment;
+import com.steevsapps.idledaddy.listeners.DialogListener;
+import com.steevsapps.idledaddy.listeners.ItemPickedListener;
 import com.steevsapps.idledaddy.steam.SteamService;
+import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
 
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 
-public class MainActivity extends AppCompatActivity implements DialogListener {
-    private final static String TAG = "ywtag";
 
-    // Status messages
-    private View statusLoggedIn;
-    private View statusLoggedOff;
+public class MainActivity extends AppCompatActivity implements DialogListener, ItemPickedListener {
+    private final static String TAG = MainActivity.class.getSimpleName();
 
-    // Buttons
-    private Button startIdling;
-    private Button stopIdling;
+    public final static String UPDATE_STATUS = "UPDATE_STATUS";
+    public final static String STATUS = "STATUS";
+    public final static String FARMING = "FARMING";
 
-    // Ads
-    private AdView adView;
+    private final String DRAWER_ITEM = "DRAWER_ITEM";
+
+    private boolean loggedIn = false;
+    private boolean farming = false;
+
+    // Views
+    private DrawerLayout drawerLayout;
+    private NavigationView drawerView;
+    private ActionBarDrawerToggle drawerToggle;
+    private int drawerItemId;
 
     // Service connection
     private boolean isBound;
@@ -47,8 +62,10 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
-            steamService = ((SteamService.LocalBinder) service).getService();
             Log.i(TAG, "Service connected");
+            steamService = ((SteamService.LocalBinder) service).getService();
+            loggedIn = steamService.isLoggedIn();
+            farming = steamService.isFarming();
             updateStatus();
         }
 
@@ -61,10 +78,14 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
-            if (action.equals(SteamService.LOGIN_INTENT) || action.equals(SteamService.LOGOUT_INTENT)) {
-                updateStatus();
+            if (intent.getAction().equals(SteamService.LOGIN_EVENT)) {
+                final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
+                loggedIn = result == EResult.OK;
+            } else if (intent.getAction().equals(SteamService.DISCONNECT_EVENT)) {
+                loggedIn = false;
             }
+            farming = steamService.isFarming();
+            updateStatus();
         }
     };
 
@@ -92,22 +113,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         }
     }
 
-    /**
-     * Update status message
-     */
-    private void updateStatus() {
-        statusLoggedIn.setVisibility(View.GONE);
-        statusLoggedOff.setVisibility(View.GONE);
-        startIdling.setEnabled(false);
-        if (steamService != null && steamService.isLoggedIn()) {
-            statusLoggedIn.setVisibility(View.VISIBLE);
-            startIdling.setEnabled(!steamService.isFarming());
-        } else {
-            statusLoggedOff.setVisibility(View.VISIBLE);
-        }
-        invalidateOptionsMenu();
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -116,21 +121,110 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        statusLoggedIn = findViewById(R.id.status_logged_in);
-        statusLoggedOff = findViewById(R.id.status_not_logged_in);
-        startIdling = (Button) findViewById(R.id.start_idling);
-        stopIdling = (Button) findViewById(R.id.stop_idling);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerView = (NavigationView) findViewById(R.id.left_drawer);
+        drawerView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                selectItem(item.getItemId(), true);
+                return true;
+            }
+        });
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer) {
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+            }
+        };
+        drawerLayout.addDrawerListener(drawerToggle);
+
+        // Update the navigation drawer and title on backstack changes
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                final Fragment fragment = getCurrentFragment();
+                if (fragment instanceof HomeFragment) {
+                    drawerItemId = R.id.home;
+                    setTitle(R.string.app_name);
+                    drawerView.getMenu().findItem(R.id.home).setChecked(true);
+                } else if (fragment instanceof GamesFragment) {
+                    drawerItemId = R.id.games;
+                    setTitle(R.string.games);
+                    drawerView.getMenu().findItem(R.id.games).setChecked(true);
+                }
+            }
+        });
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
+        if (savedInstanceState != null) {
+            drawerItemId = savedInstanceState.getInt(DRAWER_ITEM);
+        } else {
+            selectItem(R.id.home, false);
+        }
 
         applySettings();
+    }
 
-        // Bads
-        MobileAds.initialize(this, "ca-app-pub-6413501894389361~6190763130");
-        adView = (AdView) findViewById(R.id.adView);
-        final AdRequest adRequest = new AdRequest.Builder()
-                // Seems ok to leave in production???
-                .addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99")
-                .build();
-        adView.loadAd(adRequest);
+    @Override
+    public void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        drawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        drawerToggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(DRAWER_ITEM, drawerItemId);
+    }
+
+    private void selectItem(int id, boolean addToBackStack) {
+        if (drawerItemId == id) {
+            // Already selected
+            drawerLayout.closeDrawer(drawerView);
+            return;
+        }
+        drawerItemId = id;
+        drawerView.getMenu().findItem(id).setChecked(true);
+        Fragment fragment;
+        switch (id) {
+            case R.id.home:
+                setTitle(R.string.app_name);
+                fragment = HomeFragment.newInstance(loggedIn);
+                break;
+            case R.id.games:
+                setTitle(R.string.games);
+                fragment = GamesFragment.newInstance(steamService.getSteamId());
+                break;
+            default:
+                fragment = new Fragment();
+                break;
+        }
+        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.replace(R.id.content_frame, fragment);
+        if (addToBackStack) {
+            ft.addToBackStack(null);
+        }
+        ft.commit();
+        drawerLayout.closeDrawer(drawerView);
+    }
+
+    private Fragment getCurrentFragment() {
+        return getSupportFragmentManager().findFragmentById(R.id.content_frame);
     }
 
     private void applySettings() {
@@ -146,8 +240,8 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
     protected void onResume() {
         super.onResume();
         final IntentFilter filter = new IntentFilter();
-        filter.addAction(SteamService.LOGIN_INTENT);
-        filter.addAction(SteamService.LOGOUT_INTENT);
+        filter.addAction(SteamService.LOGIN_EVENT);
+        filter.addAction(SteamService.DISCONNECT_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         startSteam();
     }
@@ -177,6 +271,10 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (drawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
         switch (item.getItemId()) {
             case R.id.settings:
                 startActivityForResult(SettingsActivity.createIntent(this), 0);
@@ -208,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
             case R.id.stop_idling:
                 stopSteam();
                 break;
-            case R.id.status_not_logged_in:
+            case R.id.status:
                 startActivity(LoginActivity.createIntent(this));
                 break;
         }
@@ -225,11 +323,25 @@ public class MainActivity extends AppCompatActivity implements DialogListener {
         finish();
     }
 
+    private void updateStatus() {
+        final Intent intent = new Intent(UPDATE_STATUS);
+        intent.putExtra(STATUS, loggedIn);
+        intent.putExtra(FARMING, farming);
+        LocalBroadcastManager.getInstance(this)
+                .sendBroadcast(intent);
+    }
+
     @Override
     public void onYesPicked(String text) {
         final String key = text.toUpperCase().trim();
         if (!key.isEmpty()) {
             steamService.redeemKey(key);
         }
+    }
+
+    @Override
+    public void onItemPicked(Game game) {
+        steamService.stopFarming();
+        steamService.idleSingle(game);
     }
 }

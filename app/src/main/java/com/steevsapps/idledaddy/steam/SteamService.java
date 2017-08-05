@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -24,6 +25,8 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.steam.wrapper.Badge;
+import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
 import com.steevsapps.idledaddy.utils.Utils;
 
@@ -65,6 +68,7 @@ import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
 import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
 import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import uk.co.thomasc.steamkit.util.KeyDictionary;
 import uk.co.thomasc.steamkit.util.WebHelpers;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
@@ -72,15 +76,16 @@ import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
 import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
 
 public class SteamService extends Service {
-    private final static String TAG = "ywtag";
+    private final static String TAG = SteamService.class.getSimpleName();
     private final static int NOTIF_ID = 6896; // Ongoing notification ID
 
     // Used to tell activities when login state has changed
-    public final static String LOGIN_INTENT = "LOGIN_INTENT";
+    public final static String LOGIN_EVENT = "LOGIN_EVENT";
     public final static String RESULT = "RESULT";
-    public final static String LOGOUT_INTENT = "LOGOUT_INTENT";
+    public final static String DISCONNECT_EVENT = "DISCONNECT_EVENT";
 
     private final static String SKIP_INTENT = "SKIP_INTENT";
+    public final static String STOP_INTENT = "STOP_INTENT";
 
     private SteamClient steamClient;
     private SteamUser steamUser;
@@ -129,6 +134,10 @@ public class SteamService extends Service {
                         farm();
                     }
                 }).start();
+            } else if (intent.getAction().equals(STOP_INTENT)) {
+                Log.i(TAG, "received stop intent");
+                stopPlaying();
+                updateNotification("Stopped");
             }
         }
     };
@@ -143,14 +152,14 @@ public class SteamService extends Service {
         }).start();
     }
 
-    private void stopFarming() {
+    public void stopFarming() {
         farming = false;
         stopFarmTask();
     }
 
     private void farm() {
         Log.i(TAG, "Checking remaining card drops");
-        List<WebScraper.Badge> badges = null;
+        List<Badge> badges = null;
         for (int i=0;i<3;i++) {
             badges = WebScraper.getRemainingGames(generateWebCookies());
             if (badges != null) {
@@ -187,7 +196,7 @@ public class SteamService extends Service {
         if (farmIndex >= badges.size()) {
             farmIndex = 0;
         }
-        final WebScraper.Badge b = badges.get(farmIndex);
+        final Badge b = badges.get(farmIndex);
 
         // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
         if (b.hoursPlayed >= 2 || badges.size() == 1 || Prefs.simpleFarming() || farmIndex > 0) {
@@ -263,7 +272,10 @@ public class SteamService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!running) {
             Log.i(TAG, "Command starting");
-            registerReceiver(receiver, new IntentFilter(SKIP_INTENT));
+            final IntentFilter filter = new IntentFilter();
+            filter.addAction(SKIP_INTENT);
+            filter.addAction(STOP_INTENT);
+            registerReceiver(receiver, filter);
             start();
         }
         return Service.START_NOT_STICKY;
@@ -296,6 +308,14 @@ public class SteamService extends Service {
         return farming;
     }
 
+    public long getSteamId() {
+        final SteamID steamID = steamClient.getSteamId();
+        if (steamID != null) {
+            return steamID.convertToLong();
+        }
+        return 0;
+    }
+
     private Notification buildNotification(String text) {
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -311,7 +331,7 @@ public class SteamService extends Service {
     /**
      * Build idling notification
      */
-    private void buildIdleNotification(WebScraper.Badge badge) {
+    private void buildIdleNotification(Badge badge) {
         Log.i(TAG, "Idle notification");
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -342,6 +362,12 @@ public class SteamService extends Service {
                             builder.setLargeIcon(resource);
                             nm.notify(NOTIF_ID, builder.build());
                         }
+
+                        @Override
+                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                            super.onLoadFailed(e, errorDrawable);
+                            nm.notify(NOTIF_ID, builder.build());
+                        }
                     });
         } else {
             nm.notify(NOTIF_ID, builder.build());
@@ -355,6 +381,49 @@ public class SteamService extends Service {
     private void updateNotification(String text) {
         final NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIF_ID, buildNotification(text));
+    }
+
+    public void idleSingle(Game game) {
+        Log.i(TAG, "Idle notification");
+        playGame(game.appId);
+        final Intent notificationIntent = new Intent(this, MainActivity.class);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setStyle(new NotificationCompat.MediaStyle());
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle(getString(R.string.app_name));
+        builder.setContentText("Now playing " + game.name);
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
+        builder.setContentIntent(pendingIntent);
+
+        // Add the stop action
+        final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.addAction(R.drawable.ic_stop_white_48dp, "Stop", stopIntent);
+
+        final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (!Prefs.minimizeData()) {
+            // Load game icon into notification
+            Glide.with(getApplicationContext())
+                    .load(game.logoUrl)
+                    .asBitmap()
+                    .into(new SimpleTarget<Bitmap>() {
+                        @Override
+                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                            builder.setLargeIcon(resource);
+                            nm.notify(NOTIF_ID, builder.build());
+                        }
+
+                        @Override
+                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
+                            super.onLoadFailed(e, errorDrawable);
+                            nm.notify(NOTIF_ID, builder.build());
+                        }
+                    });
+        } else {
+            nm.notify(NOTIF_ID, builder.build());
+        }
     }
 
     public void start() {
@@ -488,7 +557,7 @@ public class SteamService extends Service {
                     }).start();
                 }
                 // Notify the activity that user is logged out
-                LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(LOGOUT_INTENT));
+                LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(DISCONNECT_EVENT));
             }
         });
         msg.handle(LoggedOffCallback.class, new ActionT<LoggedOffCallback>() {
@@ -574,7 +643,7 @@ public class SteamService extends Service {
                 }
 
                 // Tell LoginActivity the result
-                final Intent intent = new Intent(LOGIN_INTENT);
+                final Intent intent = new Intent(LOGIN_EVENT);
                 intent.putExtra(RESULT, result);
                 LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(intent);
             }
