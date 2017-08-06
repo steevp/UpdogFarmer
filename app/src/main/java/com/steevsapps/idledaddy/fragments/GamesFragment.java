@@ -8,11 +8,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,6 +34,7 @@ import java.util.List;
 public class GamesFragment extends Fragment implements SearchView.OnQueryTextListener {
     private final static String TAG = GamesFragment.class.getSimpleName();
     private final static String STEAM_ID = "STEAM_ID";
+    private final static String CURRENT_APPID = "CURRENT_APPID";
     private final static String GAMES = "GAMES";
 
     private RecyclerView recyclerView;
@@ -44,6 +45,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     private ProgressBar progressBar;
 
     private long steamId;
+    private int currentAppId;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -54,10 +56,11 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         }
     };
 
-    public static GamesFragment newInstance(long steamId) {
+    public static GamesFragment newInstance(long steamId, int currentAppId) {
         final GamesFragment fragment = new GamesFragment();
         final Bundle args = new Bundle();
         args.putLong(STEAM_ID, steamId);
+        args.putInt(CURRENT_APPID, currentAppId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -65,23 +68,26 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     @Override
     public void onPause() {
         super.onPause();
-        LocalBroadcastManager.getInstance(getActivity())
-                .unregisterReceiver(receiver);
+        getActivity().unregisterReceiver(receiver);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        LocalBroadcastManager.getInstance(getActivity())
-                .registerReceiver(receiver, new IntentFilter(SteamService.STOP_INTENT));
+        getActivity().registerReceiver(receiver, new IntentFilter(SteamService.STOP_INTENT));
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         steamId = getArguments().getLong(STEAM_ID);
-        if (savedInstanceState == null && steamId == 0) {
-            Toast.makeText(getActivity(), "You must be logged in!", Toast.LENGTH_LONG).show();
+        if (savedInstanceState != null) {
+            currentAppId = savedInstanceState.getInt(CURRENT_APPID);
+        } else {
+            currentAppId = getArguments().getInt(CURRENT_APPID);
+            if (steamId == 0) {
+                Toast.makeText(getActivity(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
+            }
         }
         setHasOptionsMenu(true);
     }
@@ -90,6 +96,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(GAMES, adapter.getData());
+        outState.putInt(CURRENT_APPID, adapter.getCurrentAppId());
     }
 
     @Nullable
@@ -106,8 +113,9 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         if (savedInstanceState != null) {
             // Restore games list
+            Log.i(TAG, "Restoring " + currentAppId);
             final List<Game> games = savedInstanceState.getParcelableArrayList(GAMES);
-            adapter = new GamesAdapter(getActivity(), games);
+            adapter = new GamesAdapter(getActivity(), games, currentAppId);
             recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.GONE);
             if (games == null || games.isEmpty()) {
@@ -150,7 +158,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
 
         @Override
         protected void onPostExecute(List<Game> games) {
-            adapter = new GamesAdapter(getActivity(), games);
+            adapter = new GamesAdapter(getActivity(), games, currentAppId);
             recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.GONE);
             if (games == null || games.isEmpty()) {

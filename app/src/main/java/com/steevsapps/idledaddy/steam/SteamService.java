@@ -84,13 +84,14 @@ public class SteamService extends Service {
     public final static String RESULT = "RESULT";
     public final static String DISCONNECT_EVENT = "DISCONNECT_EVENT";
 
-    private final static String SKIP_INTENT = "SKIP_INTENT";
+    public final static String SKIP_INTENT = "SKIP_INTENT";
     public final static String STOP_INTENT = "STOP_INTENT";
 
     private SteamClient steamClient;
     private SteamUser steamUser;
     private SteamFriends steamFriends;
     private int farmIndex = 0;
+    private int currentAppId = 0;
 
     private volatile boolean running = false;
     private volatile boolean connected = false;
@@ -137,7 +138,13 @@ public class SteamService extends Service {
             } else if (intent.getAction().equals(STOP_INTENT)) {
                 Log.i(TAG, "received stop intent");
                 stopPlaying();
+                stopFarming();
                 updateNotification("Stopped");
+                final Intent updateStatus = new Intent(MainActivity.UPDATE_STATUS);
+                updateStatus.putExtra(MainActivity.STATUS, loggedIn);
+                updateStatus.putExtra(MainActivity.FARMING, farming);
+                LocalBroadcastManager.getInstance(SteamService.this)
+                        .sendBroadcast(updateStatus);
             }
         }
     };
@@ -308,6 +315,10 @@ public class SteamService extends Service {
         return farming;
     }
 
+    public int getCurrentAppId() {
+        return currentAppId;
+    }
+
     public long getSteamId() {
         final SteamID steamID = steamClient.getSteamId();
         if (steamID != null) {
@@ -345,6 +356,10 @@ public class SteamService extends Service {
         builder.setSubText(badge.dropsRemaining + (badge.dropsRemaining > 1 ? " card drops remaining" : " card drop remaining"));
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setContentIntent(pendingIntent);
+
+        // Add the stop action
+        final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.addAction(R.drawable.ic_stop_white_48dp, "Stop", stopIntent);
 
         // Add the skip action
         final PendingIntent skipIntent = PendingIntent.getBroadcast(this, 0, new Intent(SKIP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
@@ -773,6 +788,7 @@ public class SteamService extends Service {
      * @param appId game to idle
      */
     private void playGame(int appId) {
+        currentAppId = appId;
         steamUser.setPlayingGame(appId);
     }
 
@@ -782,6 +798,7 @@ public class SteamService extends Service {
      * @param appIds the games to idle
      */
     private void playGames(int...appIds) {
+        currentAppId = 0;
         // Array of games played
         final SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[] gamesPlayed =
                 new SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[appIds.length];
@@ -801,6 +818,7 @@ public class SteamService extends Service {
     }
 
     private void stopPlaying() {
+        currentAppId = 0;
         steamUser.setPlayingGame(0);
     }
 
