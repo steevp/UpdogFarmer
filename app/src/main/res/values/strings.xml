@@ -11,8 +11,8 @@
     <string name="login">Login</string>
     <string name="start_idling">Start farming</string>
     <string name="desc_start">Idles your games until all trading cards have dropped.</string>
-    <string name="stop_idling">Stop farming</string>
-    <string name="desc_stop">Stops the farming session.</string>
+    <string name="stop_idling">Stop service</string>
+    <string name="desc_stop">Stops the Steam service and closes the app.</string>
     <string name="idling_finished">No games left to idle.</string>
     <string name="search">Search</string>
     <string name="settings">Settings</string>
@@ -39,4 +39,5 @@
     <string name="games">Games</string>
     <string name="no_games_found">Couldn\&apos;t retrieve the list of games. Make sure your profile is set to public.</string>
     <string name="now_playing">Now playing</string>
+    <string name="error_not_logged_in">You must be logged in to Steam</string>
 </resources>

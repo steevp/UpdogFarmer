@@ -45,7 +45,10 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
     public final static String STATUS = "STATUS";
     public final static String FARMING = "FARMING";
 
-    private final String DRAWER_ITEM = "DRAWER_ITEM";
+    private final static String DRAWER_ITEM = "DRAWER_ITEM";
+    private final static String TITLE = "TITLE";
+
+    private String title;
 
     private boolean loggedIn = false;
     private boolean farming = false;
@@ -149,6 +152,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
+                loggedIn = steamService.isLoggedIn();
+                farming = steamService.isFarming();
+                updateStatus();
                 final Fragment fragment = getCurrentFragment();
                 if (fragment instanceof HomeFragment) {
                     drawerItemId = R.id.home;
@@ -167,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
 
         if (savedInstanceState != null) {
             drawerItemId = savedInstanceState.getInt(DRAWER_ITEM);
+            setTitle(savedInstanceState.getString(TITLE));
         } else {
             selectItem(R.id.home, false);
         }
@@ -190,6 +197,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(DRAWER_ITEM, drawerItemId);
+        outState.putString(TITLE, title);
     }
 
     private void selectItem(int id, boolean addToBackStack) {
@@ -208,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
                 break;
             case R.id.games:
                 setTitle(R.string.games);
-                fragment = GamesFragment.newInstance(steamService.getSteamId());
+                fragment = GamesFragment.newInstance(steamService.getSteamId(), steamService.getCurrentAppId());
                 break;
             default:
                 fragment = new Fragment();
@@ -234,6 +242,18 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+    }
+
+    @Override
+    public void setTitle(int titleId) {
+        title = getString(titleId);
+        super.setTitle(titleId);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        this.title = title.toString();
+        super.setTitle(title);
     }
 
     @Override

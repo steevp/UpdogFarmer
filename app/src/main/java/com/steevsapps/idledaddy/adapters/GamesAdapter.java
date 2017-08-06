@@ -27,7 +27,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     private ItemPickedListener callback;
     private int currentAppId = 0;
 
-    public GamesAdapter(Context c, List<Game> games) {
+    public GamesAdapter(Context c, List<Game> games, int appId) {
         // Sort games alphabetically
         Collections.sort(games, new Comparator<Game>() {
             @Override
@@ -38,6 +38,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         context = c;
         dataSet.addAll(games);
         dataSetCopy.addAll(games);
+        currentAppId = appId;
         try {
             callback = (ItemPickedListener) context;
         } catch (ClassCastException e) {
@@ -64,6 +65,10 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
             currentAppId = appId;
             notifyDataSetChanged();
         }
+    }
+
+    public int getCurrentAppId() {
+        return currentAppId;
     }
 
     public ArrayList<Game> getData() {

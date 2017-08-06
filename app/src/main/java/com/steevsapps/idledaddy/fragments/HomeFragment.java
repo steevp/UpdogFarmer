@@ -27,6 +27,7 @@ public class HomeFragment extends Fragment {
     private final static String LOGGED_IN = "LOGGED_IN";
 
     // Status message
+    private View status;
     private ImageView statusImg;
     private TextView statusText;
 
@@ -81,6 +82,7 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.home_fragment, container, false);
+        status = view.findViewById(R.id.status);
         statusImg = (ImageView) view.findViewById(R.id.status_img);
         statusText = (TextView) view.findViewById(R.id.status_text);
         startIdling = (Button) view.findViewById(R.id.start_idling);
@@ -100,12 +102,14 @@ public class HomeFragment extends Fragment {
     }
 
     private void setStatusOnline() {
+        status.setClickable(false);
         statusImg.setImageResource(R.drawable.ic_check_circle_white_48dp);
         statusImg.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.green));
         statusText.setText(R.string.logged_in);
     }
 
     private void setStatusOffline() {
+        status.setClickable(true);
         statusImg.setImageResource(R.drawable.ic_error_white_48dp);
         statusImg.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.orange));
         statusText.setText(R.string.not_logged_in);
