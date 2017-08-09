@@ -712,6 +712,7 @@ public class SteamService extends Service {
                             serverString.append(",");
                         }
                     }
+                    Log.i(TAG, serverString.toString());
                     Prefs.writeCmServers(serverString.toString());
                 }
             }
