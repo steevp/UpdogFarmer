@@ -908,7 +908,11 @@ public class SteamService extends Service {
 
         // rsa encrypt it with the public key for the universe we're on
         byte[] cryptedSessionKey = null;
-        final RSACrypto rsa = new RSACrypto(KeyDictionary.getPublicKey(steamClient.getConnectedUniverse()));
+        final byte[] publicKey = KeyDictionary.getPublicKey(steamClient.getConnectedUniverse());
+        if (publicKey == null) {
+            return false;
+        }
+        final RSACrypto rsa = new RSACrypto(publicKey);
         cryptedSessionKey = rsa.encrypt(sessionKey);
 
         final byte[] loginKey = new byte[20];
