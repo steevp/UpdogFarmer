@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
             }
             farming = steamService.isFarming();
             updateStatus();
+            invalidateOptionsMenu();
         }
     };
 
@@ -125,6 +126,25 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
         setSupportActionBar(toolbar);
 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        // On tablets we use the DrawerView but not the DrawerLayout
+        if (drawerLayout != null) {
+            drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer) {
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    super.onDrawerClosed(drawerView);
+                    invalidateOptionsMenu();
+                }
+
+                @Override
+                public void onDrawerOpened(View drawerView) {
+                    super.onDrawerOpened(drawerView);
+                    invalidateOptionsMenu();
+                }
+            };
+            drawerLayout.addDrawerListener(drawerToggle);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
         drawerView = (NavigationView) findViewById(R.id.left_drawer);
         drawerView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -133,20 +153,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
                 return true;
             }
         });
-        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer) {
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                invalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                invalidateOptionsMenu();
-            }
-        };
-        drawerLayout.addDrawerListener(drawerToggle);
 
         // Update the navigation drawer and title on backstack changes
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
@@ -168,9 +174,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
             }
         });
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-
         if (savedInstanceState != null) {
             drawerItemId = savedInstanceState.getInt(DRAWER_ITEM);
             setTitle(savedInstanceState.getString(TITLE));
@@ -184,13 +187,17 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
     @Override
     public void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
+        if (drawerToggle != null) {
+            drawerToggle.syncState();
+        }
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        drawerToggle.onConfigurationChanged(newConfig);
+        if (drawerToggle != null) {
+            drawerToggle.onConfigurationChanged(newConfig);
+        }
     }
 
     @Override
@@ -203,7 +210,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
     private void selectItem(int id, boolean addToBackStack) {
         if (drawerItemId == id) {
             // Already selected
-            drawerLayout.closeDrawer(drawerView);
+            if (drawerLayout != null) {
+                drawerLayout.closeDrawer(drawerView);
+            }
             return;
         }
         drawerItemId = id;
@@ -228,7 +237,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
             ft.addToBackStack(null);
         }
         ft.commit();
-        drawerLayout.closeDrawer(drawerView);
+        if (drawerLayout != null) {
+            drawerLayout.closeDrawer(drawerView);
+        }
     }
 
     private Fragment getCurrentFragment() {
@@ -291,7 +302,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerToggle.onOptionsItemSelected(item)) {
+        if (drawerToggle != null && drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
