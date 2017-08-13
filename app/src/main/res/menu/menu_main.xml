@@ -6,7 +6,8 @@
 
     <item android:id="@+id/redeem"
         android:title="@string/redeem"
-        app:showAsAction="never"/>
+        android:icon="@drawable/ic_add_white_24dp"
+        app:showAsAction="ifRoom|withText"/>
 
     <item android:id="@+id/settings"
         android:title="@string/settings"

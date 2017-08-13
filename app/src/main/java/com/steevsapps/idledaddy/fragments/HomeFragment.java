@@ -97,6 +97,7 @@ public class HomeFragment extends Fragment {
         final AdRequest adRequest = new AdRequest.Builder()
                 // Seems ok to leave in production???
                 .addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99")
+                .addTestDevice("E8F66CC8599C1F21FDBC86370F926F88")
                 .build();
         adView.loadAd(adRequest);
     }
