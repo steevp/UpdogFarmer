@@ -9,5 +9,10 @@
             android:id="@+id/games"
             android:icon="@drawable/ic_games_white_24dp"
             android:title="@string/games" />
+
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_settings_white_24dp"
+            android:title="@string/settings" />
     </group>
 </menu>

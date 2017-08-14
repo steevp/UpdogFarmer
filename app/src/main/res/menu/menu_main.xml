@@ -9,10 +9,6 @@
         android:icon="@drawable/ic_add_white_24dp"
         app:showAsAction="ifRoom|withText"/>
 
-    <item android:id="@+id/settings"
-        android:title="@string/settings"
-        app:showAsAction="never"/>
-
     <item android:id="@+id/logout"
         android:title="@string/logout"
         app:showAsAction="never"/>
