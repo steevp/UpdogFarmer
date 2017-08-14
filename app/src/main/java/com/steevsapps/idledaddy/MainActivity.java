@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
+import com.steevsapps.idledaddy.fragments.DataFragment;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
 import com.steevsapps.idledaddy.fragments.HomeFragment;
 import com.steevsapps.idledaddy.fragments.SettingsFragment;
@@ -220,6 +221,15 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
             }
             return;
         }
+
+        // Cleanup retained data fragment when switching screens
+        final DataFragment dataFragment = (DataFragment) getSupportFragmentManager().findFragmentByTag("data");
+        if (dataFragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .remove(dataFragment)
+                    .commit();
+        }
+
         drawerItemId = id;
         drawerView.getMenu().findItem(id).setChecked(true);
         Fragment fragment;
