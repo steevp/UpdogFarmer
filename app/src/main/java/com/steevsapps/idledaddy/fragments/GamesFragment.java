@@ -35,7 +35,6 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     private final static String TAG = GamesFragment.class.getSimpleName();
     private final static String STEAM_ID = "STEAM_ID";
     private final static String CURRENT_APPID = "CURRENT_APPID";
-    private final static String GAMES = "GAMES";
 
     private RecyclerView recyclerView;
     private GamesAdapter adapter;
@@ -43,6 +42,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     private SearchView searchView;
     private TextView emptyView;
     private ProgressBar progressBar;
+    private DataFragment dataFragment;
 
     private long steamId;
     private int currentAppId;
@@ -95,7 +95,6 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(GAMES, adapter.getData());
         outState.putInt(CURRENT_APPID, adapter.getCurrentAppId());
     }
 
@@ -111,18 +110,24 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         recyclerView.addItemDecoration(divider);
         emptyView = (TextView) view.findViewById(R.id.empty_view);
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        if (savedInstanceState != null) {
+        dataFragment = (DataFragment) getActivity().getSupportFragmentManager().findFragmentByTag("data");
+        if (dataFragment != null) {
             // Restore games list
             Log.i(TAG, "Restoring " + currentAppId);
-            final List<Game> games = savedInstanceState.getParcelableArrayList(GAMES);
+            final List<Game> games = dataFragment.getData();
             adapter = new GamesAdapter(getActivity(), games, currentAppId);
             recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.GONE);
-            if (games == null || games.isEmpty()) {
+            if (games.isEmpty()) {
                 emptyView.setVisibility(View.VISIBLE);
             }
         } else {
             // Fetch games list
+            dataFragment = new DataFragment();
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(dataFragment, "data")
+                    .commit();
             new FetchGamesTask().execute();
         }
         return view;
@@ -158,10 +163,11 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
 
         @Override
         protected void onPostExecute(List<Game> games) {
+            dataFragment.setData(games);
             adapter = new GamesAdapter(getActivity(), games, currentAppId);
             recyclerView.setAdapter(adapter);
             progressBar.setVisibility(View.GONE);
-            if (games == null || games.isEmpty()) {
+            if (games.isEmpty()) {
                 emptyView.setVisibility(View.VISIBLE);
             }
         }

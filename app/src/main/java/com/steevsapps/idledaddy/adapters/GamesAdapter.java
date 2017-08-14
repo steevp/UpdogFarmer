@@ -21,8 +21,8 @@ import java.util.List;
 
 public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> {
 
-    private ArrayList<Game> dataSet = new ArrayList<>();
-    private ArrayList<Game> dataSetCopy = new ArrayList<>();
+    private List<Game> dataSet = new ArrayList<>();
+    private List<Game> dataSetCopy = new ArrayList<>();
     private Context context;
     private ItemPickedListener callback;
     private int currentAppId = 0;
@@ -69,10 +69,6 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
 
     public int getCurrentAppId() {
         return currentAppId;
-    }
-
-    public ArrayList<Game> getData() {
-        return dataSetCopy;
     }
 
     @Override
