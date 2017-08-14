@@ -29,6 +29,7 @@ import android.view.WindowManager;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
 import com.steevsapps.idledaddy.fragments.HomeFragment;
+import com.steevsapps.idledaddy.fragments.SettingsFragment;
 import com.steevsapps.idledaddy.listeners.DialogListener;
 import com.steevsapps.idledaddy.listeners.ItemPickedListener;
 import com.steevsapps.idledaddy.steam.SteamService;
@@ -170,6 +171,10 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
                     drawerItemId = R.id.games;
                     setTitle(R.string.games);
                     drawerView.getMenu().findItem(R.id.games).setChecked(true);
+                } else if (fragment instanceof SettingsFragment) {
+                    drawerItemId = R.id.settings;
+                    setTitle(R.string.settings);
+                    drawerView.getMenu().findItem(R.id.settings).setChecked(true);
                 }
             }
         });
@@ -226,6 +231,10 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
             case R.id.games:
                 setTitle(R.string.games);
                 fragment = GamesFragment.newInstance(steamService.getSteamId(), steamService.getCurrentAppId());
+                break;
+            case R.id.settings:
+                setTitle(R.string.settings);
+                fragment = SettingsFragment.newInstance();
                 break;
             default:
                 fragment = new Fragment();
@@ -307,9 +316,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
         }
 
         switch (item.getItemId()) {
-            case R.id.settings:
-                startActivityForResult(SettingsActivity.createIntent(this), 0);
-                return true;
             case R.id.redeem:
                 RedeemDialog.newInstance().show(getSupportFragmentManager(), "redeem");
                 return true;
@@ -318,14 +324,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
                 return true;
         }
         return false;
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0 && resultCode == SettingsActivity.SETTINGS_CHANGED) {
-            applySettings();
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     public void clickHandler(View v) {

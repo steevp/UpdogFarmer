@@ -21,7 +21,6 @@
             </intent-filter>
         </activity>
         <activity android:name="com.steevsapps.idledaddy.LoginActivity" />
-        <activity android:name="com.steevsapps.idledaddy.SettingsActivity" />
     </application>
 
 </manifest>
