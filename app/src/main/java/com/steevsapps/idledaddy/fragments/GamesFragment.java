@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
 import com.steevsapps.idledaddy.steam.SteamService;
-import com.steevsapps.idledaddy.steam.WebScraper;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import java.util.List;
@@ -114,13 +112,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         if (dataFragment != null) {
             // Restore games list
             Log.i(TAG, "Restoring " + currentAppId);
-            final List<Game> games = dataFragment.getData();
-            adapter = new GamesAdapter(getActivity(), games, currentAppId);
-            recyclerView.setAdapter(adapter);
-            progressBar.setVisibility(View.GONE);
-            if (games.isEmpty()) {
-                emptyView.setVisibility(View.VISIBLE);
-            }
+            update(dataFragment.getData());
         } else {
             // Fetch games list
             dataFragment = new DataFragment();
@@ -128,7 +120,11 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
                     .beginTransaction()
                     .add(dataFragment, "data")
                     .commit();
-            new FetchGamesTask().execute();
+            final FetchGamesFragment taskFragment = FetchGamesFragment.newInstance(steamId);
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(taskFragment, "task_fragment")
+                    .commit();
         }
         return view;
     }
@@ -155,21 +151,17 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         return true;
     }
 
-    private class FetchGamesTask extends AsyncTask<Void,Void,List<Game>> {
-        @Override
-        protected List<Game> doInBackground(Void... voids) {
-            return WebScraper.getGamesOwned(steamId);
-        }
-
-        @Override
-        protected void onPostExecute(List<Game> games) {
-            dataFragment.setData(games);
-            adapter = new GamesAdapter(getActivity(), games, currentAppId);
-            recyclerView.setAdapter(adapter);
-            progressBar.setVisibility(View.GONE);
-            if (games.isEmpty()) {
-                emptyView.setVisibility(View.VISIBLE);
-            }
+    /**
+     * Update games list
+     * @param games the list of games
+     */
+    public void update(List<Game> games) {
+        dataFragment.setData(games);
+        adapter = new GamesAdapter(getActivity(), games, currentAppId);
+        recyclerView.setAdapter(adapter);
+        progressBar.setVisibility(View.GONE);
+        if (games.isEmpty()) {
+            emptyView.setVisibility(View.VISIBLE);
         }
     }
 }
