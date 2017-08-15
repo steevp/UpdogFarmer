@@ -32,15 +32,18 @@ import com.steevsapps.idledaddy.fragments.GamesFragment;
 import com.steevsapps.idledaddy.fragments.HomeFragment;
 import com.steevsapps.idledaddy.fragments.SettingsFragment;
 import com.steevsapps.idledaddy.listeners.DialogListener;
+import com.steevsapps.idledaddy.listeners.FetchGamesListener;
 import com.steevsapps.idledaddy.listeners.ItemPickedListener;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
 
+import java.util.List;
+
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 
 
-public class MainActivity extends AppCompatActivity implements DialogListener, ItemPickedListener {
+public class MainActivity extends AppCompatActivity implements DialogListener, ItemPickedListener, FetchGamesListener {
     private final static String TAG = MainActivity.class.getSimpleName();
 
     public final static String UPDATE_STATUS = "UPDATE_STATUS";
@@ -382,5 +385,22 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
     public void onItemPicked(Game game) {
         steamService.stopFarming();
         steamService.idleSingle(game);
+    }
+
+    @Override
+    public void onGamesListReceived(List<Game> games) {
+        // Remove task fragment
+        final Fragment taskFragment = getSupportFragmentManager().findFragmentByTag("task_fragment");
+        if (taskFragment != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(taskFragment)
+                    .commit();
+        }
+        // Update GamesFragment
+        final Fragment fragment = getCurrentFragment();
+        if (fragment instanceof GamesFragment) {
+            ((GamesFragment) fragment).update(games);
+        }
     }
 }
