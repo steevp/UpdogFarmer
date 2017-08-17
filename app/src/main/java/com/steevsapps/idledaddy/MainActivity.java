@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
             }
             farming = steamService.isFarming();
             updateStatus();
-            invalidateOptionsMenu();
         }
     };
 
@@ -371,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
         intent.putExtra(FARMING, farming);
         LocalBroadcastManager.getInstance(this)
                 .sendBroadcast(intent);
+        invalidateOptionsMenu();
     }
 
     @Override
