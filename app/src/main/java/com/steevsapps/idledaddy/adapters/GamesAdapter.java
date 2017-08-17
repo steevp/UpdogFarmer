@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.listeners.ItemPickedListener;
+import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
 
@@ -24,7 +24,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     private List<Game> dataSet = new ArrayList<>();
     private List<Game> dataSetCopy = new ArrayList<>();
     private Context context;
-    private ItemPickedListener callback;
+    private GamePickedListener callback;
     private int currentAppId = 0;
 
     public GamesAdapter(Context c, List<Game> games, int appId) {
@@ -40,9 +40,9 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         dataSetCopy.addAll(games);
         currentAppId = appId;
         try {
-            callback = (ItemPickedListener) context;
+            callback = (GamePickedListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement ItemPickedListener.");
+            throw new ClassCastException(context.toString() + " must implement GamePickedListener.");
         }
     }
 
@@ -97,7 +97,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
             @Override
             public void onClick(View view) {
                 setCurrentAppId(game.appId);
-                callback.onItemPicked(game);
+                callback.onGamePicked(game);
             }
         });
     }

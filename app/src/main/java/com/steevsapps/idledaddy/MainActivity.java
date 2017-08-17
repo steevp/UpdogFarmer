@@ -33,7 +33,7 @@ import com.steevsapps.idledaddy.fragments.HomeFragment;
 import com.steevsapps.idledaddy.fragments.SettingsFragment;
 import com.steevsapps.idledaddy.listeners.DialogListener;
 import com.steevsapps.idledaddy.listeners.FetchGamesListener;
-import com.steevsapps.idledaddy.listeners.ItemPickedListener;
+import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
@@ -43,7 +43,7 @@ import java.util.List;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 
 
-public class MainActivity extends AppCompatActivity implements DialogListener, ItemPickedListener, FetchGamesListener {
+public class MainActivity extends AppCompatActivity implements DialogListener, GamePickedListener, FetchGamesListener {
     private final static String TAG = MainActivity.class.getSimpleName();
 
     public final static String UPDATE_STATUS = "UPDATE_STATUS";
@@ -382,7 +382,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, I
     }
 
     @Override
-    public void onItemPicked(Game game) {
+    public void onGamePicked(Game game) {
         steamService.stopFarming();
         steamService.idleSingle(game);
     }
