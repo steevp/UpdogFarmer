@@ -6,6 +6,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <!--<android.support.v7.widget.RecyclerView
+        android:id="@+id/card_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />-->
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -14,6 +20,7 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:padding="8dp">
 
             <android.support.v7.widget.CardView
@@ -26,45 +33,38 @@
                 card_view:cardUseCompatPadding="true">
 
                 <LinearLayout
+                    android:id="@+id/status"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:paddingTop="8dp"
-                    android:paddingBottom="8dp">
+                    android:paddingBottom="8dp"
+                    android:onClick="clickHandler">
 
-                    <LinearLayout
-                        android:id="@+id/status"
-                        android:orientation="vertical"
+                    <TextView
+                        android:textSize="@dimen/text_size_default"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onClick="clickHandler">
+                        android:text="@string/status"
+                        android:gravity="center" />
 
-                        <TextView
-                            android:textSize="@dimen/text_size_default"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/status"
-                            android:gravity="center" />
+                    <ImageView
+                        android:id="@+id/status_img"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/orange"
+                        android:src="@drawable/ic_error_white_48dp" />
 
-                        <ImageView
-                            android:id="@+id/status_img"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:layout_gravity="center_horizontal"
-                            android:layout_marginTop="8dp"
-                            android:layout_marginBottom="8dp"
-                            android:background="@color/orange"
-                            android:src="@drawable/ic_error_white_48dp" />
-
-                        <TextView
-                            android:id="@+id/status_text"
-                            android:textSize="@dimen/text_size_default"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:text="@string/not_logged_in" />
-                    </LinearLayout>
-
+                    <TextView
+                        android:id="@+id/status_text"
+                        android:textSize="@dimen/text_size_default"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/not_logged_in" />
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>

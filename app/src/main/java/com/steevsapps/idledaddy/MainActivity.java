@@ -45,11 +45,6 @@ import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 
 public class MainActivity extends AppCompatActivity implements DialogListener, GamePickedListener, FetchGamesListener {
     private final static String TAG = MainActivity.class.getSimpleName();
-
-    public final static String UPDATE_STATUS = "UPDATE_STATUS";
-    public final static String STATUS = "STATUS";
-    public final static String FARMING = "FARMING";
-
     private final static String DRAWER_ITEM = "DRAWER_ITEM";
     private final static String TITLE = "TITLE";
 
@@ -238,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
         switch (id) {
             case R.id.home:
                 setTitle(R.string.app_name);
-                fragment = HomeFragment.newInstance(loggedIn);
+                fragment = HomeFragment.newInstance(loggedIn, farming);
                 break;
             case R.id.games:
                 setTitle(R.string.games);
@@ -294,6 +289,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
         final IntentFilter filter = new IntentFilter();
         filter.addAction(SteamService.LOGIN_EVENT);
         filter.addAction(SteamService.DISCONNECT_EVENT);
+        filter.addAction(SteamService.STOP_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         startSteam();
     }
@@ -364,13 +360,17 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
         finish();
     }
 
+    /**
+     * Update the fragments
+     */
     private void updateStatus() {
-        final Intent intent = new Intent(UPDATE_STATUS);
-        intent.putExtra(STATUS, loggedIn);
-        intent.putExtra(FARMING, farming);
-        LocalBroadcastManager.getInstance(this)
-                .sendBroadcast(intent);
         invalidateOptionsMenu();
+        final Fragment fragment = getCurrentFragment();
+        if (fragment instanceof HomeFragment) {
+            ((HomeFragment) fragment).update(loggedIn, farming);
+        } else if (fragment instanceof GamesFragment) {
+            ((GamesFragment) fragment).update(steamService.getCurrentAppId());
+        }
     }
 
     @Override
@@ -400,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
         // Update GamesFragment
         final Fragment fragment = getCurrentFragment();
         if (fragment instanceof GamesFragment) {
-            ((GamesFragment) fragment).update(games);
+            ((GamesFragment) fragment).updateGames(games);
         }
     }
 }
