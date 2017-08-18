@@ -70,6 +70,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
             loggedIn = steamService.isLoggedIn();
             farming = steamService.isFarming();
             updateStatus();
+            if (farming) {
+                showDropInfo();
+            }
         }
 
         @Override
@@ -81,14 +84,20 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            farming = steamService.isFarming();
             if (intent.getAction().equals(SteamService.LOGIN_EVENT)) {
                 final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
                 loggedIn = result == EResult.OK;
+                updateStatus();
             } else if (intent.getAction().equals(SteamService.DISCONNECT_EVENT)) {
                 loggedIn = false;
+                updateStatus();
+            } else if (intent.getAction().equals(SteamService.STOP_EVENT)) {
+                loggedIn = steamService.isLoggedIn();
+                updateStatus();
+            } else if (intent.getAction().equals(SteamService.FARM_EVENT)) {
+                showDropInfo();
             }
-            farming = steamService.isFarming();
-            updateStatus();
         }
     };
 
@@ -165,6 +174,9 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
                     drawerItemId = R.id.home;
                     setTitle(R.string.app_name);
                     drawerView.getMenu().findItem(R.id.home).setChecked(true);
+                    if (farming) {
+                        showDropInfo();
+                    }
                 } else if (fragment instanceof GamesFragment) {
                     drawerItemId = R.id.games;
                     setTitle(R.string.games);
@@ -290,6 +302,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
         filter.addAction(SteamService.LOGIN_EVENT);
         filter.addAction(SteamService.DISCONNECT_EVENT);
         filter.addAction(SteamService.STOP_EVENT);
+        filter.addAction(SteamService.FARM_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         startSteam();
     }
@@ -370,6 +383,16 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
             ((HomeFragment) fragment).update(loggedIn, farming);
         } else if (fragment instanceof GamesFragment) {
             ((GamesFragment) fragment).update(steamService.getCurrentAppId());
+        }
+    }
+
+    /**
+     * Show card drop info
+     */
+    private void showDropInfo() {
+        final Fragment fragment = getCurrentFragment();
+        if (fragment instanceof HomeFragment) {
+            ((HomeFragment) fragment).showDropInfo(steamService.getGameCount(), steamService.getCardCount());
         }
     }
 

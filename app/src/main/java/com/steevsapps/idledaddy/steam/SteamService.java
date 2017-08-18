@@ -84,6 +84,9 @@ public class SteamService extends Service {
     public final static String RESULT = "RESULT"; // Login result
     public final static String DISCONNECT_EVENT = "DISCONNECT_EVENT"; // Emitted on disconnect
     public final static String STOP_EVENT = "STOP_EVENT"; // Emitted when stop clicked
+    public final static String FARM_EVENT = "FARM_EVENT"; // Emitted when farm() is called
+    public final static String GAME_COUNT = "GAME_COUNT"; // Number of games left to farm
+    public final static String CARD_COUNT = "CARD_COUNT"; // Number of card drops remaining
 
     // Actions
     public final static String SKIP_INTENT = "SKIP_INTENT";
@@ -94,6 +97,8 @@ public class SteamService extends Service {
     private SteamFriends steamFriends;
     private int farmIndex = 0;
     private int currentAppId = 0;
+    private int gameCount = 0;
+    private int cardCount = 0;
 
     private volatile boolean running = false;
     private volatile boolean connected = false;
@@ -187,6 +192,20 @@ public class SteamService extends Service {
             steamClient.disconnect();
             return;
         }
+
+        // Count the games and cards
+        gameCount = badges.size();
+        cardCount = 0;
+        for (Badge b : badges) {
+            cardCount += b.dropsRemaining;
+        }
+
+        // Send farm event
+        final Intent event = new Intent(FARM_EVENT);
+        event.putExtra(GAME_COUNT, gameCount);
+        event.putExtra(CARD_COUNT, cardCount);
+        LocalBroadcastManager.getInstance(SteamService.this)
+                .sendBroadcast(event);
 
         if (badges.isEmpty()) {
             Log.i(TAG, "Finished idling");
@@ -316,6 +335,14 @@ public class SteamService extends Service {
 
     public int getCurrentAppId() {
         return currentAppId;
+    }
+
+    public int getGameCount() {
+        return gameCount;
+    }
+
+    public int getCardCount() {
+        return cardCount;
     }
 
     public long getSteamId() {
