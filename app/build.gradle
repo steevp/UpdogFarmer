@@ -7,8 +7,8 @@ android {
         applicationId "com.steevsapps.idledaddy"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 16
-        versionName "1.9.3"
+        versionCode 17
+        versionName "1.9.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
