@@ -1,9 +1,5 @@
 package com.steevsapps.idledaddy.fragments;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -24,7 +20,6 @@ import android.widget.Toast;
 
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
-import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import java.util.List;
@@ -45,15 +40,6 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     private long steamId;
     private int currentAppId;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SteamService.STOP_INTENT)) {
-                adapter.setCurrentAppId(0);
-            }
-        }
-    };
-
     public static GamesFragment newInstance(long steamId, int currentAppId) {
         final GamesFragment fragment = new GamesFragment();
         final Bundle args = new Bundle();
@@ -63,16 +49,11 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         return fragment;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().unregisterReceiver(receiver);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().registerReceiver(receiver, new IntentFilter(SteamService.STOP_INTENT));
+    public void update(int appId) {
+        currentAppId = appId;
+        if (adapter != null) {
+            adapter.setCurrentAppId(appId);
+        }
     }
 
     @Override
@@ -112,7 +93,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         if (dataFragment != null) {
             // Restore games list
             Log.i(TAG, "Restoring " + currentAppId);
-            update(dataFragment.getData());
+            updateGames(dataFragment.getData());
         } else {
             // Fetch games list
             dataFragment = new DataFragment();
@@ -155,7 +136,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
      * Update games list
      * @param games the list of games
      */
-    public void update(List<Game> games) {
+    public void updateGames(List<Game> games) {
         dataFragment.setData(games);
         adapter = new GamesAdapter(getActivity(), games, currentAppId);
         recyclerView.setAdapter(adapter);

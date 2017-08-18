@@ -79,11 +79,13 @@ public class SteamService extends Service {
     private final static String TAG = SteamService.class.getSimpleName();
     private final static int NOTIF_ID = 6896; // Ongoing notification ID
 
-    // Used to tell activities when login state has changed
-    public final static String LOGIN_EVENT = "LOGIN_EVENT";
-    public final static String RESULT = "RESULT";
-    public final static String DISCONNECT_EVENT = "DISCONNECT_EVENT";
+    // Events
+    public final static String LOGIN_EVENT = "LOGIN_EVENT"; // Emitted on login
+    public final static String RESULT = "RESULT"; // Login result
+    public final static String DISCONNECT_EVENT = "DISCONNECT_EVENT"; // Emitted on disconnect
+    public final static String STOP_EVENT = "STOP_EVENT"; // Emitted when stop clicked
 
+    // Actions
     public final static String SKIP_INTENT = "SKIP_INTENT";
     public final static String STOP_INTENT = "STOP_INTENT";
 
@@ -140,11 +142,8 @@ public class SteamService extends Service {
                 stopPlaying();
                 stopFarming();
                 updateNotification("Stopped");
-                final Intent updateStatus = new Intent(MainActivity.UPDATE_STATUS);
-                updateStatus.putExtra(MainActivity.STATUS, loggedIn);
-                updateStatus.putExtra(MainActivity.FARMING, farming);
                 LocalBroadcastManager.getInstance(SteamService.this)
-                        .sendBroadcast(updateStatus);
+                        .sendBroadcast(new Intent(STOP_EVENT));
             }
         }
     };

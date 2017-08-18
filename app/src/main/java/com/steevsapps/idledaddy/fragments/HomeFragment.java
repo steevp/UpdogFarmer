@@ -1,14 +1,9 @@
 package com.steevsapps.idledaddy.fragments;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +14,13 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
 
 public class HomeFragment extends Fragment {
     private final static String TAG = HomeFragment.class.getSimpleName();
-    private final static String LOGGED_IN = "LOGGED_IN";
+
+    public final static String LOGGED_IN = "LOGGED_IN";
+    public final static String FARMING = "FARMING";
 
     // Status message
     private View status;
@@ -39,43 +35,26 @@ public class HomeFragment extends Fragment {
     private boolean loggedIn = false;
     private boolean farming = false;
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(MainActivity.UPDATE_STATUS)) {
-                loggedIn = intent.getBooleanExtra(MainActivity.STATUS, false);
-                farming = intent.getBooleanExtra(MainActivity.FARMING, false);
-                updateStatus();
-            }
-        }
-    };
-
-    public static HomeFragment newInstance(boolean loggedIn) {
+    public static HomeFragment newInstance(boolean loggedIn, boolean farming) {
         final HomeFragment fragment = new HomeFragment();
         final Bundle args = new Bundle();
         args.putBoolean(LOGGED_IN, loggedIn);
+        args.putBoolean(FARMING, farming);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public void update(boolean loggedIn, boolean farming) {
+        this.loggedIn = loggedIn;
+        this.farming = farming;
+        updateStatus();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loggedIn = getArguments().getBoolean(LOGGED_IN, false);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(getActivity())
-                .unregisterReceiver(receiver);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(getActivity())
-                .registerReceiver(receiver, new IntentFilter(MainActivity.UPDATE_STATUS));
+        farming = getArguments().getBoolean(FARMING, false);
     }
 
     @Nullable
