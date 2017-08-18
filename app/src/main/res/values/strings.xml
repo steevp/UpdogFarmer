@@ -41,5 +41,5 @@
     <string name="now_playing">Now playing</string>
     <string name="error_not_logged_in">You must be logged in to Steam</string>
     <string name="games_left">%d game(s) left to idle</string>
-    <string name="cards_left">%d card drops remaining</string>
+    <string name="cards_left">%d card drop(s) remaining</string>
 </resources>
