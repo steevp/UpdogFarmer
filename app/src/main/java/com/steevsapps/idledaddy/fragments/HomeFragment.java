@@ -26,6 +26,9 @@ public class HomeFragment extends Fragment {
     private View status;
     private ImageView statusImg;
     private TextView statusText;
+    private ViewGroup dropInfo;
+    private TextView cardCountText;
+    private TextView gameCountText;
 
     private Button startIdling;
     private Button stopIdling;
@@ -50,6 +53,12 @@ public class HomeFragment extends Fragment {
         updateStatus();
     }
 
+    public void showDropInfo(int gameCount, int cardCount) {
+        dropInfo.setVisibility(View.VISIBLE);
+        gameCountText.setText(getString(R.string.games_left, gameCount));
+        cardCountText.setText(getString(R.string.cards_left, cardCount));
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +73,9 @@ public class HomeFragment extends Fragment {
         status = view.findViewById(R.id.status);
         statusImg = (ImageView) view.findViewById(R.id.status_img);
         statusText = (TextView) view.findViewById(R.id.status_text);
+        dropInfo = (ViewGroup) view.findViewById(R.id.drop_info);
+        cardCountText = (TextView) view.findViewById(R.id.card_count);
+        gameCountText = (TextView) view.findViewById(R.id.game_count);
         startIdling = (Button) view.findViewById(R.id.start_idling);
         adView = (AdView) view.findViewById(R.id.adView);
         updateStatus();
