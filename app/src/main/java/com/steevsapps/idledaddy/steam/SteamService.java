@@ -498,17 +498,12 @@ public class SteamService extends Service {
     public void logoff() {
         Log.i(TAG, "logging off");
         stopFarming();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                steamUser.logOff();
-                Prefs.writeUsername("");
-                Prefs.writePassword("");
-                Prefs.writeLoginKey("");
-                steamClient.disconnect();
-                updateNotification("Logged out");
-            }
-        }).start();
+        steamUser.logOff();
+        Prefs.writeUsername("");
+        Prefs.writePassword("");
+        Prefs.writeLoginKey("");
+        steamClient.disconnect();
+        updateNotification("Logged out");
     }
 
     public void disconnect() {
@@ -614,12 +609,7 @@ public class SteamService extends Service {
                     stopFarming();
                 }
                 // Reconnect
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        steamClient.disconnect();
-                    }
-                }).start();
+                steamClient.disconnect();
             }
         });
         msg.handle(LoggedOnCallback.class, new ActionT<LoggedOnCallback>() {
@@ -679,12 +669,8 @@ public class SteamService extends Service {
                         updateNotification("Login key expired!");
                     }
 
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            steamClient.disconnect();
-                        }
-                    }).start();
+                    // Reconnect
+                    steamClient.disconnect();
                 }
 
                 // Tell LoginActivity the result
