@@ -201,10 +201,6 @@ public class MainActivity extends AppCompatActivity
             selectItem(R.id.home, false);
         }
 
-        // Listen for preference changes
-        prefs = Prefs.getPrefs();
-        prefs.registerOnSharedPreferenceChangeListener(this);
-
         applySettings();
     }
 
@@ -314,6 +310,9 @@ public class MainActivity extends AppCompatActivity
         filter.addAction(SteamService.FARM_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         startSteam();
+        // Listen for preference changes
+        prefs = Prefs.getPrefs();
+        prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
