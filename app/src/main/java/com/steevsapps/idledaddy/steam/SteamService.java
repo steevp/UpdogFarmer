@@ -353,6 +353,12 @@ public class SteamService extends Service {
         return 0;
     }
 
+    public void changeStatus(EPersonaState status) {
+        if (isLoggedIn()) {
+            steamFriends.setPersonaState(status);
+        }
+    }
+
     private Notification buildNotification(String text) {
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
