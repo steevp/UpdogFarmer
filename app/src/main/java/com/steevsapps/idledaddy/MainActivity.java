@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -40,10 +41,12 @@ import com.steevsapps.idledaddy.utils.Prefs;
 
 import java.util.List;
 
+import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 
 
-public class MainActivity extends AppCompatActivity implements DialogListener, GamePickedListener, FetchGamesListener {
+public class MainActivity extends AppCompatActivity
+        implements DialogListener, GamePickedListener, FetchGamesListener, SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String DRAWER_ITEM = "DRAWER_ITEM";
     private final static String TITLE = "TITLE";
@@ -58,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
     private NavigationView drawerView;
     private ActionBarDrawerToggle drawerToggle;
     private int drawerItemId;
+
+    private SharedPreferences prefs;
 
     // Service connection
     private boolean isBound;
@@ -196,6 +201,10 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
             selectItem(R.id.home, false);
         }
 
+        // Listen for preference changes
+        prefs = Prefs.getPrefs();
+        prefs.registerOnSharedPreferenceChangeListener(this);
+
         applySettings();
     }
 
@@ -312,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         doUnbindService();
+        prefs.unregisterOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -424,6 +434,21 @@ public class MainActivity extends AppCompatActivity implements DialogListener, G
         final Fragment fragment = getCurrentFragment();
         if (fragment instanceof GamesFragment) {
             ((GamesFragment) fragment).updateGames(games);
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("stay_awake")) {
+            if (Prefs.stayAwake()) {
+                // Don't let the screen turn off
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+        } else if (key.equals("offline")) {
+            // Change status
+            steamService.changeStatus(Prefs.getOffline() ? EPersonaState.Offline : EPersonaState.Online);
         }
     }
 }

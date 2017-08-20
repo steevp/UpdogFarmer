@@ -23,7 +23,7 @@
     <string name="cat_idle">Idle settings</string>
     <string name="key_offline">offline</string>
     <string name="pref_offline">Offline Farming</string>
-    <string name="sum_offline">Sets your status as Offline so your friends won\&apos;t see you idling. (Requires restart)</string>
+    <string name="sum_offline">Sets your status as Offline so your friends won\&apos;t see you idling.</string>
     <string name="key_stay_awake">stay_awake</string>
     <string name="pref_stay_awake">Keep device awake</string>
     <string name="sum_stay_awake">Enable this if your device doesn\&apos;t keep WiFi on during sleep.</string>
