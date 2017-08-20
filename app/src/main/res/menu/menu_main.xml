@@ -6,10 +6,12 @@
 
     <item android:id="@+id/redeem"
         android:title="@string/redeem"
+        android:orderInCategory="10"
         android:icon="@drawable/ic_add_white_24dp"
         app:showAsAction="ifRoom|withText"/>
 
     <item android:id="@+id/logout"
         android:title="@string/logout"
+        android:orderInCategory="11"
         app:showAsAction="never"/>
 </menu>
