@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -40,6 +42,19 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
+    // Timeout handler
+    private final static int TIMEOUT_MILLIS = 15000;
+    private final Handler timeoutHandler = new Handler();
+    private final Runnable timeoutRunnable = new Runnable() {
+        @Override
+        public void run() {
+            loginButton.setEnabled(true);
+            progress.setVisibility(View.GONE);
+            passwordInput.setError(getString(R.string.timeout_error));
+            steamService.disconnect();
+        }
+    };
+
     private boolean twoFactorRequired;
 
     // Views
@@ -54,6 +69,7 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(SteamService.LOGIN_EVENT)) {
+                stopTimeout();
                 loginButton.setEnabled(true);
                 progress.setVisibility(View.GONE);
                 final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
@@ -63,14 +79,14 @@ public class LoginActivity extends AppCompatActivity {
                     twoFactorInput.setErrorEnabled(false);
 
                     if (result == EResult.InvalidPassword) {
-                        passwordInput.setError("Invalid password");
+                        passwordInput.setError(getString(R.string.invalid_password));
                     } else if (result == EResult.AccountLoginDeniedNeedTwoFactor || result == EResult.AccountLogonDenied || result == EResult.AccountLogonDeniedNoMail || result == EResult.AccountLogonDeniedVerifiedEmailRequired) {
                         twoFactorRequired = result == EResult.AccountLoginDeniedNeedTwoFactor;
                         twoFactorInput.setVisibility(View.VISIBLE);
-                        twoFactorInput.setError("Steam Guard code required");
+                        twoFactorInput.setError(getString(R.string.steamguard_required));
                         twoFactorInput.getEditText().requestFocus();
                     } else if (result == EResult.TwoFactorCodeMismatch || result == EResult.InvalidLoginAuthCode) {
-                        twoFactorInput.setError("Invalid Code");
+                        twoFactorInput.setError(getString(R.string.invalid_code));
                     }
                 } else {
                     // Save username and password
@@ -94,6 +110,22 @@ public class LoginActivity extends AppCompatActivity {
             unbindService(connection);
             isBound = false;
         }
+    }
+
+    /**
+     * Start timeout handler in case the server doesn't respond
+     */
+    private void startTimeout() {
+        Log.i(TAG, "Starting timeout handler");
+        timeoutHandler.postDelayed(timeoutRunnable, TIMEOUT_MILLIS);
+    }
+
+    /**
+     * Stop the timeout handler
+     */
+    private void stopTimeout() {
+        Log.i(TAG, "Stopping timeout handler");
+        timeoutHandler.removeCallbacks(timeoutRunnable);
     }
 
     public static Intent createIntent(Context c) {
@@ -131,6 +163,12 @@ public class LoginActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
 
+    @Override
+    protected void onDestroy() {
+        stopTimeout();
+        super.onDestroy();
+    }
+
     public void doLogin(View v) {
         final String username = usernameInput.getEditText().getText().toString().trim();
         final String password = passwordInput.getEditText().getText().toString().trim();
@@ -147,6 +185,7 @@ public class LoginActivity extends AppCompatActivity {
             }
             details.shouldRememberPassword = true;
             steamService.login(details);
+            startTimeout();
         }
     }
 }
