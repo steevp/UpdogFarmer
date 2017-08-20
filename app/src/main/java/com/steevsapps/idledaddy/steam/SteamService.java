@@ -511,6 +511,10 @@ public class SteamService extends Service {
         }).start();
     }
 
+    public void disconnect() {
+        steamClient.disconnect();
+    }
+
     public void redeemKey(final String key) {
         steamUser.registerProductKey(key);
     }
