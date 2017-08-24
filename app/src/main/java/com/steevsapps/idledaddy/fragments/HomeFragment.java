@@ -71,13 +71,13 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.home_fragment, container, false);
         status = view.findViewById(R.id.status);
-        statusImg = (ImageView) view.findViewById(R.id.status_img);
-        statusText = (TextView) view.findViewById(R.id.status_text);
-        dropInfo = (ViewGroup) view.findViewById(R.id.drop_info);
-        cardCountText = (TextView) view.findViewById(R.id.card_count);
-        gameCountText = (TextView) view.findViewById(R.id.game_count);
-        startIdling = (Button) view.findViewById(R.id.start_idling);
-        adView = (AdView) view.findViewById(R.id.adView);
+        statusImg = view.findViewById(R.id.status_img);
+        statusText = view.findViewById(R.id.status_text);
+        dropInfo = view.findViewById(R.id.drop_info);
+        cardCountText = view.findViewById(R.id.card_count);
+        gameCountText = view.findViewById(R.id.game_count);
+        startIdling = view.findViewById(R.id.start_idling);
+        adView = view.findViewById(R.id.adView);
         updateStatus();
         loadAds();
         return view;

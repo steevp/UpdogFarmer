@@ -79,7 +79,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.games_fragment, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.games_list);
+        recyclerView = view.findViewById(R.id.games_list);
         layoutManager = new LinearLayoutManager(recyclerView.getContext());
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
@@ -88,8 +88,8 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         adapter = new GamesAdapter(recyclerView.getContext());
         adapter.setCurrentAppId(currentAppId);
         recyclerView.setAdapter(adapter);
-        emptyView = (TextView) view.findViewById(R.id.empty_view);
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        emptyView = view.findViewById(R.id.empty_view);
+        progressBar = view.findViewById(R.id.progress);
         dataFragment = (DataFragment) getActivity().getSupportFragmentManager().findFragmentByTag("data");
         if (dataFragment != null) {
             // Restore games list
