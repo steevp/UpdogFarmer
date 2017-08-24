@@ -16,6 +16,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -372,7 +373,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startSteam() {
-        startService(SteamService.createIntent(this));
+        ContextCompat.startForegroundService(this, SteamService.createIntent(this));
         doBindService();
     }
 
