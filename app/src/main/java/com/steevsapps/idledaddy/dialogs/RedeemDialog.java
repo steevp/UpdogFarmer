@@ -44,7 +44,7 @@ public class RedeemDialog extends DialogFragment {
         builder.setTitle(R.string.redeem);
         builder.setMessage(R.string.redeem_msg);
         final View view = LayoutInflater.from(getActivity()).inflate(R.layout.redeem_dialog, null);
-        final EditText input = (EditText) view.findViewById(R.id.input);
+        final EditText input = view.findViewById(R.id.input);
         builder.setView(view);
         builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override

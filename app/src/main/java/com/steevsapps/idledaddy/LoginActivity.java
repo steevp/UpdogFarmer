@@ -137,11 +137,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        usernameInput = (TextInputLayout) findViewById(R.id.username);
-        passwordInput = (TextInputLayout) findViewById(R.id.password);
-        twoFactorInput = (TextInputLayout) findViewById(R.id.two_factor);
-        loginButton = (Button) findViewById(R.id.login);
-        progress = (ProgressBar) findViewById(R.id.progress);
+        usernameInput = findViewById(R.id.username);
+        passwordInput = findViewById(R.id.password);
+        twoFactorInput = findViewById(R.id.two_factor);
+        loginButton = findViewById(R.id.login);
+        progress = findViewById(R.id.progress);
 
         // Restore saved password if any
         usernameInput.getEditText().setText(Prefs.getUsername());

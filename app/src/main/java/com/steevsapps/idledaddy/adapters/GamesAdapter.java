@@ -119,9 +119,9 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
 
         private ViewHolder(View itemView) {
             super(itemView);
-            name = (TextView) itemView.findViewById(R.id.name);
-            logo = (ImageView) itemView.findViewById(R.id.logo);
-            nowPlaying = (TextView) itemView.findViewById(R.id.now_playing);
+            name = itemView.findViewById(R.id.name);
+            logo = itemView.findViewById(R.id.logo);
+            nowPlaying = itemView.findViewById(R.id.now_playing);
         }
     }
 }
