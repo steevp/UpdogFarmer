@@ -27,7 +27,16 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     private GamePickedListener callback;
     private int currentAppId = 0;
 
-    public GamesAdapter(Context c, List<Game> games, int appId) {
+    public GamesAdapter(Context c) {
+        context = c;
+        try {
+            callback = (GamePickedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement GamePickedListener.");
+        }
+    }
+
+    public void setData(List<Game> games) {
         // Sort games alphabetically
         Collections.sort(games, new Comparator<Game>() {
             @Override
@@ -35,15 +44,11 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
                 return game1.name.toLowerCase().compareTo(game2.name.toLowerCase());
             }
         });
-        context = c;
+        dataSet.clear();
+        dataSetCopy.clear();
         dataSet.addAll(games);
         dataSetCopy.addAll(games);
-        currentAppId = appId;
-        try {
-            callback = (GamePickedListener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement GamePickedListener.");
-        }
+        notifyDataSetChanged();
     }
 
     public void filter(String text) {
