@@ -51,9 +51,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
 
     public void update(int appId) {
         currentAppId = appId;
-        if (adapter != null) {
-            adapter.setCurrentAppId(appId);
-        }
+        adapter.setCurrentAppId(appId);
     }
 
     @Override
@@ -87,6 +85,9 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         recyclerView.setHasFixedSize(true);
         final DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
         recyclerView.addItemDecoration(divider);
+        adapter = new GamesAdapter(recyclerView.getContext());
+        adapter.setCurrentAppId(currentAppId);
+        recyclerView.setAdapter(adapter);
         emptyView = (TextView) view.findViewById(R.id.empty_view);
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         dataFragment = (DataFragment) getActivity().getSupportFragmentManager().findFragmentByTag("data");
@@ -138,8 +139,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
      */
     public void updateGames(List<Game> games) {
         dataFragment.setData(games);
-        adapter = new GamesAdapter(getActivity(), games, currentAppId);
-        recyclerView.setAdapter(adapter);
+        adapter.setData(games);
         progressBar.setVisibility(View.GONE);
         if (games.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
