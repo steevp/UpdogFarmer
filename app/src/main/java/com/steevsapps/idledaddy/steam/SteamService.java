@@ -1,6 +1,7 @@
 package com.steevsapps.idledaddy.steam;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -11,12 +12,15 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -78,6 +82,7 @@ import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
 public class SteamService extends Service {
     private final static String TAG = SteamService.class.getSimpleName();
     private final static int NOTIF_ID = 6896; // Ongoing notification ID
+    private final static String CHANNEL_ID = "idle_channel"; // Notification channel
 
     // Events
     public final static String LOGIN_EVENT = "LOGIN_EVENT"; // Emitted on login
@@ -290,6 +295,10 @@ public class SteamService extends Service {
         steamClient = new SteamClient();
         steamUser = steamClient.getHandler(SteamUser.class);
         steamFriends = steamClient.getHandler(SteamFriends.class);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Create notification channel
+            createChannel();
+        }
         startForeground(NOTIF_ID, buildNotification("Steam service started"));
     }
 
@@ -320,6 +329,20 @@ public class SteamService extends Service {
             e.printStackTrace();
         }
         super.onDestroy();
+    }
+
+    /**
+     * Create notification channel for Android O
+     */
+    @RequiresApi(Build.VERSION_CODES.O)
+    private void createChannel() {
+        final CharSequence name = getString(R.string.channel_name);
+        final int importance = NotificationManager.IMPORTANCE_HIGH;
+        final NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+        channel.setShowBadge(false);
+        channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.createNotificationChannel(channel);
     }
 
     /**
@@ -363,7 +386,7 @@ public class SteamService extends Service {
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
-        return new NotificationCompat.Builder(this)
+        return new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(text)
@@ -380,14 +403,14 @@ public class SteamService extends Service {
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setStyle(new NotificationCompat.MediaStyle());
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setContentTitle(getString(R.string.app_name));
-        builder.setContentText("Now playing " + badge.name);
-        builder.setSubText(badge.dropsRemaining + (badge.dropsRemaining > 1 ? " card drops remaining" : " card drop remaining"));
-        builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        builder.setContentIntent(pendingIntent);
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setStyle(new MediaStyle())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText("Now playing " + badge.name)
+                .setSubText(badge.dropsRemaining + (badge.dropsRemaining > 1 ? " card drops remaining" : " card drop remaining"))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentIntent(pendingIntent);
 
         // Add the stop action
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
@@ -437,13 +460,13 @@ public class SteamService extends Service {
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setStyle(new NotificationCompat.MediaStyle());
-        builder.setSmallIcon(R.mipmap.ic_launcher);
-        builder.setContentTitle(getString(R.string.app_name));
-        builder.setContentText("Now playing " + game.name);
-        builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        builder.setContentIntent(pendingIntent);
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setStyle(new MediaStyle())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText("Now playing " + game.name)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setContentIntent(pendingIntent);
 
         // Add the stop action
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);

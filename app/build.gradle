@@ -36,6 +36,7 @@ dependencies {
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:preference-v7:$supportLibraryVersion"
     compile "com.android.support:preference-v14:$supportLibraryVersion"
+    compile "com.android.support:support-media-compat:$supportLibraryVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.github.steevp:SteamKit-Java:95ef7766c6'
     compile 'org.jsoup:jsoup:1.10.3'

@@ -46,4 +46,5 @@
     <string name="steamguard_required">Steam Guard code required</string>
     <string name="invalid_code">Invalid code</string>
     <string name="timeout_error">Connection timed out. Please try again</string>
+    <string name="channel_name">Idle notifications</string>
 </resources>
