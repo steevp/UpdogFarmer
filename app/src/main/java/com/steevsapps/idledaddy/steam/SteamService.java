@@ -341,6 +341,9 @@ public class SteamService extends Service {
         final NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
         channel.setShowBadge(false);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        channel.enableVibration(false);
+        channel.enableLights(false);
+        channel.setBypassDnd(false);
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.createNotificationChannel(channel);
     }
