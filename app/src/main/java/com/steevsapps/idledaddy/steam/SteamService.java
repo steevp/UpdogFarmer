@@ -337,7 +337,7 @@ public class SteamService extends Service {
     @RequiresApi(Build.VERSION_CODES.O)
     private void createChannel() {
         final CharSequence name = getString(R.string.channel_name);
-        final int importance = NotificationManager.IMPORTANCE_HIGH;
+        final int importance = NotificationManager.IMPORTANCE_LOW;
         final NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
         channel.setShowBadge(false);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
