@@ -684,6 +684,9 @@ public class SteamService extends Service {
                                             WebScraper.viewInventory(generateWebCookies());
                                         }
                                     }).start();
+                                } else if (currentAppId > 0) {
+                                    Log.i(TAG, "Resume playing");
+                                    playGame(currentAppId);
                                 }
                             } else {
                                 updateNotification("Unable to get Steam web authentication!");
