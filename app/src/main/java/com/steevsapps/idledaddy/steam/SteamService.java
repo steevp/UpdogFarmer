@@ -18,8 +18,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.app.NotificationCompat.MediaStyle;
 import android.util.Log;
 import android.widget.Toast;
@@ -29,7 +29,6 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.steam.wrapper.Badge;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
 import com.steevsapps.idledaddy.utils.Utils;
@@ -175,10 +174,10 @@ public class SteamService extends Service {
 
     private void farm() {
         Log.i(TAG, "Checking remaining card drops");
-        List<Badge> badges = null;
+        List<Game> games = null;
         for (int i=0;i<3;i++) {
-            badges = WebScraper.getRemainingGames(generateWebCookies());
-            if (badges != null) {
+            games = WebScraper.getRemainingGames(generateWebCookies());
+            if (games != null) {
                 Log.i(TAG, "gotem");
                 break;
             }
@@ -192,17 +191,17 @@ public class SteamService extends Service {
             }
         }
 
-        if (badges == null) {
+        if (games == null) {
             Log.i(TAG, "Invalid cookie data or no internet, reconnecting");
             steamClient.disconnect();
             return;
         }
 
         // Count the games and cards
-        gameCount = badges.size();
+        gameCount = games.size();
         cardCount = 0;
-        for (Badge b : badges) {
-            cardCount += b.dropsRemaining;
+        for (Game g : games) {
+            cardCount += g.dropsRemaining;
         }
 
         // Send farm event
@@ -212,7 +211,7 @@ public class SteamService extends Service {
         LocalBroadcastManager.getInstance(SteamService.this)
                 .sendBroadcast(event);
 
-        if (badges.isEmpty()) {
+        if (games.isEmpty()) {
             Log.i(TAG, "Finished idling");
             stopPlaying();
             updateNotification(getString(R.string.idling_finished));
@@ -221,35 +220,35 @@ public class SteamService extends Service {
         }
 
         // Sort by hours played descending
-        Collections.sort(badges, Collections.reverseOrder());
+        Collections.sort(games, Collections.reverseOrder());
 
-        if (farmIndex >= badges.size()) {
+        if (farmIndex >= games.size()) {
             farmIndex = 0;
         }
-        final Badge b = badges.get(farmIndex);
+        final Game g = games.get(farmIndex);
 
         // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
-        if (b.hoursPlayed >= 2 || badges.size() == 1 || Prefs.simpleFarming() || farmIndex > 0) {
+        if (g.hoursPlayed >= 2 || games.size() == 1 || Prefs.simpleFarming() || farmIndex > 0) {
             // If a game has over 2 hrs we can just idle it
-            Log.i(TAG, "Now idling " + b.name);
+            Log.i(TAG, "Now idling " + g.name);
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    buildIdleNotification(b);
+                    buildIdleNotification(g);
                 }
             });
-            playGame(b.appId);
+            playGame(g.appId);
             stopFarmTask();
         } else {
             // Idle multiple games (max 32) until one has reached 2 hrs
             Log.i(TAG, "Idling multiple");
-            int size = badges.size();
+            int size = games.size();
             if (size > 32) {
                 size = 32;
             }
             final int[] appIds = new int[size];
             for (int i=0;i<size;i++) {
-                appIds[i] = badges.get(i).appId;
+                appIds[i] = games.get(i).appId;
             }
             playGames(appIds);
             updateNotification("Idling multiple");
@@ -399,8 +398,9 @@ public class SteamService extends Service {
 
     /**
      * Build idling notification
+     * @param game
      */
-    private void buildIdleNotification(Badge badge) {
+    private void buildIdleNotification(Game game) {
         Log.i(TAG, "Idle notification");
         final Intent notificationIntent = new Intent(this, MainActivity.class);
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
@@ -410,24 +410,30 @@ public class SteamService extends Service {
                 .setStyle(new MediaStyle())
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText("Now playing " + badge.name)
-                .setSubText(badge.dropsRemaining + (badge.dropsRemaining > 1 ? " card drops remaining" : " card drop remaining"))
+                .setContentText("Now playing " + game.name)
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent);
+
+        if (game.dropsRemaining > 0) {
+            // Show drops remaining
+            builder.setSubText(game.dropsRemaining + (game.dropsRemaining > 1 ? " card drops remaining" : " card drop remaining"));
+        }
 
         // Add the stop action
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
         builder.addAction(R.drawable.ic_stop_white_48dp, "Stop", stopIntent);
 
-        // Add the skip action
-        final PendingIntent skipIntent = PendingIntent.getBroadcast(this, 0, new Intent(SKIP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
-        builder.addAction(R.drawable.ic_skip_next_white_48dp, "Skip", skipIntent);
+        if (game.dropsRemaining > 1) {
+            // Add the skip action
+            final PendingIntent skipIntent = PendingIntent.getBroadcast(this, 0, new Intent(SKIP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+            builder.addAction(R.drawable.ic_skip_next_white_48dp, "Skip", skipIntent);
+        }
 
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         if (!Prefs.minimizeData()) {
             // Load game icon into notification
             Glide.with(getApplicationContext())
-                    .load(badge.iconUrl)
+                    .load(game.iconUrl)
                     .asBitmap()
                     .into(new SimpleTarget<Bitmap>() {
                         @Override
@@ -457,46 +463,9 @@ public class SteamService extends Service {
     }
 
     public void idleSingle(Game game) {
-        Log.i(TAG, "Idle notification");
+        Log.i(TAG, "Now playing " + game.name);
         playGame(game.appId);
-        final Intent notificationIntent = new Intent(this, MainActivity.class);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
-                notificationIntent, 0);
-
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setStyle(new MediaStyle())
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText("Now playing " + game.name)
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setContentIntent(pendingIntent);
-
-        // Add the stop action
-        final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
-        builder.addAction(R.drawable.ic_stop_white_48dp, "Stop", stopIntent);
-
-        final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (!Prefs.minimizeData()) {
-            // Load game icon into notification
-            Glide.with(getApplicationContext())
-                    .load(game.logoUrl)
-                    .asBitmap()
-                    .into(new SimpleTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                            builder.setLargeIcon(resource);
-                            nm.notify(NOTIF_ID, builder.build());
-                        }
-
-                        @Override
-                        public void onLoadFailed(Exception e, Drawable errorDrawable) {
-                            super.onLoadFailed(e, errorDrawable);
-                            nm.notify(NOTIF_ID, builder.build());
-                        }
-                    });
-        } else {
-            nm.notify(NOTIF_ID, builder.build());
-        }
+        buildIdleNotification(game);
     }
 
     public void start() {

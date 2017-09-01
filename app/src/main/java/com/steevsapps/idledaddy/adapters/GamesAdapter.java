@@ -88,7 +88,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         holder.name.setText(game.name);
         if (!Prefs.minimizeData()) {
             Glide.with(context)
-                    .load(game.logoUrl)
+                    .load(game.iconUrl)
                     .into(holder.logo);
         } else {
             holder.logo.setImageResource(R.drawable.ic_image_white_48dp);
