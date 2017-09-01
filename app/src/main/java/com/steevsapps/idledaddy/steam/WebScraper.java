@@ -11,7 +11,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -132,27 +131,6 @@ public class WebScraper {
         }
 
         return badgeList;
-    }
-
-    static boolean hasRemainingDrops(int appId, Map<String,String> cookies) {
-        Document doc;
-        try {
-            doc = Jsoup.connect(GAMECARDS + appId + "?l=english")
-                    .followRedirects(true)
-                    .cookies(cookies)
-                    .get();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        final Element progressInfo = doc.select("span.progress_info_bold").first();
-        if (progressInfo == null) {
-            return false;
-        }
-
-        final Matcher m = dropPattern.matcher(progressInfo.text());
-        return m.find();
     }
 
     /**
