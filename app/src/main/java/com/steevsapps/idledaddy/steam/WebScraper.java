@@ -1,7 +1,6 @@
 package com.steevsapps.idledaddy.steam;
 
 import com.steevsapps.idledaddy.Secrets;
-import com.steevsapps.idledaddy.steam.wrapper.Badge;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import org.json.JSONArray;
@@ -46,8 +45,8 @@ public class WebScraper {
      * @param cookies Steam cookies
      * @return list of games with remaining drops
      */
-    static List<Badge> getRemainingGames(Map<String,String> cookies) {
-        final List<Badge> badgeList = new ArrayList<>();
+    static List<Game> getRemainingGames(Map<String,String> cookies) {
+        final List<Game> badgeList = new ArrayList<>();
         Document doc;
         try {
             doc = Jsoup.connect(BADGES)
@@ -129,7 +128,7 @@ public class WebScraper {
                 time = Float.parseFloat(m.group(1));
             }
 
-            badgeList.add(new Badge(appId, name, time, drops));
+            badgeList.add(new Game(appId, name, time, drops));
         }
 
         return badgeList;
