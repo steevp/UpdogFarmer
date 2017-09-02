@@ -429,7 +429,7 @@ public class SteamService extends Service {
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
         builder.addAction(R.drawable.ic_stop_white_48dp, "Stop", stopIntent);
 
-        if (game.dropsRemaining > 1) {
+        if (farming) {
             // Add the skip action
             final PendingIntent skipIntent = PendingIntent.getBroadcast(this, 0, new Intent(SKIP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
             builder.addAction(R.drawable.ic_skip_next_white_48dp, "Skip", skipIntent);
