@@ -113,6 +113,7 @@ public class SteamService extends Service {
     private String token;
     private String tokenSecure;
     private String sentryHash;
+    private String steamParental;
     private boolean authenticated = false;
     private boolean loggedIn = false;
 
@@ -859,6 +860,9 @@ public class SteamService extends Service {
         if (sentryHash != null) {
             cookies.put("steamMachineAuth" + steamClient.getSteamId().convertToLong(), sentryHash);
         }
+        if (steamParental != null) {
+            cookies.put("steamparental", steamParental);
+        }
         return cookies;
     }
 
@@ -957,6 +961,13 @@ public class SteamService extends Service {
         tokenSecure = authResult.get("tokenSecure").asString();
 
         authenticated = true;
+
+        final String pin = Prefs.getParentalPin().trim();
+        if (!pin.isEmpty()) {
+            // Unlock family view
+            steamParental = WebScraper.unlockParental(pin, generateWebCookies());
+        }
+
         return true;
     }
 }
