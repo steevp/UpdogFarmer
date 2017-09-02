@@ -5,6 +5,7 @@ import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -26,9 +27,9 @@ import java.util.regex.Pattern;
  */
 public class WebScraper {
     private final static String BADGES = "http://steamcommunity.com/my/badges?l=english";
-    private final static String GAMECARDS = "http://steamcommunity.com/my/gamecards/";
     private final static String INVENTORY = "http://steamcommunity.com/my/inventory";
     private final static String GAMES_OWNED = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=1&format=json";
+    private final static String PARENTAL_UNLOCK = "http://store.steampowered.com/parental/ajaxunlock";
 
     // Pattern to match app ID
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
@@ -36,8 +37,6 @@ public class WebScraper {
     private final static Pattern dropPattern = Pattern.compile("^(\\d+) card drops? remaining$");
     // Pattern to match play time
     private final static Pattern timePattern = Pattern.compile("([0-9\\.]+) hrs on record");
-
-
 
     /**
      * Get a list of games with card drops remaining
@@ -145,6 +144,27 @@ public class WebScraper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Unlock Steam parental controls with a pin
+     */
+    static String unlockParental(String pin, Map<String,String> cookies) {
+        try {
+            final Map<String,String> responseCookies = Jsoup.connect(PARENTAL_UNLOCK)
+                    .referrer("http://store.steampowered.com/")
+                    .followRedirects(true)
+                    .ignoreContentType(true)
+                    .cookies(cookies)
+                    .data("pin", pin)
+                    .method(Connection.Method.POST)
+                    .execute()
+                    .cookies();
+            return responseCookies.get("steamparental");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static List<Game> getGamesOwned(long steamId) {

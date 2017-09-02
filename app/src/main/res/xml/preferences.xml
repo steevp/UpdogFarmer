@@ -3,26 +3,32 @@
     <PreferenceCategory
         android:title="@string/cat_idle">
         <CheckBoxPreference
-            android:key="@string/key_offline"
+            android:key="offline"
             android:title="@string/pref_offline"
             android:summary="@string/sum_offline"
             android:defaultValue="false" />
         <CheckBoxPreference
-            android:key="@string/key_stay_awake"
+            android:key="stay_awake"
             android:title="@string/pref_stay_awake"
             android:summary="@string/sum_stay_awake"
             android:defaultValue="false" />
 
         <CheckBoxPreference
-            android:key="@string/key_simple"
+            android:key="simple"
             android:title="@string/pref_simple"
             android:summary="@string/sum_simple"
             android:defaultValue="false" />
 
         <CheckBoxPreference
-            android:key="@string/key_minimize_data"
+            android:key="minimize_data"
             android:title="@string/pref_minimize_data"
             android:summary="@string/sum_minimize_data"
             android:defaultValue="false" />
+
+        <EditTextPreference
+            android:key="parental_pin"
+            android:title="@string/pref_parental_pin"
+            android:summary="@string/sum_parental_pin" />
+
     </PreferenceCategory>
 </PreferenceScreen>
