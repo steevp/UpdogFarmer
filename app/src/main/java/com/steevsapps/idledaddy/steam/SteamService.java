@@ -100,7 +100,7 @@ public class SteamService extends Service {
     private SteamUser steamUser;
     private SteamFriends steamFriends;
     private int farmIndex = 0;
-    private int currentAppId = 0;
+    private Game currentGame;
     private int gameCount = 0;
     private int cardCount = 0;
 
@@ -226,23 +226,25 @@ public class SteamService extends Service {
         if (farmIndex >= games.size()) {
             farmIndex = 0;
         }
-        final Game g = games.get(farmIndex);
+        final Game game = games.get(farmIndex);
 
         // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
-        if (g.hoursPlayed >= 2 || games.size() == 1 || Prefs.simpleFarming() || farmIndex > 0) {
+        if (game.hoursPlayed >= 2 || games.size() == 1 || Prefs.simpleFarming() || farmIndex > 0) {
             // If a game has over 2 hrs we can just idle it
-            Log.i(TAG, "Now idling " + g.name);
+            Log.i(TAG, "Now idling " + game.name);
+            currentGame = game;
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    buildIdleNotification(g);
+                    buildIdleNotification(game);
                 }
             });
-            playGame(g.appId);
+            playGame(game.appId);
             stopFarmTask();
         } else {
             // Idle multiple games (max 32) until one has reached 2 hrs
             Log.i(TAG, "Idling multiple");
+            currentGame = null;
             int size = games.size();
             if (size > 32) {
                 size = 32;
@@ -360,7 +362,10 @@ public class SteamService extends Service {
     }
 
     public int getCurrentAppId() {
-        return currentAppId;
+        if (currentGame != null) {
+            return currentGame.appId;
+        }
+        return 0;
     }
 
     public int getGameCount() {
@@ -465,6 +470,7 @@ public class SteamService extends Service {
 
     public void idleSingle(Game game) {
         Log.i(TAG, "Now playing " + game.name);
+        currentGame = game;
         playGame(game.appId);
         buildIdleNotification(game);
     }
@@ -654,9 +660,14 @@ public class SteamService extends Service {
                                             WebScraper.viewInventory(generateWebCookies());
                                         }
                                     }).start();
-                                } else if (currentAppId > 0) {
+                                } else if (currentGame != null) {
                                     Log.i(TAG, "Resume playing");
-                                    playGame(currentAppId);
+                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            idleSingle(currentGame);
+                                        }
+                                    });
                                 }
                             } else {
                                 updateNotification("Unable to get Steam web authentication!");
@@ -810,7 +821,6 @@ public class SteamService extends Service {
      * @param appId game to idle
      */
     private void playGame(int appId) {
-        currentAppId = appId;
         steamUser.setPlayingGame(appId);
     }
 
@@ -820,7 +830,6 @@ public class SteamService extends Service {
      * @param appIds the games to idle
      */
     private void playGames(int...appIds) {
-        currentAppId = 0;
         // Array of games played
         final SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[] gamesPlayed =
                 new SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[appIds.length];
@@ -840,7 +849,7 @@ public class SteamService extends Service {
     }
 
     private void stopPlaying() {
-        currentAppId = 0;
+        currentGame = null;
         steamUser.setPlayingGame(0);
     }
 
