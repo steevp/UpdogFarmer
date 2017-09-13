@@ -55,8 +55,8 @@ public class HomeFragment extends Fragment {
 
     public void showDropInfo(int gameCount, int cardCount) {
         dropInfo.setVisibility(View.VISIBLE);
-        gameCountText.setText(getString(R.string.games_left, gameCount));
-        cardCountText.setText(getString(R.string.cards_left, cardCount));
+        gameCountText.setText(getResources().getQuantityString(R.plurals.games_left, gameCount, gameCount));
+        cardCountText.setText(getResources().getQuantityString(R.plurals.card_drops_remaining, cardCount, cardCount));
     }
 
     @Override

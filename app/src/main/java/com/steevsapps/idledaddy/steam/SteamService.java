@@ -416,13 +416,13 @@ public class SteamService extends Service {
                 .setStyle(new MediaStyle())
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText("Now playing " + game.name)
+                .setContentText(getString(R.string.now_playing2, game.name))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent);
 
         if (game.dropsRemaining > 0) {
             // Show drops remaining
-            builder.setSubText(game.dropsRemaining + (game.dropsRemaining > 1 ? " card drops remaining" : " card drop remaining"));
+            builder.setSubText(getResources().getQuantityString(R.plurals.card_drops_remaining, game.dropsRemaining, game.dropsRemaining));
         }
 
         // Add the stop action
@@ -802,11 +802,11 @@ public class SteamService extends Service {
                         public void run() {
                             String error;
                             if (purchaseResult == 9) {
-                                error = "Product already owned";
+                                error = getString(R.string.product_already_owned);
                             } else if (purchaseResult == 14) {
-                                error = "Invalid key";
+                                error = getString(R.string.invalid_key);
                             } else {
-                                error = "Activation failed";
+                                error = getString(R.string.activation_failed);
                             }
                             Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
                         }

@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Idle Daddy</string>
-    <string name="welcome">Welcome to Idle Daddy!</string>
     <string name="status">Status</string>
     <string name="logged_in">Logged in</string>
     <string name="not_logged_in">Tap here to login</string>
@@ -38,11 +37,21 @@
     <string name="no_games_found">Couldn\&apos;t retrieve the list of games. Make sure your profile is set to public.</string>
     <string name="now_playing">Now playing</string>
     <string name="error_not_logged_in">You must be logged in to Steam</string>
-    <string name="games_left">%d game(s) left to idle</string>
-    <string name="cards_left">%d card drop(s) remaining</string>
     <string name="invalid_password">Invalid password</string>
     <string name="steamguard_required">Steam Guard code required</string>
     <string name="invalid_code">Invalid code</string>
     <string name="timeout_error">Connection timed out. Please try again</string>
     <string name="channel_name">Idle notifications</string>
+    <string name="now_playing2">Now playing %s</string>
+    <string name="product_already_owned">Product already owned</string>
+    <string name="invalid_key">Invalid key</string>
+    <string name="activation_failed">Activation failed</string>
+    <plurals name="games_left">
+        <item quantity="one">%d game left to idle</item>
+        <item quantity="other">%d games left to idle</item>
+    </plurals>
+    <plurals name="card_drops_remaining">
+        <item quantity="one">%d card drop remaining</item>
+        <item quantity="other">%d card drops remaining</item>
+    </plurals>
 </resources>
