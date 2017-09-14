@@ -1,0 +1,58 @@
+<!-- Translation by ZIGS -->
+<resources>
+    <string name="app_name">Idle Daddy</string>
+    <string name="status">Estado</string>
+    <string name="logged_in">Ligado</string>
+    <string name="not_logged_in">Toque aqui para fazer login</string>
+    <string name="login_to_steam">Ligar ao Steam</string>
+    <string name="username">Nome de Utilizador</string>
+    <string name="password">Palavra-chave</string>
+    <string name="steamguard">Código Steam Guard</string>
+    <string name="login">Login</string>
+    <string name="start_idling">Iniciar coleta</string>
+    <string name="desc_start">Corre os jogos até receber todas as cartas</string>
+    <string name="stop_idling">Parar serviço</string>
+    <string name="desc_stop">Pára o Steam e fecha a aplicação</string>
+    <string name="idling_finished">Não restam mais cartas para receber</string>
+    <string name="search">Procurar</string>
+    <string name="settings">Definições</string>
+    <string name="logout">Logout</string>
+    <string name="redeem">Activar Produto</string>
+    <string name="redeem_msg">Introduza aqui o código do produto:</string>
+    <string name="ok">OK</string>
+    <string name="cat_idle">Definições de coleta</string>
+    <string name="pref_offline">Modo offline</string>
+    <string name="sum_offline">Define o seu estado como offline para que os seus amigos não o vejam a coletar</string>
+    <string name="pref_stay_awake">Manter dispositivo activo</string>
+    <string name="sum_stay_awake">Ligue isto se o seu dispositivo não mantêm o WiFi ligado em modo inactivo</string>
+    <string name="pref_simple">Modo simples</string>
+    <string name="sum_simple">Corre todos os jogos um-por-um até receber todas as cartas sem que primeiro corra todos até terem 2 horas cada. Em caso de dúvida, deixe isto desligado</string>
+    <string name="pref_minimize_data">Minimizar utilização de dados</string>
+    <string name="sum_minimize_data">Não descarrega a imagem do jogo</string>
+    <string name="pref_parental_pin">Código parental</string>
+    <string name="sum_parental_pin">Introduza o seu código parental para desbloquear o acesso completo à conta Steam</string>
+    <string name="open_drawer">Abrir menu</string>
+    <string name="close_drawer">Fechar menu</string>
+    <string name="home">Início</string>
+    <string name="games">Jogos</string>
+    <string name="no_games_found">Não foi possível obter a lista de jogos. Certifique-se que o seu perfil está definido como \"público\"</string>
+    <string name="now_playing">A correr</string>
+    <string name="error_not_logged_in">Tem que estar ligado ao Steam</string>
+    <string name="invalid_password">Palavra-chave inválida</string>
+    <string name="steamguard_required">Código Steam Guard necessário</string>
+    <string name="invalid_code">Código inválido</string>
+    <string name="timeout_error">Connecção expirou. Por favor tente novamente</string>
+    <string name="channel_name">Notificações Idle Daddy</string>
+    <string name="now_playing2">A correr %s</string>
+    <string name="product_already_owned">Produto já presente na sua conta</string>
+    <string name="invalid_key">Chave inválida</string>
+    <string name="activation_failed">Falha na activação</string>
+    <plurals name="games_left">
+        <item quantity="one">Resta %d jogo para correr</item>
+        <item quantity="other">Restam %d jogos para correr</item>
+    </plurals>
+    <plurals name="card_drops_remaining">
+        <item quantity="one">Número de cartas restantes: %d</item>
+        <item quantity="other">Número de cartas restantes: %d</item>
+    </plurals>
+</resources>
