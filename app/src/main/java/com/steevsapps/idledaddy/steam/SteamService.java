@@ -607,6 +607,7 @@ public class SteamService extends Service {
                 if (callback.getResult() == EResult.LoggedInElsewhere) {
                     updateNotification("Logged in elsewhere");
                     stopFarming();
+                    currentGame = null;
                 }
                 // Reconnect
                 disconnect();
