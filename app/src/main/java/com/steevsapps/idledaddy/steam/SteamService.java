@@ -108,6 +108,7 @@ public class SteamService extends Service {
     private volatile boolean running = false;
     private volatile boolean connected = false;
     private volatile boolean farming = false;
+    private volatile boolean checkingForCards = false;
 
     private String webApiUserNonce;
     private String sessionId;
@@ -139,7 +140,7 @@ public class SteamService extends Service {
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SKIP_INTENT)) {
+            if (intent.getAction().equals(SKIP_INTENT) && !checkingForCards) {
                 // Skip clicked
                 farmIndex++;
                 executor.execute(farmTask);
@@ -157,7 +158,9 @@ public class SteamService extends Service {
     private final class FarmTask implements Runnable {
         @Override
         public void run() {
+            checkingForCards = true;
             farm();
+            checkingForCards = false;
         }
     }
 
