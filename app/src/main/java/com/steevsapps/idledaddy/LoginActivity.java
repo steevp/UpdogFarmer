@@ -73,10 +73,10 @@ public class LoginActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(SteamService.LOGIN_EVENT)) {
                 stopTimeout();
-                loginButton.setEnabled(true);
                 progress.setVisibility(View.GONE);
                 final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
                 if (result != EResult.OK) {
+                    loginButton.setEnabled(true);
                     usernameInput.setErrorEnabled(false);
                     passwordInput.setErrorEnabled(false);
                     twoFactorInput.setErrorEnabled(false);
