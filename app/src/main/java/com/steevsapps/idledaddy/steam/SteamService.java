@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -117,7 +118,8 @@ public class SteamService extends Service {
     private boolean authenticated = false;
     private boolean loggedIn = false;
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
     private ScheduledFuture<?> farmHandle;
 
     /**
@@ -134,19 +136,13 @@ public class SteamService extends Service {
     // This is the object that receives interactions from clients.
     private final IBinder binder = new LocalBinder();
 
-
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(SKIP_INTENT)) {
                 // Skip clicked
                 farmIndex++;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        farm();
-                    }
-                }).start();
+                executor.execute(farmTask);
             } else if (intent.getAction().equals(STOP_INTENT)) {
                 Log.i(TAG, "received stop intent");
                 stopPlaying();
@@ -158,14 +154,18 @@ public class SteamService extends Service {
         }
     };
 
+    private final class FarmTask implements Runnable {
+        @Override
+        public void run() {
+            farm();
+        }
+    }
+
+    private final FarmTask farmTask = new FarmTask();
+
     public void startFarming() {
         farming = true;
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                    farm();
-            }
-        }).start();
+        executor.execute(farmTask);
     }
 
     public void stopFarming() {
@@ -194,7 +194,7 @@ public class SteamService extends Service {
 
         if (games == null) {
             Log.i(TAG, "Invalid cookie data or no internet, reconnecting");
-            steamClient.disconnect();
+            disconnect();
             return;
         }
 
@@ -260,15 +260,9 @@ public class SteamService extends Service {
     }
 
     private void startFarmTask() {
-        final Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                farm();
-            }
-        };
         if (farmHandle == null || farmHandle.isCancelled()) {
             Log.i(TAG, "Starting farmtask");
-            farmHandle = scheduler.scheduleAtFixedRate(runnable, 10, 10, TimeUnit.MINUTES);
+            farmHandle = scheduler.scheduleAtFixedRate(farmTask, 10, 10, TimeUnit.MINUTES);
         }
     }
 
@@ -323,6 +317,8 @@ public class SteamService extends Service {
         stopForeground(true);
         running = false;
         stopFarming();
+        executor.shutdownNow();
+        scheduler.shutdownNow();
         // Somebody was getting IllegalArgumentException from this, possibly because I was calling
         // super.onDestroy() at the beginning, but I'll still catch it just to be safe.
         try {
@@ -477,30 +473,29 @@ public class SteamService extends Service {
 
     public void start() {
         running = true;
-        new Thread(new Runnable() {
+        executor.execute(new Runnable() {
             @Override
             public void run() {
                 steamClient.connect();
-
-                while (running) {
-                    update();
-                }
-
-                Log.i(TAG, "thread stopping");
-                steamClient.disconnect();
             }
-        }).start();
+        });
+        scheduler.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                update();
+            }
+        }, 500, 500, TimeUnit.MILLISECONDS);
     }
 
     public void login(final LogOnDetails details) {
         Log.i(TAG, "logging in");
-        new Thread(new Runnable() {
+        executor.execute(new Runnable() {
             @Override
             public void run() {
                 waitForConnection();
                 steamUser.logOn(details, Prefs.getMachineId());
             }
-        }).start();
+        });
     }
 
     public void logoff() {
@@ -510,12 +505,17 @@ public class SteamService extends Service {
         Prefs.writeUsername("");
         Prefs.writePassword("");
         Prefs.writeLoginKey("");
-        steamClient.disconnect();
+        disconnect();
         updateNotification("Logged out");
     }
 
     public void disconnect() {
-        steamClient.disconnect();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                steamClient.disconnect();
+            }
+        });
     }
 
     public void redeemKey(final String key) {
@@ -563,11 +563,6 @@ public class SteamService extends Service {
             final CallbackMsg msg = steamClient.getCallback(true);
 
             if (msg == null) {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 break;
             }
 
@@ -591,20 +586,14 @@ public class SteamService extends Service {
                 Log.i(TAG, "Disconnected()");
                 connected = false;
                 loggedIn = false;
-                if (running) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(5000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            steamClient.connect();
-                        }
-                    }).start();
-                }
-                // Notify the activity that user is logged out
+                // Try to reconnect after a 5 second delay
+                scheduler.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        steamClient.connect();
+                    }
+                }, 5, TimeUnit.SECONDS);
+                // Tell the activity that we've been disconnected from Steam
                 LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(DISCONNECT_EVENT));
             }
         });
@@ -617,7 +606,7 @@ public class SteamService extends Service {
                     stopFarming();
                 }
                 // Reconnect
-                steamClient.disconnect();
+                disconnect();
             }
         });
         msg.handle(LoggedOnCallback.class, new ActionT<LoggedOnCallback>() {
@@ -631,7 +620,7 @@ public class SteamService extends Service {
                 if (result == EResult.OK) {
                     loggedIn = true;
                     updateNotification("Logged in");
-                    new Thread(new Runnable() {
+                    executor.execute(new Runnable() {
                         @Override
                         public void run() {
                             boolean gotAuth = false;
@@ -652,14 +641,14 @@ public class SteamService extends Service {
                             if (gotAuth) {
                                 if (farming) {
                                     Log.i(TAG, "Resume farming");
-                                    new Thread(new Runnable() {
+                                    executor.execute(farmTask);
+                                    executor.execute(new Runnable() {
                                         @Override
                                         public void run() {
-                                            farm();
                                             // Reset inventory notifications
                                             WebScraper.viewInventory(generateWebCookies());
                                         }
-                                    }).start();
+                                    });
                                 } else if (currentGame != null) {
                                     Log.i(TAG, "Resume playing");
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -673,7 +662,7 @@ public class SteamService extends Service {
                                 updateNotification("Unable to get Steam web authentication!");
                             }
                         }
-                    }).start();
+                    });
 
                     if (!Prefs.getOffline()) {
                         steamFriends.setPersonaState(EPersonaState.Online);
@@ -686,7 +675,7 @@ public class SteamService extends Service {
                     }
 
                     // Reconnect
-                    steamClient.disconnect();
+                    disconnect();
                 }
 
                 // Tell LoginActivity the result
@@ -756,14 +745,14 @@ public class SteamService extends Service {
                 for (Map.Entry<NotificationType,Integer> entry: callback.getNotificationCounts().entrySet()) {
                     if (entry.getKey() == NotificationType.ITEMS && entry.getValue() > 0  && farming) {
                         // Possible card drop
-                        new Thread(new Runnable() {
+                        executor.execute(farmTask);
+                        executor.execute(new Runnable() {
                             @Override
                             public void run() {
-                                farm();
                                 // Reset inventory notifications
                                 WebScraper.viewInventory(generateWebCookies());
                             }
-                        }).start();
+                        });
                         break;
                     }
                 }
