@@ -8,7 +8,7 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
