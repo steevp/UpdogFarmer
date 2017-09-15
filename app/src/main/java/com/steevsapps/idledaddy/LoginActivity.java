@@ -9,6 +9,8 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -50,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         public void run() {
             loginButton.setEnabled(true);
             progress.setVisibility(View.GONE);
-            passwordInput.setError(getString(R.string.timeout_error));
+            Snackbar.make(coordinatorLayout, R.string.timeout_error, Snackbar.LENGTH_LONG).show();
             steamService.disconnect();
         }
     };
@@ -58,6 +60,7 @@ public class LoginActivity extends AppCompatActivity {
     private boolean twoFactorRequired;
 
     // Views
+    private CoordinatorLayout coordinatorLayout;
     private TextInputLayout usernameInput;
     private TextInputLayout passwordInput;
     private TextInputLayout twoFactorInput;
@@ -137,6 +140,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        coordinatorLayout = findViewById(R.id.coordinator);
         usernameInput = findViewById(R.id.username);
         passwordInput = findViewById(R.id.password);
         twoFactorInput = findViewById(R.id.two_factor);
