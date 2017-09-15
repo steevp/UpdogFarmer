@@ -59,11 +59,6 @@ public class FetchGamesFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Game> games) {
-            // Add the Steam client ¯\_(ツ)_/¯
-            final Game steamClient = new Game(753, "Steam", 0, 0);
-            steamClient.iconUrl = "http://cdn.akamai.steamstatic.com/steamcommunity/public/images/apps/753/ebc73b4e326945ea7eb986d93e2b1aabb291fe7d.jpg";
-            games.add(steamClient);
-
             if (callback != null) {
                 callback.onGamesListReceived(games);
             }
