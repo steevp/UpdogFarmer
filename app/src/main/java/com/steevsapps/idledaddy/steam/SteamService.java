@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -121,6 +122,7 @@ public class SteamService extends Service {
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+    private Future<?> loginHandle;
     private ScheduledFuture<?> farmHandle;
 
     /**
@@ -492,7 +494,7 @@ public class SteamService extends Service {
 
     public void login(final LogOnDetails details) {
         Log.i(TAG, "logging in");
-        executor.execute(new Runnable() {
+        loginHandle = executor.submit(new Runnable() {
             @Override
             public void run() {
                 waitForConnection();
@@ -513,6 +515,9 @@ public class SteamService extends Service {
     }
 
     public void disconnect() {
+        if (loginHandle != null) {
+            loginHandle.cancel(true);
+        }
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -557,6 +562,7 @@ public class SteamService extends Service {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                break;
             }
         }
     }
@@ -593,6 +599,7 @@ public class SteamService extends Service {
                 scheduler.schedule(new Runnable() {
                     @Override
                     public void run() {
+                        Log.i(TAG, "Reconnecting");
                         steamClient.connect();
                     }
                 }, 5, TimeUnit.SECONDS);
