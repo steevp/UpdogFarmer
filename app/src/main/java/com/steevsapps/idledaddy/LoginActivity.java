@@ -92,9 +92,8 @@ public class LoginActivity extends AppCompatActivity {
                         twoFactorInput.setError(getString(R.string.invalid_code));
                     }
                 } else {
-                    // Save username and password
+                    // Save username
                     Prefs.writeUsername(usernameInput.getEditText().getText().toString().trim());
-                    Prefs.writePassword(passwordInput.getEditText().getText().toString().trim());
                     finish();
                 }
             }
@@ -147,9 +146,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login);
         progress = findViewById(R.id.progress);
 
-        // Restore saved password if any
+        // Restore saved username if any
         usernameInput.getEditText().setText(Prefs.getUsername());
-        passwordInput.getEditText().setText(Prefs.getPassword());
     }
 
     @Override
