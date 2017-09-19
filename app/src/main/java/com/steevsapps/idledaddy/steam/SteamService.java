@@ -683,6 +683,9 @@ public class SteamService extends Service {
                         waiting = true;
                         waitHandle = scheduler.scheduleAtFixedRate(waitTask, 0, 5, TimeUnit.MINUTES);
                     }
+                } else {
+                    // Reconnect
+                    disconnect();
                 }
             }
         });
