@@ -73,7 +73,6 @@ import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
 import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
 import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import uk.co.thomasc.steamkit.util.KeyDictionary;
 import uk.co.thomasc.steamkit.util.WebHelpers;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
@@ -110,6 +109,7 @@ public class SteamService extends Service {
     private volatile boolean running = false;
     private volatile boolean connected = false;
     private volatile boolean farming = false;
+    private volatile boolean waiting = false;
 
     private String webApiUserNonce;
     private String sessionId;
@@ -119,11 +119,13 @@ public class SteamService extends Service {
     private String steamParental;
     private boolean authenticated = false;
     private boolean loggedIn = false;
+    private long steamId;
 
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
     private Future<?> loginHandle;
     private ScheduledFuture<?> farmHandle;
+    private ScheduledFuture<?> waitHandle;
 
     /**
      * Class for clients to access.  Because we know this service always
@@ -159,11 +161,41 @@ public class SteamService extends Service {
     private final class FarmTask implements Runnable {
         @Override
         public void run() {
-            farm();
+            try {
+                farm();
+            } catch (Exception e) {
+                Log.i(TAG, "FarmTask failed", e);
+            }
         }
     }
 
     private final FarmTask farmTask = new FarmTask();
+
+    /**
+     * Wait for user to NOT be in-game so we can resume idling
+     */
+    private final class WaitTask implements Runnable {
+        @Override
+        public void run() {
+            try {
+                Log.i(TAG, "Checking if we can resume idling...");
+                final Boolean notInGame = WebScraper.checkIfNotInGame(generateWebCookies());
+                if (notInGame == null) {
+                    Log.i(TAG, "Invalid cookie data or no internet, reconnecting...");
+                    disconnect();
+                } else if (notInGame) {
+                    Log.i(TAG, "Finished");
+                    waiting = false;
+                    disconnect();
+                    waitHandle.cancel(false);
+                }
+            } catch (Exception e) {
+                Log.i(TAG, "WaitTask failed", e);
+            }
+        }
+    }
+
+    private final WaitTask waitTask = new WaitTask();
 
     public void startFarming() {
         farming = true;
@@ -173,6 +205,28 @@ public class SteamService extends Service {
     public void stopFarming() {
         farming = false;
         unscheduleFarmTask();
+    }
+
+    /**
+     * Resume farming/idling
+     */
+    private void resumeFarming() {
+        if (waiting) {
+            return;
+        }
+
+        if (farming) {
+            Log.i(TAG, "Resume farming");
+            executor.execute(farmTask);
+        } else if (currentGame != null) {
+            Log.i(TAG, "Resume playing");
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    idleSingle(currentGame);
+                }
+            });
+        }
     }
 
     private void farm() {
@@ -394,11 +448,7 @@ public class SteamService extends Service {
     }
 
     public long getSteamId() {
-        final SteamID steamID = steamClient.getSteamId();
-        if (steamID != null) {
-            return steamID.convertToLong();
-        }
-        return 0;
+        return steamId;
     }
 
     public void changeStatus(EPersonaState status) {
@@ -616,7 +666,6 @@ public class SteamService extends Service {
                     public void run() {
                         Log.i(TAG, "Reconnecting");
                         steamClient.connect();
-                        Log.i(TAG, "exiting thread...");
                     }
                 }, 5, TimeUnit.SECONDS);
                 // Tell the activity that we've been disconnected from Steam
@@ -628,12 +677,13 @@ public class SteamService extends Service {
             public void call(LoggedOffCallback callback) {
                 Log.i(TAG, "Logoff result " + callback.getResult().toString());
                 if (callback.getResult() == EResult.LoggedInElsewhere) {
-                    updateNotification("Logged in elsewhere");
-                    stopFarming();
-                    currentGame = null;
+                    updateNotification(getString(R.string.logged_in_elsewhere));
+                    unscheduleFarmTask();
+                    if (!waiting) {
+                        waiting = true;
+                        waitHandle = scheduler.scheduleAtFixedRate(waitTask, 0, 5, TimeUnit.MINUTES);
+                    }
                 }
-                // Reconnect
-                disconnect();
             }
         });
         msg.handle(LoggedOnCallback.class, new ActionT<LoggedOnCallback>() {
@@ -646,6 +696,7 @@ public class SteamService extends Service {
 
                 if (result == EResult.OK) {
                     loggedIn = true;
+                    steamId = steamClient.getSteamId().convertToLong();
                     updateNotification("Logged in");
                     executor.execute(new Runnable() {
                         @Override
@@ -666,18 +717,7 @@ public class SteamService extends Service {
                             }
 
                             if (gotAuth) {
-                                if (farming) {
-                                    Log.i(TAG, "Resume farming");
-                                    executor.execute(farmTask);
-                                } else if (currentGame != null) {
-                                    Log.i(TAG, "Resume playing");
-                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            idleSingle(currentGame);
-                                        }
-                                    });
-                                }
+                                resumeFarming();
                             } else {
                                 updateNotification("Unable to get Steam web authentication!");
                             }
@@ -764,7 +804,7 @@ public class SteamService extends Service {
             public void call(NotificationUpdateCallback callback) {
                 Log.i(TAG, "New notifications " + callback.getNotificationCounts().toString());
                 for (Map.Entry<NotificationType,Integer> entry: callback.getNotificationCounts().entrySet()) {
-                    if (entry.getKey() == NotificationType.ITEMS && entry.getValue() > 0  && farming) {
+                    if (entry.getKey() == NotificationType.ITEMS && entry.getValue() > 0  && farming && !waiting) {
                         // Possible card drop
                         executor.execute(farmTask);
                         break;
@@ -870,7 +910,7 @@ public class SteamService extends Service {
         cookies.put("steamLogin", token);
         cookies.put("steamLoginSecure", tokenSecure);
         if (sentryHash != null) {
-            cookies.put("steamMachineAuth" + steamClient.getSteamId().convertToLong(), sentryHash);
+            cookies.put("steamMachineAuth" + steamId, sentryHash);
         }
         if (steamParental != null) {
             cookies.put("steamparental", steamParental);
@@ -960,7 +1000,7 @@ public class SteamService extends Service {
         KeyValue authResult;
 
         try {
-            authResult = userAuth.authenticateUser(String.valueOf(steamClient.getSteamId().convertToLong()), WebHelpers.UrlEncode(cryptedSessionKey), WebHelpers.UrlEncode(cryptedLoginKey), "POST", "true");
+            authResult = userAuth.authenticateUser(String.valueOf(steamId), WebHelpers.UrlEncode(cryptedSessionKey), WebHelpers.UrlEncode(cryptedLoginKey), "POST", "true");
         } catch (final Exception e) {
             return false;
         }

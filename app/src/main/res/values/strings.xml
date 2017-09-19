@@ -54,4 +54,5 @@
         <item quantity="one">%d card drop remaining</item>
         <item quantity="other">%d card drops remaining</item>
     </plurals>
+    <string name="logged_in_elsewhere">Steam in use. Will resume when possible.</string>
 </resources>
