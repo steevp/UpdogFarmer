@@ -11,7 +11,6 @@ import java.util.UUID;
  */
 public class Prefs {
     private final static String USERNAME = "username";
-    private final static String PASSWORD = "password";
     private final static String LOGIN_KEY = "login_key";
     private final static String MACHINE_ID = "machine_id";
     private final static String SENTRY_HASH = "sentry_hash";
@@ -46,10 +45,6 @@ public class Prefs {
         writePref(USERNAME, username);
     }
 
-    public static void writePassword(String password) {
-        writePref(PASSWORD, password);
-    }
-
     public static void writeLoginKey(String loginKey) {
         writePref(LOGIN_KEY, loginKey);
     }
@@ -64,10 +59,6 @@ public class Prefs {
 
     public static String getUsername() {
         return prefs.getString(USERNAME, "");
-    }
-
-    public static String getPassword() {
-        return prefs.getString(PASSWORD, "");
     }
 
     public static String getLoginKey() {

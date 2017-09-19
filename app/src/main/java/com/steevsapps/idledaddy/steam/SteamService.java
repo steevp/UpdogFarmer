@@ -519,7 +519,6 @@ public class SteamService extends Service {
         stopFarming();
         steamUser.logOff();
         Prefs.writeUsername("");
-        Prefs.writePassword("");
         Prefs.writeLoginKey("");
         disconnect();
         updateNotification("Logged out");
@@ -548,10 +547,9 @@ public class SteamService extends Service {
         // Just in case
         Prefs.init(this);
         final String username = Prefs.getUsername();
-        final String password = Prefs.getPassword();
         final String loginKey = Prefs.getLoginKey();
         final byte[] sentryData = readSentryFile();
-        if (username.isEmpty() || password.isEmpty() || loginKey.isEmpty()) {
+        if (username.isEmpty() || loginKey.isEmpty()) {
             return;
         }
         Log.i(TAG, "Restoring login");
