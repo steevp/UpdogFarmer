@@ -30,6 +30,7 @@ public class WebScraper {
     private final static String INVENTORY = "http://steamcommunity.com/my/inventory";
     private final static String GAMES_OWNED = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=1&format=json";
     private final static String PARENTAL_UNLOCK = "http://store.steampowered.com/parental/ajaxunlock";
+    private final static String PROFILE = "http://steamcommunity.com/my/profile?l=english";
 
     // Pattern to match app ID
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
@@ -194,5 +195,30 @@ public class WebScraper {
                 conn.disconnect();
             }
         }
+    }
+
+    /**
+     * Check if user is currently NOT in-game, so we can resume farming.
+     */
+    static Boolean checkIfNotInGame(Map<String,String> cookies) {
+        Document doc;
+        try {
+            doc = Jsoup.connect(PROFILE)
+                    .followRedirects(true)
+                    .cookies(cookies)
+                    .get();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        final Element userAvatar = doc.select("a.user_avatar").first();
+        if (userAvatar == null) {
+            // Invalid cookie data
+            return null;
+        }
+
+        final Element inGame = doc.select("div.profile_in_game_name").first();
+        return inGame == null;
     }
 }

@@ -55,4 +55,5 @@
         <item quantity="one">Número de cartas restantes: %d</item>
         <item quantity="other">Número de cartas restantes: %d</item>
     </plurals>
+    <string name="logged_in_elsewhere">Steam em uso. Irá retomar a operação assim que possível</string>
 </resources>
