@@ -102,6 +102,7 @@ public class SteamService extends Service {
     private SteamUser steamUser;
     private SteamFriends steamFriends;
     private int farmIndex = 0;
+    private List<Game> gamesToFarm;
     private Game currentGame;
     private int gameCount = 0;
     private int cardCount = 0;
@@ -109,7 +110,6 @@ public class SteamService extends Service {
     private volatile boolean running = false;
     private volatile boolean connected = false;
     private volatile boolean farming = false;
-    private volatile boolean checkingForCards = false;
 
     private String webApiUserNonce;
     private String sessionId;
@@ -142,10 +142,9 @@ public class SteamService extends Service {
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SKIP_INTENT) && !checkingForCards) {
+            if (intent.getAction().equals(SKIP_INTENT)) {
                 // Skip clicked
-                farmIndex++;
-                executor.execute(farmTask);
+                skipGame();
             } else if (intent.getAction().equals(STOP_INTENT)) {
                 Log.i(TAG, "received stop intent");
                 stopPlaying();
@@ -160,9 +159,7 @@ public class SteamService extends Service {
     private final class FarmTask implements Runnable {
         @Override
         public void run() {
-            checkingForCards = true;
             farm();
-            checkingForCards = false;
         }
     }
 
@@ -175,15 +172,14 @@ public class SteamService extends Service {
 
     public void stopFarming() {
         farming = false;
-        stopFarmTask();
+        unscheduleFarmTask();
     }
 
     private void farm() {
         Log.i(TAG, "Checking remaining card drops");
-        List<Game> games = null;
         for (int i=0;i<3;i++) {
-            games = WebScraper.getRemainingGames(generateWebCookies());
-            if (games != null) {
+            gamesToFarm = WebScraper.getRemainingGames(generateWebCookies());
+            if (gamesToFarm != null) {
                 Log.i(TAG, "gotem");
                 break;
             }
@@ -197,16 +193,16 @@ public class SteamService extends Service {
             }
         }
 
-        if (games == null) {
+        if (gamesToFarm == null) {
             Log.i(TAG, "Invalid cookie data or no internet, reconnecting");
             disconnect();
             return;
         }
 
         // Count the games and cards
-        gameCount = games.size();
+        gameCount = gamesToFarm.size();
         cardCount = 0;
-        for (Game g : games) {
+        for (Game g : gamesToFarm) {
             cardCount += g.dropsRemaining;
         }
 
@@ -217,7 +213,7 @@ public class SteamService extends Service {
         LocalBroadcastManager.getInstance(SteamService.this)
                 .sendBroadcast(event);
 
-        if (games.isEmpty()) {
+        if (gamesToFarm.isEmpty()) {
             Log.i(TAG, "Finished idling");
             stopPlaying();
             updateNotification(getString(R.string.idling_finished));
@@ -226,55 +222,65 @@ public class SteamService extends Service {
         }
 
         // Sort by hours played descending
-        Collections.sort(games, Collections.reverseOrder());
+        Collections.sort(gamesToFarm, Collections.reverseOrder());
 
-        if (farmIndex >= games.size()) {
+        if (farmIndex >= gamesToFarm.size()) {
             farmIndex = 0;
         }
-        final Game game = games.get(farmIndex);
+        final Game game = gamesToFarm.get(farmIndex);
 
         // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
-        if (game.hoursPlayed >= 2 || games.size() == 1 || Prefs.simpleFarming() || farmIndex > 0) {
+        if (game.hoursPlayed >= 2 || gamesToFarm.size() == 1 || Prefs.simpleFarming() || farmIndex > 0) {
             // If a game has over 2 hrs we can just idle it
-            Log.i(TAG, "Now idling " + game.name);
-            currentGame = game;
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    buildIdleNotification(game);
+                    idleSingle(game);
                 }
             });
-            playGame(game.appId);
-            stopFarmTask();
+            unscheduleFarmTask();
         } else {
             // Idle multiple games (max 32) until one has reached 2 hrs
             Log.i(TAG, "Idling multiple");
             currentGame = null;
-            int size = games.size();
+            int size = gamesToFarm.size();
             if (size > 32) {
                 size = 32;
             }
             final int[] appIds = new int[size];
             for (int i=0;i<size;i++) {
-                appIds[i] = games.get(i).appId;
+                appIds[i] = gamesToFarm.get(i).appId;
             }
             playGames(appIds);
             updateNotification("Idling multiple");
-            startFarmTask();
+            scheduleFarmTask();
         }
 
         // Reset inventory notifications
         WebScraper.viewInventory(generateWebCookies());
     }
 
-    private void startFarmTask() {
+    private void skipGame() {
+        if (gamesToFarm == null || gamesToFarm.size() < 2) {
+            return;
+        }
+
+        farmIndex++;
+        if (farmIndex >= gamesToFarm.size()) {
+            farmIndex = 0;
+        }
+
+        idleSingle(gamesToFarm.get(farmIndex));
+    }
+
+    private void scheduleFarmTask() {
         if (farmHandle == null || farmHandle.isCancelled()) {
             Log.i(TAG, "Starting farmtask");
             farmHandle = scheduler.scheduleAtFixedRate(farmTask, 10, 10, TimeUnit.MINUTES);
         }
     }
 
-    private void stopFarmTask() {
+    private void unscheduleFarmTask() {
         if (farmHandle != null) {
             Log.i(TAG, "Stopping farmtask");
             farmHandle.cancel(true);
