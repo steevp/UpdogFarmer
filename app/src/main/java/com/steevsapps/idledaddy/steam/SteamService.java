@@ -262,6 +262,9 @@ public class SteamService extends Service {
             updateNotification("Idling multiple");
             startFarmTask();
         }
+
+        // Reset inventory notifications
+        WebScraper.viewInventory(generateWebCookies());
     }
 
     private void startFarmTask() {
@@ -324,6 +327,13 @@ public class SteamService extends Service {
         stopFarming();
         executor.shutdownNow();
         scheduler.shutdownNow();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                steamClient.disconnect();
+                Log.i(TAG, "Disconnected!!");
+            }
+        }).start();
         // Somebody was getting IllegalArgumentException from this, possibly because I was calling
         // super.onDestroy() at the beginning, but I'll still catch it just to be safe.
         try {
@@ -494,6 +504,7 @@ public class SteamService extends Service {
 
     public void login(final LogOnDetails details) {
         Log.i(TAG, "logging in");
+        details.loginId = NOTIF_ID;
         loginHandle = executor.submit(new Runnable() {
             @Override
             public void run() {
@@ -601,6 +612,7 @@ public class SteamService extends Service {
                     public void run() {
                         Log.i(TAG, "Reconnecting");
                         steamClient.connect();
+                        Log.i(TAG, "exiting thread...");
                     }
                 }, 5, TimeUnit.SECONDS);
                 // Tell the activity that we've been disconnected from Steam
@@ -653,13 +665,6 @@ public class SteamService extends Service {
                                 if (farming) {
                                     Log.i(TAG, "Resume farming");
                                     executor.execute(farmTask);
-                                    executor.execute(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            // Reset inventory notifications
-                                            WebScraper.viewInventory(generateWebCookies());
-                                        }
-                                    });
                                 } else if (currentGame != null) {
                                     Log.i(TAG, "Resume playing");
                                     new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -681,6 +686,7 @@ public class SteamService extends Service {
                 } else {
                     if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
                         // Probably no longer valid
+                        Log.i(TAG, "Login key expired");
                         Prefs.writeLoginKey("");
                         updateNotification("Login key expired!");
                     }
@@ -757,13 +763,6 @@ public class SteamService extends Service {
                     if (entry.getKey() == NotificationType.ITEMS && entry.getValue() > 0  && farming) {
                         // Possible card drop
                         executor.execute(farmTask);
-                        executor.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                // Reset inventory notifications
-                                WebScraper.viewInventory(generateWebCookies());
-                            }
-                        });
                         break;
                     }
                 }
