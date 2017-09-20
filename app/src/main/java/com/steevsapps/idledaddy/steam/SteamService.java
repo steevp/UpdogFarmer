@@ -681,7 +681,7 @@ public class SteamService extends Service {
                     unscheduleFarmTask();
                     if (!waiting) {
                         waiting = true;
-                        waitHandle = scheduler.scheduleAtFixedRate(waitTask, 0, 5, TimeUnit.MINUTES);
+                        waitHandle = scheduler.scheduleAtFixedRate(waitTask, 0, 30, TimeUnit.SECONDS);
                     }
                 } else {
                     // Reconnect
