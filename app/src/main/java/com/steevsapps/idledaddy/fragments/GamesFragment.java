@@ -3,8 +3,7 @@ package com.steevsapps.idledaddy.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -31,7 +30,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
 
     private RecyclerView recyclerView;
     private GamesAdapter adapter;
-    private LinearLayoutManager layoutManager;
+    private GridLayoutManager layoutManager;
     private SearchView searchView;
     private TextView emptyView;
     private ProgressBar progressBar;
@@ -80,11 +79,9 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.games_fragment, container, false);
         recyclerView = view.findViewById(R.id.games_list);
-        layoutManager = new LinearLayoutManager(recyclerView.getContext());
+        layoutManager = new GridLayoutManager(recyclerView.getContext(), getResources().getInteger(R.integer.game_columns));
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
-        final DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
-        recyclerView.addItemDecoration(divider);
         adapter = new GamesAdapter(recyclerView.getContext());
         adapter.setCurrentAppId(currentAppId);
         recyclerView.setAdapter(adapter);
