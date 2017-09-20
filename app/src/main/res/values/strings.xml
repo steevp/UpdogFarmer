@@ -2,8 +2,8 @@
     <string name="app_name">Idle Daddy</string>
     <string name="status">Status</string>
     <string name="logged_in">Logged in</string>
-    <string name="not_logged_in">Tap here to login</string>
-    <string name="login_to_steam">Login to Steam</string>
+    <string name="tap_to_login">Tap here to log in</string>
+    <string name="login_to_steam">Log in to Steam</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="steamguard">Steam Guard code</string>
@@ -55,4 +55,9 @@
         <item quantity="other">%d card drops remaining</item>
     </plurals>
     <string name="logged_in_elsewhere">Steam in use. Will resume when possible.</string>
+    <string name="web_login_failed">Failed to log in to Steam website!</string>
+    <string name="login_key_expired">Login key expired!</string>
+    <string name="stopped">Stopped</string>
+    <string name="idling_multiple">Idling multiple</string>
+    <string name="logged_out">Logged out</string>
 </resources>

@@ -104,7 +104,7 @@ public class HomeFragment extends Fragment {
         status.setClickable(true);
         statusImg.setImageResource(R.drawable.ic_error_white_48dp);
         statusImg.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.orange));
-        statusText.setText(R.string.not_logged_in);
+        statusText.setText(R.string.tap_to_login);
     }
 
     private void updateStatus() {

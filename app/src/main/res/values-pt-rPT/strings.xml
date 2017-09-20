@@ -3,7 +3,7 @@
     <string name="app_name">Idle Daddy</string>
     <string name="status">Estado</string>
     <string name="logged_in">Ligado</string>
-    <string name="not_logged_in">Toque aqui para fazer login</string>
+    <string name="tap_to_login">Toque aqui para fazer login</string>
     <string name="login_to_steam">Ligar ao Steam</string>
     <string name="username">Nome de Utilizador</string>
     <string name="password">Palavra-chave</string>

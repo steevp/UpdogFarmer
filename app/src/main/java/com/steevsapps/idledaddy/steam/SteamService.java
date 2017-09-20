@@ -151,7 +151,7 @@ public class SteamService extends Service {
                 Log.i(TAG, "received stop intent");
                 stopPlaying();
                 stopFarming();
-                updateNotification("Stopped");
+                updateNotification(getString(R.string.stopped));
                 LocalBroadcastManager.getInstance(SteamService.this)
                         .sendBroadcast(new Intent(STOP_EVENT));
             }
@@ -306,7 +306,7 @@ public class SteamService extends Service {
                 appIds[i] = gamesToFarm.get(i).appId;
             }
             playGames(appIds);
-            updateNotification("Idling multiple");
+            updateNotification(getString(R.string.idling_multiple));
             scheduleFarmTask();
         }
 
@@ -577,7 +577,7 @@ public class SteamService extends Service {
         Prefs.writeUsername("");
         Prefs.writeLoginKey("");
         disconnect();
-        updateNotification("Logged out");
+        updateNotification(getString(R.string.logged_out));
     }
 
     public void disconnect() {
@@ -700,7 +700,7 @@ public class SteamService extends Service {
                 if (result == EResult.OK) {
                     loggedIn = true;
                     steamId = steamClient.getSteamId().convertToLong();
-                    updateNotification("Logged in");
+                    updateNotification(getString(R.string.logged_in));
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -722,7 +722,7 @@ public class SteamService extends Service {
                             if (gotAuth) {
                                 resumeFarming();
                             } else {
-                                updateNotification("Unable to get Steam web authentication!");
+                                updateNotification(getString(R.string.web_login_failed));
                             }
                         }
                     });
@@ -735,7 +735,7 @@ public class SteamService extends Service {
                         // Probably no longer valid
                         Log.i(TAG, "Login key expired");
                         Prefs.writeLoginKey("");
-                        updateNotification("Login key expired!");
+                        updateNotification(getString(R.string.login_key_expired));
                     }
 
                     // Reconnect
