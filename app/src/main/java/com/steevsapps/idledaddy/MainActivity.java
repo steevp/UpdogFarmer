@@ -171,7 +171,7 @@ public class MainActivity extends AppCompatActivity
             usernameView.setText(personaName);
         }
 
-        if (!avatarHash.isEmpty() && !avatarHash.equals("0000000000000000000000000000000000000000")) {
+        if (!Prefs.minimizeData() && !avatarHash.isEmpty() && !avatarHash.equals("0000000000000000000000000000000000000000")) {
             final String avatar = String.format(Locale.US,
                     "http://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/%s/%s_full.jpg",
                     avatarHash.substring(0, 2),
