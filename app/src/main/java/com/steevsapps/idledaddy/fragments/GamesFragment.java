@@ -2,6 +2,7 @@ package com.steevsapps.idledaddy.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,6 +36,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     private TextView emptyView;
     private ProgressBar progressBar;
     private DataFragment dataFragment;
+    private FloatingActionButton fab;
 
     private long steamId;
     private int currentAppId;
@@ -87,6 +89,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         recyclerView.setAdapter(adapter);
         emptyView = view.findViewById(R.id.empty_view);
         progressBar = view.findViewById(R.id.progress);
+        fab = view.findViewById(R.id.redeem);
         dataFragment = (DataFragment) getActivity().getSupportFragmentManager().findFragmentByTag("data");
         if (dataFragment != null) {
             // Restore games list
@@ -141,5 +144,6 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         if (games.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
         }
+        fab.show();
     }
 }
