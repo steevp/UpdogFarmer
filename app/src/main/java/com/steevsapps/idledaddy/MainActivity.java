@@ -27,7 +27,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
 import com.steevsapps.idledaddy.fragments.DataFragment;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
@@ -41,9 +44,12 @@ import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
 
 import java.util.List;
+import java.util.Locale;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
+
+import static com.steevsapps.idledaddy.R.id.avatar;
 
 
 public class MainActivity extends AppCompatActivity
@@ -51,6 +57,7 @@ public class MainActivity extends AppCompatActivity
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String DRAWER_ITEM = "DRAWER_ITEM";
     private final static String TITLE = "TITLE";
+    private final static String LOGOUT_EXPANDED = "LOGOUT_EXPANDED";
 
     private String title;
 
@@ -58,9 +65,13 @@ public class MainActivity extends AppCompatActivity
     private boolean farming = false;
 
     // Views
+    private ImageView avatarView;
+    private TextView usernameView;
     private DrawerLayout drawerLayout;
     private NavigationView drawerView;
     private ActionBarDrawerToggle drawerToggle;
+    private ImageView logoutToggle;
+    private boolean logoutExpanded = false;
     private int drawerItemId;
 
     private SharedPreferences prefs;
@@ -76,6 +87,7 @@ public class MainActivity extends AppCompatActivity
             loggedIn = steamService.isLoggedIn();
             farming = steamService.isFarming();
             updateStatus();
+            updateDrawerHeader(null);
             if (farming) {
                 showDropInfo();
             }
@@ -103,6 +115,8 @@ public class MainActivity extends AppCompatActivity
                 updateStatus();
             } else if (intent.getAction().equals(SteamService.FARM_EVENT)) {
                 showDropInfo();
+            } else if (intent.getAction().equals(SteamService.PERSONA_EVENT)) {
+                updateDrawerHeader(intent);
             }
         }
     };
@@ -128,6 +142,41 @@ public class MainActivity extends AppCompatActivity
     private void doLogout() {
         if (steamService != null) {
             steamService.logoff();
+        }
+        closeDrawer();
+        avatarView.setImageResource(R.color.transparent);
+        usernameView.setText("");
+        logoutExpanded = false;
+        logoutToggle.setRotation(0);
+        drawerView.getMenu().setGroupVisible(R.id.logout_group, false);
+    }
+
+    /**
+     * Update drawer header with avatar and username
+     */
+    private void updateDrawerHeader(@Nullable Intent intent) {
+        final String personaName;
+        final String avatarHash;
+
+        if (intent == null) {
+            // Restore from service
+            personaName = steamService.getPersonaName();
+            avatarHash = steamService.getAvatarHash();
+        } else {
+            personaName = intent.getStringExtra(SteamService.PERSONA_NAME);
+            avatarHash = intent.getStringExtra(SteamService.AVATAR_HASH);
+        }
+
+        if (!personaName.isEmpty()) {
+            usernameView.setText(personaName);
+        }
+
+        if (!avatarHash.isEmpty() && !avatarHash.equals("0000000000000000000000000000000000000000")) {
+            final String avatar = String.format(Locale.US,
+                    "http://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/%s/%s_full.jpg",
+                    avatarHash.substring(0, 2),
+                    avatarHash);
+            Glide.with(this).load(avatar).into(avatarView);
         }
     }
 
@@ -163,8 +212,29 @@ public class MainActivity extends AppCompatActivity
         drawerView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                selectItem(item.getItemId(), true);
+                if (item.getItemId() == R.id.logout) {
+                    // No page for this, just logout
+                    doLogout();
+                } else {
+                    // Go to page
+                    selectItem(item.getItemId(), true);
+                }
                 return true;
+            }
+        });
+
+        // Get avatar and username views from drawer header
+        final View headerView = drawerView.getHeaderView(0);
+        avatarView = headerView.findViewById(avatar);
+        usernameView = headerView.findViewById(R.id.username);
+        logoutToggle = headerView.findViewById(R.id.logout_toggle);
+        headerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                logoutExpanded = !logoutExpanded;
+                final int rotation = logoutExpanded ? 180 : 0;
+                logoutToggle.animate().rotation(rotation).setDuration(250).start();
+                drawerView.getMenu().setGroupVisible(R.id.logout_group, logoutExpanded);
             }
         });
 
@@ -197,8 +267,11 @@ public class MainActivity extends AppCompatActivity
 
         if (savedInstanceState != null) {
             drawerItemId = savedInstanceState.getInt(DRAWER_ITEM);
+            logoutExpanded = savedInstanceState.getBoolean(LOGOUT_EXPANDED);
             setTitle(savedInstanceState.getString(TITLE));
+            drawerView.getMenu().setGroupVisible(R.id.logout_group, logoutExpanded);
         } else {
+            logoutExpanded = false;
             selectItem(R.id.home, false);
         }
 
@@ -226,14 +299,13 @@ public class MainActivity extends AppCompatActivity
         super.onSaveInstanceState(outState);
         outState.putInt(DRAWER_ITEM, drawerItemId);
         outState.putString(TITLE, title);
+        outState.putBoolean(LOGOUT_EXPANDED, logoutExpanded);
     }
 
     private void selectItem(int id, boolean addToBackStack) {
         if (drawerItemId == id) {
             // Already selected
-            if (drawerLayout != null) {
-                drawerLayout.closeDrawer(drawerView);
-            }
+            closeDrawer();
             return;
         }
 
@@ -271,13 +343,17 @@ public class MainActivity extends AppCompatActivity
             ft.addToBackStack(null);
         }
         ft.commit();
-        if (drawerLayout != null) {
-            drawerLayout.closeDrawer(drawerView);
-        }
+        closeDrawer();
     }
 
     private Fragment getCurrentFragment() {
         return getSupportFragmentManager().findFragmentById(R.id.content_frame);
+    }
+
+    private void closeDrawer() {
+        if (drawerLayout != null) {
+            drawerLayout.closeDrawer(drawerView);
+        }
     }
 
     private void applySettings() {
@@ -309,6 +385,7 @@ public class MainActivity extends AppCompatActivity
         filter.addAction(SteamService.DISCONNECT_EVENT);
         filter.addAction(SteamService.STOP_EVENT);
         filter.addAction(SteamService.FARM_EVENT);
+        filter.addAction(SteamService.PERSONA_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         startSteam();
         // Listen for preference changes
@@ -326,11 +403,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        final MenuItem logOff = menu.findItem(R.id.logout);
-        final MenuItem redeem = menu.findItem(R.id.redeem);
         final boolean loggedIn = steamService != null && steamService.isLoggedIn();
-        logOff.setVisible(loggedIn);
-        redeem.setVisible(loggedIn);
+        menu.findItem(R.id.redeem).setVisible(loggedIn);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -349,9 +423,6 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.redeem:
                 RedeemDialog.newInstance().show(getSupportFragmentManager(), "redeem");
-                return true;
-            case R.id.logout:
-                doLogout();
                 return true;
         }
         return false;
