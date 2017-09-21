@@ -96,12 +96,12 @@ public class Prefs {
     private static void writePref(String key, String value) {
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     private static void writePref(String key, int value) {
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(key, value);
-        editor.commit();
+        editor.apply();
     }
 }

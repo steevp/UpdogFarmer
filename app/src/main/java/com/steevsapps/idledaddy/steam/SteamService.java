@@ -55,6 +55,7 @@ import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPaymentMethod;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.SteamFriends;
+import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStateCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.callbacks.NotificationUpdateCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.types.NotificationType;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
@@ -92,6 +93,9 @@ public class SteamService extends Service {
     public final static String FARM_EVENT = "FARM_EVENT"; // Emitted when farm() is called
     public final static String GAME_COUNT = "GAME_COUNT"; // Number of games left to farm
     public final static String CARD_COUNT = "CARD_COUNT"; // Number of card drops remaining
+    public final static String PERSONA_EVENT = "PERSONA_EVENT"; // Emitted when we get PersonaStateCallback
+    public final static String PERSONA_NAME = "PERSONA_NAME"; // Username
+    public final static String AVATAR_HASH = "AVATAR_HASH"; // User avatar hash
 
     // Actions
     public final static String SKIP_INTENT = "SKIP_INTENT";
@@ -105,6 +109,8 @@ public class SteamService extends Service {
     private Game currentGame;
     private int gameCount = 0;
     private int cardCount = 0;
+    private String personaName = "";
+    private String avatarHash = "";
 
     private volatile boolean running = false;
     private volatile boolean connected = false;
@@ -447,6 +453,14 @@ public class SteamService extends Service {
         return cardCount;
     }
 
+    public String getPersonaName() {
+        return personaName;
+    }
+
+    public String getAvatarHash() {
+        return avatarHash;
+    }
+
     public long getSteamId() {
         return steamId;
     }
@@ -553,7 +567,11 @@ public class SteamService extends Service {
         scheduler.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
-                update();
+                try {
+                    update();
+                } catch (Exception e) {
+                    Log.i(TAG, "update() failed", e);
+                }
             }
         }, 500, 500, TimeUnit.MILLISECONDS);
     }
@@ -857,6 +875,20 @@ public class SteamService extends Service {
                             Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
                         }
                     });
+                }
+            }
+        });
+        msg.handle(PersonaStateCallback.class, new ActionT<PersonaStateCallback>() {
+            @Override
+            public void call(PersonaStateCallback callback) {
+                if (steamClient.getSteamId().equals(callback.getFriendID())) {
+                    personaName = callback.getName();
+                    avatarHash = Utils.bytesToHex(callback.getAvatarHash()).toLowerCase();
+                    Log.i(TAG, "Avatar hash" + avatarHash);
+                    final Intent event = new Intent(PERSONA_EVENT);
+                    event.putExtra(PERSONA_NAME, personaName);
+                    event.putExtra(AVATAR_HASH, avatarHash);
+                    LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(event);
                 }
             }
         });
