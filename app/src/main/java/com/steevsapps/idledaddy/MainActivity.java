@@ -405,6 +405,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         final boolean loggedIn = steamService != null && steamService.isLoggedIn();
         menu.findItem(R.id.redeem).setVisible(loggedIn);
+        drawerView.getHeaderView(0).setClickable(loggedIn);
         return super.onPrepareOptionsMenu(menu);
     }
 
