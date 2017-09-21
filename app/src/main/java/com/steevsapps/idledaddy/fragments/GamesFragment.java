@@ -90,6 +90,10 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         emptyView = view.findViewById(R.id.empty_view);
         progressBar = view.findViewById(R.id.progress);
         fab = view.findViewById(R.id.redeem);
+        // Show redeem button if user is logged in
+        if (steamId > 0) {
+            fab.show();
+        }
         dataFragment = (DataFragment) getActivity().getSupportFragmentManager().findFragmentByTag("data");
         if (dataFragment != null) {
             // Restore games list
@@ -144,6 +148,5 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         if (games.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
         }
-        fab.show();
     }
 }
