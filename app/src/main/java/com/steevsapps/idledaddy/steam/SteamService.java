@@ -678,14 +678,14 @@ public class SteamService extends Service {
                 Log.i(TAG, "Disconnected()");
                 connected = false;
                 loggedIn = false;
-                // Try to reconnect after a 5 second delay
+                // Try to reconnect after a 3 second delay
                 scheduler.schedule(new Runnable() {
                     @Override
                     public void run() {
                         Log.i(TAG, "Reconnecting");
                         steamClient.connect();
                     }
-                }, 5, TimeUnit.SECONDS);
+                }, 3, TimeUnit.SECONDS);
                 // Tell the activity that we've been disconnected from Steam
                 LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(DISCONNECT_EVENT));
             }
