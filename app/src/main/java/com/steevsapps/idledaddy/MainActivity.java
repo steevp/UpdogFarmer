@@ -404,7 +404,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         final boolean loggedIn = steamService != null && steamService.isLoggedIn();
-        menu.findItem(R.id.redeem).setVisible(loggedIn);
         drawerView.getHeaderView(0).setClickable(loggedIn);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -420,12 +419,6 @@ public class MainActivity extends AppCompatActivity
         if (drawerToggle != null && drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
-        switch (item.getItemId()) {
-            case R.id.redeem:
-                RedeemDialog.newInstance().show(getSupportFragmentManager(), "redeem");
-                return true;
-        }
         return false;
     }
 
@@ -440,6 +433,9 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.status:
                 startActivity(LoginActivity.createIntent(this));
+                break;
+            case R.id.redeem:
+                RedeemDialog.newInstance().show(getSupportFragmentManager(), "redeem");
                 break;
         }
     }
