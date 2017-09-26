@@ -48,10 +48,14 @@
     <string name="activation_failed">Не удалось активировать</string>
     <plurals name="games_left">
         <item quantity="one">%d игра осталась</item>
+        <item quantity="few">%d игра осталась</item>
+        <item quantity="many">%d игр осталось</item>
         <item quantity="other">%d игр осталось</item>
     </plurals>
     <plurals name="card_drops_remaining">
         <item quantity="one">%d карточка выпадет</item>
+        <item quantity="few">%d карточка выпадет</item>
+        <item quantity="many">%d карточек выпадет</item>
         <item quantity="other">%d карточек выпадет</item>
     </plurals>
     <string name="logged_in_elsewhere">Steam используется. Будет продолжено, когда станет возможно.</string>
