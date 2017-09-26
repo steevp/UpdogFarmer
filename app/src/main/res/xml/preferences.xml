@@ -30,4 +30,8 @@
         android:summary="@string/sum_minimize_data"
         android:defaultValue="false" />
 
+    <Preference android:key="about"
+        android:title="About"
+        android:summary="Source code, credits, etc."/>
+
 </PreferenceScreen>

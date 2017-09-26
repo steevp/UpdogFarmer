@@ -93,11 +93,9 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         } else {
             holder.logo.setImageResource(R.drawable.ic_image_white_48dp);
         }
-        if (game.appId == currentAppId) {
-            holder.nowPlaying.setVisibility(View.VISIBLE);
-        } else {
-            holder.nowPlaying.setVisibility(View.GONE);
-        }
+
+        holder.nowPlaying.setVisibility((game.appId == currentAppId) ? View.VISIBLE : View.GONE);
+        
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
