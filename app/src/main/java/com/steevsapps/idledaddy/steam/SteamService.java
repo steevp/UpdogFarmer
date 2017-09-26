@@ -127,7 +127,7 @@ public class SteamService extends Service {
     private boolean loggedIn = false;
     private long steamId;
 
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final ExecutorService executor = Executors.newCachedThreadPool();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
     private Future<?> loginHandle;
     private ScheduledFuture<?> farmHandle;
@@ -249,6 +249,7 @@ public class SteamService extends Service {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    return;
                 }
             }
         }
