@@ -210,6 +210,7 @@ public class SteamService extends Service {
 
     public void stopFarming() {
         farming = false;
+        farmIndex = 0;
         unscheduleFarmTask();
     }
 
