@@ -21,7 +21,7 @@ public class AboutDialog extends DialogFragment {
         final WebView webView = (WebView) LayoutInflater.from(getActivity()).inflate(R.layout.about_dialog, null);
         webView.loadUrl("file:///android_asset/about.html");
         return new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_Light_Dialog_Alert)
-                .setTitle("About")
+                .setTitle(R.string.pref_about)
                 .setView(webView)
                 .setPositiveButton(R.string.ok, null)
                 .create();
