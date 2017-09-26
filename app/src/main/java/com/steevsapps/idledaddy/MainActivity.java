@@ -49,8 +49,6 @@ import java.util.Locale;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 
-import static com.steevsapps.idledaddy.R.id.avatar;
-
 
 public class MainActivity extends AppCompatActivity
         implements DialogListener, GamePickedListener, FetchGamesListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -225,7 +223,7 @@ public class MainActivity extends AppCompatActivity
 
         // Get avatar and username views from drawer header
         final View headerView = drawerView.getHeaderView(0);
-        avatarView = headerView.findViewById(avatar);
+        avatarView = headerView.findViewById(R.id.avatar);
         usernameView = headerView.findViewById(R.id.username);
         logoutToggle = headerView.findViewById(R.id.logout_toggle);
         headerView.setOnClickListener(new View.OnClickListener() {
