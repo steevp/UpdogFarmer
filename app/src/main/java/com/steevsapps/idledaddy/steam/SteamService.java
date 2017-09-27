@@ -27,8 +27,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.steevsapps.idledaddy.BuildConfig;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.listeners.LogcatDebugListener;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
 import com.steevsapps.idledaddy.utils.Utils;
@@ -79,6 +81,7 @@ import uk.co.thomasc.steamkit.util.WebHelpers;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
 import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
+import uk.co.thomasc.steamkit.util.logging.DebugLog;
 
 public class SteamService extends Service {
     private final static String TAG = SteamService.class.getSimpleName();
@@ -372,6 +375,9 @@ public class SteamService extends Service {
             // Create notification channel
             createChannel();
         }
+        if (BuildConfig.DEBUG) {
+            DebugLog.addListener(new LogcatDebugListener());
+        }
         startForeground(NOTIF_ID, buildNotification("Steam service started"));
     }
 
@@ -396,13 +402,6 @@ public class SteamService extends Service {
         stopFarming();
         executor.shutdownNow();
         scheduler.shutdownNow();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                steamClient.disconnect();
-                Log.i(TAG, "Disconnected!!");
-            }
-        }).start();
         // Somebody was getting IllegalArgumentException from this, possibly because I was calling
         // super.onDestroy() at the beginning, but I'll still catch it just to be safe.
         try {
@@ -605,12 +604,7 @@ public class SteamService extends Service {
         if (loginHandle != null) {
             loginHandle.cancel(true);
         }
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                steamClient.disconnect();
-            }
-        });
+        steamClient.disconnect();
     }
 
     public void redeemKey(final String key) {
