@@ -7,11 +7,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,6 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.steevsapps.idledaddy.fragments.TimeOutFragment;
+import com.steevsapps.idledaddy.listeners.TimeOutListener;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.utils.Prefs;
 
@@ -27,8 +29,11 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 
 import static com.steevsapps.idledaddy.steam.SteamService.LOGIN_EVENT;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements TimeOutListener {
     private final static String TAG = LoginActivity.class.getSimpleName();
+
+    private final static String LOGIN_IN_PROGRESS = "LOGIN_IN_PROGRESS";
+    private final static String TWO_FACTOR_REQUIRED = "TWO_FACTOR_REQUIRED";
 
     boolean isBound;
     private SteamService steamService;
@@ -44,19 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     };
 
-    // Timeout handler
-    private final static int TIMEOUT_MILLIS = 15000;
-    private final Handler timeoutHandler = new Handler();
-    private final Runnable timeoutRunnable = new Runnable() {
-        @Override
-        public void run() {
-            loginButton.setEnabled(true);
-            progress.setVisibility(View.GONE);
-            Snackbar.make(coordinatorLayout, R.string.timeout_error, Snackbar.LENGTH_LONG).show();
-            steamService.disconnect();
-        }
-    };
-
+    private boolean loginInProgress;
     private boolean twoFactorRequired;
 
     // Views
@@ -119,7 +112,11 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void startTimeout() {
         Log.i(TAG, "Starting timeout handler");
-        timeoutHandler.postDelayed(timeoutRunnable, TIMEOUT_MILLIS);
+        loginInProgress = true;
+        getSupportFragmentManager()
+                .beginTransaction()
+                .add(TimeOutFragment.newInstance(), TimeOutFragment.TAG)
+                .commit();
     }
 
     /**
@@ -127,7 +124,14 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void stopTimeout() {
         Log.i(TAG, "Stopping timeout handler");
-        timeoutHandler.removeCallbacks(timeoutRunnable);
+        loginInProgress = false;
+        final Fragment timeout = getSupportFragmentManager().findFragmentByTag(TimeOutFragment.TAG);
+        if (timeout != null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(timeout)
+                    .commit();
+        }
     }
 
     public static Intent createIntent(Context c) {
@@ -146,8 +150,23 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login);
         progress = findViewById(R.id.progress);
 
-        // Restore saved username if any
-        usernameInput.getEditText().setText(Prefs.getUsername());
+        if (savedInstanceState != null) {
+            loginInProgress = savedInstanceState.getBoolean(LOGIN_IN_PROGRESS);
+            twoFactorRequired = savedInstanceState.getBoolean(TWO_FACTOR_REQUIRED);
+            loginButton.setEnabled(!loginInProgress);
+            twoFactorInput.setVisibility(twoFactorRequired ? View.VISIBLE : View.GONE);
+            progress.setVisibility(loginInProgress ? View.VISIBLE : View.GONE);
+        } else {
+            // Restore saved username if any
+            usernameInput.getEditText().setText(Prefs.getUsername());
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(LOGIN_IN_PROGRESS, loginInProgress);
+        outState.putBoolean(TWO_FACTOR_REQUIRED, twoFactorRequired);
     }
 
     @Override
@@ -155,6 +174,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onPause();
         doUnbindService();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+
+        if (isFinishing()) {
+            stopTimeout();
+        }
     }
 
     @Override
@@ -163,12 +186,6 @@ public class LoginActivity extends AppCompatActivity {
         doBindService();
         final IntentFilter filter = new IntentFilter(LOGIN_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
-    }
-
-    @Override
-    protected void onDestroy() {
-        stopTimeout();
-        super.onDestroy();
     }
 
     public void doLogin(View v) {
@@ -189,5 +206,14 @@ public class LoginActivity extends AppCompatActivity {
             steamService.login(details);
             startTimeout();
         }
+    }
+
+    @Override
+    public void onTimeOut() {
+        stopTimeout();
+        loginButton.setEnabled(true);
+        progress.setVisibility(View.GONE);
+        Snackbar.make(coordinatorLayout, R.string.timeout_error, Snackbar.LENGTH_LONG).show();
+        steamService.disconnect();
     }
 }
