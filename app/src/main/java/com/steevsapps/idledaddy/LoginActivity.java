@@ -209,7 +209,7 @@ public class LoginActivity extends AppCompatActivity implements TimeoutListener 
     }
 
     @Override
-    public void onTimeOut() {
+    public void onTimeout() {
         stopTimeout();
         loginButton.setEnabled(true);
         progress.setVisibility(View.GONE);
