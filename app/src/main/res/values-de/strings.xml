@@ -60,4 +60,7 @@
     <string name="stopped">Gestoppt</string>
     <string name="idling_multiple">Mehrere Spiele Inaktiv</string>
     <string name="logged_out">Abgemeldet</string>
+    <!-- I Google translated these: -->
+    <string name="stop">Halt</string>
+    <string name="skip">Überspringen</string>
 </resources>

@@ -64,4 +64,7 @@
     <string name="stopped">Остановлено</string>
     <string name="idling_multiple">Idling multiple</string>
     <string name="logged_out">Вы вышли</string>
+    <!-- I Google translated these: -->
+    <string name="stop">Стоп</string>
+    <string name="skip">Пропускать</string>
 </resources>
