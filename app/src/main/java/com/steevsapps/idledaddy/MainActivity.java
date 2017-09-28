@@ -268,6 +268,7 @@ public class MainActivity extends AppCompatActivity
             logoutExpanded = savedInstanceState.getBoolean(LOGOUT_EXPANDED);
             setTitle(savedInstanceState.getString(TITLE));
             drawerView.getMenu().setGroupVisible(R.id.logout_group, logoutExpanded);
+            logoutToggle.setRotation(logoutExpanded ? 180 : 0);
         } else {
             logoutExpanded = false;
             selectItem(R.id.home, false);
