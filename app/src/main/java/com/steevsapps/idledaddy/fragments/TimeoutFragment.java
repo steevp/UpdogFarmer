@@ -21,7 +21,7 @@ public class TimeoutFragment extends Fragment {
         @Override
         public void run() {
             if (callback != null) {
-                callback.onTimeOut();
+                callback.onTimeout();
             }
         }
     };
