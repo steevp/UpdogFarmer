@@ -6,14 +6,14 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import com.steevsapps.idledaddy.listeners.TimeOutListener;
+import com.steevsapps.idledaddy.listeners.TimeoutListener;
 
 /**
  * Timeout handler that survives screen rotation
  */
-public class TimeOutFragment extends Fragment {
-    public final static String TAG = TimeOutFragment.class.getSimpleName();
-    private TimeOutListener callback;
+public class TimeoutFragment extends Fragment {
+    public final static String TAG = TimeoutFragment.class.getSimpleName();
+    private TimeoutListener callback;
 
     private final static int TIMEOUT_MILLIS = 15000;
     private final Handler timeoutHandler = new Handler();
@@ -26,17 +26,17 @@ public class TimeOutFragment extends Fragment {
         }
     };
 
-    public static TimeOutFragment newInstance() {
-        return new TimeOutFragment();
+    public static TimeoutFragment newInstance() {
+        return new TimeoutFragment();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            callback = (TimeOutListener) context;
+            callback = (TimeoutListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement TimeOutListener");
+            throw new ClassCastException(context.toString() + " must implement TimeoutListener");
         }
     }
 

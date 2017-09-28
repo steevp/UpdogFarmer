@@ -1,5 +1,5 @@
 package com.steevsapps.idledaddy.listeners;
 
-public interface TimeOutListener {
+public interface TimeoutListener {
     void onTimeOut();
 }
