@@ -19,8 +19,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.steevsapps.idledaddy.fragments.TimeOutFragment;
-import com.steevsapps.idledaddy.listeners.TimeOutListener;
+import com.steevsapps.idledaddy.fragments.TimeoutFragment;
+import com.steevsapps.idledaddy.listeners.TimeoutListener;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.utils.Prefs;
 
@@ -29,7 +29,7 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 
 import static com.steevsapps.idledaddy.steam.SteamService.LOGIN_EVENT;
 
-public class LoginActivity extends AppCompatActivity implements TimeOutListener {
+public class LoginActivity extends AppCompatActivity implements TimeoutListener {
     private final static String TAG = LoginActivity.class.getSimpleName();
 
     private final static String LOGIN_IN_PROGRESS = "LOGIN_IN_PROGRESS";
@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements TimeOutListener 
         loginInProgress = true;
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(TimeOutFragment.newInstance(), TimeOutFragment.TAG)
+                .add(TimeoutFragment.newInstance(), TimeoutFragment.TAG)
                 .commit();
     }
 
@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity implements TimeOutListener 
     private void stopTimeout() {
         Log.i(TAG, "Stopping timeout handler");
         loginInProgress = false;
-        final Fragment timeout = getSupportFragmentManager().findFragmentByTag(TimeOutFragment.TAG);
+        final Fragment timeout = getSupportFragmentManager().findFragmentByTag(TimeoutFragment.TAG);
         if (timeout != null) {
             getSupportFragmentManager()
                     .beginTransaction()
