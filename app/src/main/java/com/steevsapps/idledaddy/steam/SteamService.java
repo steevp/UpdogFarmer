@@ -482,7 +482,7 @@ public class SteamService extends Service {
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
         return new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(text)
                 .setContentIntent(pendingIntent)
@@ -501,7 +501,7 @@ public class SteamService extends Service {
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setStyle(new MediaStyle())
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.now_playing2, game.name))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -560,7 +560,7 @@ public class SteamService extends Service {
         final Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(msg))
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.idling_multiple))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
