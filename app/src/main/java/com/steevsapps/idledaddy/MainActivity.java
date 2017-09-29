@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
@@ -88,6 +89,12 @@ public class MainActivity extends AppCompatActivity
             updateDrawerHeader(null);
             if (farming) {
                 showDropInfo();
+            }
+
+            // Check if a Steam key was sent to us from another app
+            final Intent intent = getIntent();
+            if (intent.getAction().equals(Intent.ACTION_SEND)) {
+                handleKeyIntent(intent);
             }
         }
 
@@ -302,6 +309,19 @@ public class MainActivity extends AppCompatActivity
         outState.putInt(DRAWER_ITEM, drawerItemId);
         outState.putString(TITLE, title);
         outState.putBoolean(LOGOUT_EXPANDED, logoutExpanded);
+    }
+
+    /**
+     * Activate a Steam key sent from another app
+     */
+    private void handleKeyIntent(Intent intent) {
+        final String key = intent.getStringExtra(Intent.EXTRA_TEXT).trim();
+        if (loggedIn) {
+            steamService.redeemKey(key);
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
+        }
+        finish();
     }
 
     private void selectItem(int id, boolean addToBackStack) {
