@@ -192,11 +192,11 @@ public class SteamService extends Service {
                 final Boolean notInGame = WebScraper.checkIfNotInGame(generateWebCookies());
                 if (notInGame == null) {
                     Log.i(TAG, "Invalid cookie data or no internet, reconnecting...");
-                    disconnect();
+                    steamClient.disconnect();
                 } else if (notInGame) {
                     Log.i(TAG, "Finished");
                     waiting = false;
-                    disconnect();
+                    steamClient.disconnect();
                     waitHandle.cancel(false);
                 }
             } catch (Exception e) {
@@ -215,7 +215,7 @@ public class SteamService extends Service {
         @Override
         public void run() {
             Log.i(TAG, "Reconnecting (connection timed out)");
-            disconnect();
+            steamClient.disconnect();
         }
     }
 
@@ -276,7 +276,7 @@ public class SteamService extends Service {
 
         if (gamesToFarm == null) {
             Log.i(TAG, "Invalid cookie data or no internet, reconnecting");
-            disconnect();
+            steamClient.disconnect();
             return;
         }
 
@@ -658,7 +658,12 @@ public class SteamService extends Service {
         if (loginHandle != null) {
             loginHandle.cancel(true);
         }
-        steamClient.disconnect();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                steamClient.disconnect();
+            }
+        });
     }
 
     public void redeemKey(final String key) {
@@ -773,7 +778,7 @@ public class SteamService extends Service {
                     }
                 } else {
                     // Reconnect
-                    disconnect();
+                    steamClient.disconnect();
                 }
             }
         });
@@ -827,7 +832,7 @@ public class SteamService extends Service {
                     }
 
                     // Reconnect
-                    disconnect();
+                    steamClient.disconnect();
                 }
 
                 // Tell LoginActivity the result

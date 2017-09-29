@@ -147,6 +147,9 @@ public class MainActivity extends AppCompatActivity
         logoutExpanded = false;
         logoutToggle.setRotation(0);
         drawerView.getMenu().setGroupVisible(R.id.logout_group, false);
+        loggedIn = false;
+        farming = false;
+        updateStatus();
     }
 
     /**
