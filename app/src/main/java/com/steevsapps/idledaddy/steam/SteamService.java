@@ -30,6 +30,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.steevsapps.idledaddy.BuildConfig;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.handlers.FreeLicense;
+import com.steevsapps.idledaddy.handlers.FreeLicenseCallback;
 import com.steevsapps.idledaddy.listeners.LogcatDebugListener;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
@@ -107,6 +109,7 @@ public class SteamService extends Service {
     private SteamClient steamClient;
     private SteamUser steamUser;
     private SteamFriends steamFriends;
+    private FreeLicense freeLicense;
     private int farmIndex = 0;
     private List<Game> gamesToFarm;
     private Game currentGame;
@@ -375,6 +378,8 @@ public class SteamService extends Service {
         steamClient = new SteamClient();
         steamUser = steamClient.getHandler(SteamUser.class);
         steamFriends = steamClient.getHandler(SteamFriends.class);
+        steamClient.addHandler(new FreeLicense());
+        freeLicense = steamClient.getHandler(FreeLicense.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create notification channel
             createChannel();
@@ -666,8 +671,15 @@ public class SteamService extends Service {
         });
     }
 
+    /**
+     * Redeem Steam key or activate free license
+     */
     public void redeemKey(final String key) {
-        steamUser.registerProductKey(key);
+        if (key.matches("\\d+")) {
+            freeLicense.requestFreeLicense(Integer.parseInt(key));
+        } else {
+            steamUser.registerProductKey(key);
+        }
     }
 
 
@@ -915,7 +927,7 @@ public class SteamService extends Service {
                 if (callback.getResult() == EResult.OK) {
                     final KeyValue kv = callback.getPurchaseReceiptInfo().getKeyValues();
                     if (kv.get("PaymentMethod").asInteger() == EPaymentMethod.ActivationCode.v()) {
-                        final StringBuilder products = new StringBuilder("Activated: ");
+                        final StringBuilder products = new StringBuilder();
                         final int size = kv.get("LineItemCount").asInteger();
                         Log.i(TAG, "LineItemCount " + size);
                         for (int i=0;i<size;i++) {
@@ -929,7 +941,7 @@ public class SteamService extends Service {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(getApplicationContext(), products.toString(), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), getString(R.string.activated, products.toString()), Toast.LENGTH_LONG).show();
                             }
                         });
                     }
@@ -967,6 +979,47 @@ public class SteamService extends Service {
                 }
             }
         });
+        msg.handle(FreeLicenseCallback.class, new ActionT<FreeLicenseCallback>() {
+            @Override
+            public void call(FreeLicenseCallback callback) {
+                final EResult result = callback.getResult();
+                final int[] grantedApps = callback.getGrantedApps();
+                final int[] grantedPackages = callback.getGrantedPackages();
+                final StringBuilder builder = new StringBuilder();
+                final String msg;
+
+                if (result == EResult.OK) {
+                    if (grantedApps.length > 0) {
+                        for (int i = 0, size = grantedApps.length; i < size; i++) {
+                            builder.append(grantedApps[i]);
+                            if (i + 1 < size) {
+                                builder.append(", ");
+                            }
+                        }
+                        msg = getString(R.string.activated, builder.toString());
+                    } else if (grantedPackages.length > 0) {
+                        for (int i = 0, size = grantedPackages.length; i < size; i++) {
+                            builder.append(grantedApps[i]);
+                            if (i + 1 < size) {
+                                builder.append(", ");
+                            }
+                        }
+                        msg = getString(R.string.activated, builder.toString());
+                    } else {
+                        msg = getString(R.string.activation_failed);
+                    }
+                } else {
+                    msg = getString(R.string.activation_failed);
+                }
+
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(SteamService.this, msg, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -976,7 +1029,6 @@ public class SteamService extends Service {
     private void playGame(int appId) {
         steamUser.setPlayingGame(appId);
     }
-
 
     /**
      * Idle multiple games at once
