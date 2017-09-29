@@ -31,6 +31,6 @@ public class FreeLicenseCallback extends CallbackMsg {
     }
 
     public int[] getGrantedPackages() {
-        return grantedApps;
+        return grantedPackages;
     }
 }
