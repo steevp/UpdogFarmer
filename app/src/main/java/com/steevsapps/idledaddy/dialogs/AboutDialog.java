@@ -12,6 +12,8 @@ import android.webkit.WebView;
 import com.steevsapps.idledaddy.R;
 
 public class AboutDialog extends DialogFragment {
+    public final static String TAG = AboutDialog.class.getSimpleName();
+
     public static AboutDialog newInstance() {
         return new AboutDialog();
     }
@@ -23,7 +25,7 @@ public class AboutDialog extends DialogFragment {
         webView.loadUrl("file:///android_asset/about.html");
         webView.setBackgroundColor(Color.TRANSPARENT);
         return new AlertDialog.Builder(getActivity())
-                .setTitle(R.string.pref_about)
+                .setTitle(R.string.about)
                 .setView(webView)
                 .setPositiveButton(R.string.ok, null)
                 .create();
