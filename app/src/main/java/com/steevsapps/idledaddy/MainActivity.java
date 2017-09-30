@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity
 
             // Check if a Steam key was sent to us from another app
             final Intent intent = getIntent();
-            if (intent.getAction().equals(Intent.ACTION_SEND)) {
+            if (Intent.ACTION_SEND.equals(intent.getAction())) {
                 handleKeyIntent(intent);
             }
         }
