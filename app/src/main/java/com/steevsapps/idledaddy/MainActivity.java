@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
 import com.steevsapps.idledaddy.fragments.DataFragment;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
@@ -220,12 +221,20 @@ public class MainActivity extends AppCompatActivity
         drawerView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if (item.getItemId() == R.id.logout) {
-                    // No page for this, just logout
-                    doLogout();
-                } else {
-                    // Go to page
-                    selectItem(item.getItemId(), true);
+                switch (item.getItemId()) {
+                    case R.id.logout:
+                        // No page for this
+                        doLogout();
+                        break;
+                    case R.id.about:
+                        // Same here
+                        AboutDialog.newInstance().show(getSupportFragmentManager(), AboutDialog.TAG);
+                        closeDrawer();
+                        break;
+                    default:
+                        // Go to page
+                        selectItem(item.getItemId(), true);
+                        break;
                 }
                 return true;
             }

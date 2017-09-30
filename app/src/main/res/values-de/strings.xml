@@ -60,8 +60,7 @@
     <string name="stopped">Gestoppt</string>
     <string name="idling_multiple">Mehrere Spiele Inaktiv</string>
     <string name="logged_out">Abgemeldet</string>
-    <string name="pref_about">Über</string>
-    <string name="sum_about">Quellcode, Kredite, etc.</string>
+    <string name="about">Über</string>
     <string name="stop">Stop</string>
     <string name="skip">Überspringen</string>
 </resources>

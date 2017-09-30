@@ -30,9 +30,4 @@
         android:summary="@string/sum_minimize_data"
         android:defaultValue="false" />
 
-    <Preference
-        android:key="about"
-        android:title="@string/pref_about"
-        android:summary="@string/sum_about" />
-
 </PreferenceScreen>
