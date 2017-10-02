@@ -1111,7 +1111,7 @@ public class SteamService extends Service {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(sentryFile);
-                final byte[] data = new byte[fis.available()];
+                final byte[] data = new byte[(int) sentryFile.length()];
                 fis.read(data);
                 return data;
             } catch (IOException e) {
