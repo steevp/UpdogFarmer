@@ -17,7 +17,7 @@
     <string name="settings">Settings</string>
     <string name="logout">Logout</string>
     <string name="redeem">Activate Product</string>
-    <string name="redeem_msg">Enter your product code or game id:</string>
+    <string name="redeem_msg">Enter a product code or free game ID</string>
     <string name="ok">OK</string>
     <string name="cat_idle">Idle settings</string>
     <string name="pref_offline">Offline Farming</string>
