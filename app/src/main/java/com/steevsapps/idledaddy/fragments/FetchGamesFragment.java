@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
 import com.steevsapps.idledaddy.listeners.FetchGamesListener;
-import com.steevsapps.idledaddy.steam.WebScraper;
+import com.steevsapps.idledaddy.steam.SteamWebHandler;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class FetchGamesFragment extends Fragment {
     private class FetchGamesTask extends AsyncTask<Void,Void,List<Game>> {
         @Override
         protected List<Game> doInBackground(Void... voids) {
-            return WebScraper.getGamesOwned(steamId);
+            return SteamWebHandler.getGamesOwned(steamId);
         }
 
         @Override

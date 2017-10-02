@@ -42,7 +42,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -76,13 +75,9 @@ import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.JobCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.CMListCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
-import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
 import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
-import uk.co.thomasc.steamkit.util.KeyDictionary;
-import uk.co.thomasc.steamkit.util.WebHelpers;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
-import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
 import uk.co.thomasc.steamkit.util.logging.DebugLog;
 
 public class SteamService extends Service {
@@ -110,6 +105,8 @@ public class SteamService extends Service {
     private SteamUser steamUser;
     private SteamFriends steamFriends;
     private FreeLicense freeLicense;
+    private SteamWebHandler webHandler = SteamWebHandler.getInstance();
+
     private int farmIndex = 0;
     private List<Game> gamesToFarm;
     private Game currentGame;
@@ -123,15 +120,8 @@ public class SteamService extends Service {
     private volatile boolean farming = false;
     private volatile boolean waiting = false;
 
-    private String webApiUserNonce;
-    private String sessionId;
-    private String token;
-    private String tokenSecure;
-    private String sentryHash;
-    private String steamParental;
-    private boolean authenticated = false;
-    private boolean loggedIn = false;
     private long steamId;
+    private boolean loggedIn = false;
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
@@ -192,7 +182,7 @@ public class SteamService extends Service {
         public void run() {
             try {
                 Log.i(TAG, "Checking if we can resume idling...");
-                final Boolean notInGame = WebScraper.checkIfNotInGame(generateWebCookies());
+                final Boolean notInGame = webHandler.checkIfNotInGame();
                 if (notInGame == null) {
                     Log.i(TAG, "Invalid cookie data or no internet, reconnecting...");
                     steamClient.disconnect();
@@ -261,7 +251,7 @@ public class SteamService extends Service {
     private void farm() {
         Log.i(TAG, "Checking remaining card drops");
         for (int i=0;i<3;i++) {
-            gamesToFarm = WebScraper.getRemainingGames(generateWebCookies());
+            gamesToFarm = webHandler.getRemainingGames();
             if (gamesToFarm != null) {
                 Log.i(TAG, "gotem");
                 break;
@@ -330,7 +320,7 @@ public class SteamService extends Service {
         }
 
         // Reset inventory notifications
-        WebScraper.viewInventory(generateWebCookies());
+        webHandler.viewInventory();
     }
 
     private void skipGame() {
@@ -714,7 +704,6 @@ public class SteamService extends Service {
         details.loginkey = loginKey;
         if (sentryData != null) {
             details.sentryFileHash = CryptoHelper.SHAHash(sentryData);
-            sentryHash = Utils.bytesToHex(details.sentryFileHash);
         }
         details.shouldRememberPassword = true;
         login(details);
@@ -800,7 +789,7 @@ public class SteamService extends Service {
                 final EResult result = callback.getResult();
                 Log.i(TAG, result.toString());
 
-                webApiUserNonce = callback.getWebAPIUserNonce();
+                final String webApiUserNonce = callback.getWebAPIUserNonce();
 
                 if (result == EResult.OK) {
                     loggedIn = true;
@@ -811,7 +800,7 @@ public class SteamService extends Service {
                         public void run() {
                             boolean gotAuth = false;
                             for (int i=0;i<3;i++) {
-                                gotAuth = authenticate();
+                                gotAuth = webHandler.authenticate(steamClient, webApiUserNonce);
                                 Log.i(TAG, "Got auth? "  + gotAuth);
                                 if (gotAuth) {
                                     break;
@@ -884,7 +873,7 @@ public class SteamService extends Service {
 
                     steamUser.sendMachineAuthResponse(auth);
 
-                    sentryHash = Utils.bytesToHex(sha1);
+                    final String sentryHash = Utils.bytesToHex(sha1);
                     Prefs.writeSentryHash(sentryHash);
                 }
             }
@@ -982,42 +971,25 @@ public class SteamService extends Service {
         msg.handle(FreeLicenseCallback.class, new ActionT<FreeLicenseCallback>() {
             @Override
             public void call(FreeLicenseCallback callback) {
-                final EResult result = callback.getResult();
                 final int[] grantedApps = callback.getGrantedApps();
                 final int[] grantedPackages = callback.getGrantedPackages();
-                final StringBuilder builder = new StringBuilder();
-                final String msg;
 
-                if (result == EResult.OK) {
-                    if (grantedApps.length > 0) {
-                        for (int i = 0, size = grantedApps.length; i < size; i++) {
-                            builder.append(grantedApps[i]);
-                            if (i + 1 < size) {
-                                builder.append(", ");
-                            }
+                if (grantedApps.length > 0 || grantedPackages.length > 0) {
+                    final int appId = (grantedApps.length > 0) ? grantedApps[0] : grantedPackages[0];
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SteamService.this, getString(R.string.activated, String.valueOf(appId)), Toast.LENGTH_LONG).show();
                         }
-                        msg = getString(R.string.activated, builder.toString());
-                    } else if (grantedPackages.length > 0) {
-                        for (int i = 0, size = grantedPackages.length; i < size; i++) {
-                            builder.append(grantedApps[i]);
-                            if (i + 1 < size) {
-                                builder.append(", ");
-                            }
-                        }
-                        msg = getString(R.string.activated, builder.toString());
-                    } else {
-                        msg = getString(R.string.activation_failed);
-                    }
+                    });
                 } else {
-                    msg = getString(R.string.activation_failed);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SteamService.this, getString(R.string.activation_failed), Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
-
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(SteamService.this, msg, Toast.LENGTH_LONG).show();
-                    }
-                });
             }
         });
     }
@@ -1056,28 +1028,6 @@ public class SteamService extends Service {
     private void stopPlaying() {
         currentGame = null;
         steamUser.setPlayingGame(0);
-    }
-
-    /**
-     * Generate Steam web cookies
-     * @return Map of the cookies or null
-     */
-    public Map<String,String> generateWebCookies() {
-        if (!authenticated) {
-            return null;
-        }
-
-        final Map<String, String> cookies = new HashMap<>();
-        cookies.put("sessionid", sessionId);
-        cookies.put("steamLogin", token);
-        cookies.put("steamLoginSecure", tokenSecure);
-        if (sentryHash != null) {
-            cookies.put("steamMachineAuth" + steamId, sentryHash);
-        }
-        if (steamParental != null) {
-            cookies.put("steamparental", steamParental);
-        }
-        return cookies;
     }
 
     private void writeSentryFile(byte[] data) {
@@ -1127,61 +1077,5 @@ public class SteamService extends Service {
             }
         }
         return null;
-    }
-
-    /**
-     * Authenticate. This does the same as SteamWeb.DoLogin(),
-     * but without contacting the Steam Website.
-     * Should this one stop working, use SteamWeb.DoLogin().
-     */
-    public boolean authenticate() {
-        authenticated = false;
-
-        //sessionId = Base64.encodeToString(String.valueOf(callback.getUniqueId()).getBytes(), Base64.DEFAULT);
-        sessionId = Utils.bytesToHex(CryptoHelper.GenerateRandomBlock(4));
-
-        final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);
-        // generate an AES session key
-        final byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);
-
-        // rsa encrypt it with the public key for the universe we're on
-        byte[] cryptedSessionKey = null;
-        final byte[] publicKey = KeyDictionary.getPublicKey(steamClient.getConnectedUniverse());
-        if (publicKey == null) {
-            return false;
-        }
-        final RSACrypto rsa = new RSACrypto(publicKey);
-        cryptedSessionKey = rsa.encrypt(sessionKey);
-
-        final byte[] loginKey = new byte[20];
-        System.arraycopy(webApiUserNonce.getBytes(), 0, loginKey, 0, webApiUserNonce.length());
-
-        // aes encrypt the loginkey with our session key
-        final byte[] cryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
-
-        KeyValue authResult;
-
-        try {
-            authResult = userAuth.authenticateUser(String.valueOf(steamId), WebHelpers.UrlEncode(cryptedSessionKey), WebHelpers.UrlEncode(cryptedLoginKey), "POST", "true");
-        } catch (final Exception e) {
-            return false;
-        }
-
-        if (authResult == null) {
-            return false;
-        }
-
-        token = authResult.get("token").asString();
-        tokenSecure = authResult.get("tokenSecure").asString();
-
-        authenticated = true;
-
-        final String pin = Prefs.getParentalPin().trim();
-        if (!pin.isEmpty()) {
-            // Unlock family view
-            steamParental = WebScraper.unlockParental(pin, generateWebCookies());
-        }
-
-        return true;
     }
 }
