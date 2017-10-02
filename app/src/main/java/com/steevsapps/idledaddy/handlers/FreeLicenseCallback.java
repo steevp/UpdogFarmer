@@ -10,12 +10,14 @@ public class FreeLicenseCallback extends CallbackMsg {
     private EResult result;
     private int[] grantedApps;
     private int[] grantedPackages;
+    private int gameId;
 
-    FreeLicenseCallback(JobID jobID, SteammessagesClientserver2.CMsgClientRequestFreeLicenseResponse msg) {
+    FreeLicenseCallback(JobID jobID, SteammessagesClientserver2.CMsgClientRequestFreeLicenseResponse msg, int gameId) {
         this.jobId = jobID;
         result = EResult.f(msg.eresult);
         grantedApps = msg.grantedAppids;
         grantedPackages = msg.grantedPackageids;
+        this.gameId = gameId;
     }
 
     public JobID getJobId() {
@@ -32,5 +34,9 @@ public class FreeLicenseCallback extends CallbackMsg {
 
     public int[] getGrantedPackages() {
         return grantedPackages;
+    }
+
+    public int getGameId() {
+        return gameId;
     }
 }

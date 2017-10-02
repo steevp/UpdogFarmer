@@ -970,23 +970,36 @@ public class SteamService extends Service {
         });
         msg.handle(FreeLicenseCallback.class, new ActionT<FreeLicenseCallback>() {
             @Override
-            public void call(FreeLicenseCallback callback) {
+            public void call(final FreeLicenseCallback callback) {
+                final int gameId = callback.getGameId();
                 final int[] grantedApps = callback.getGrantedApps();
                 final int[] grantedPackages = callback.getGrantedPackages();
 
                 if (grantedApps.length > 0 || grantedPackages.length > 0) {
-                    final int appId = (grantedApps.length > 0) ? grantedApps[0] : grantedPackages[0];
+                    // Granted
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(SteamService.this, getString(R.string.activated, String.valueOf(appId)), Toast.LENGTH_LONG).show();
+                            Toast.makeText(SteamService.this, getString(R.string.activated, String.valueOf(gameId)), Toast.LENGTH_LONG).show();
                         }
                     });
                 } else {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    // Try activating it with the web handler
+                    executor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(SteamService.this, getString(R.string.activation_failed), Toast.LENGTH_LONG).show();
+                            final String msg;
+                            if (webHandler.addFreeLicense(gameId)) {
+                                msg = getString(R.string.activated, String.valueOf(gameId));
+                            } else {
+                                msg = getString(R.string.activation_failed);
+                            }
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(SteamService.this, msg, Toast.LENGTH_LONG).show();
+                                }
+                            });
                         }
                     });
                 }
