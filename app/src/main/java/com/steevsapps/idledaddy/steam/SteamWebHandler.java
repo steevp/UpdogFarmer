@@ -326,7 +326,7 @@ public class SteamWebHandler {
             return null;
         }
 
-        return doc.select("div.profile_in_game_name").first() != null;
+        return doc.select("div.profile_in_game_name").first() == null;
     }
 
     /**
