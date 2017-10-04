@@ -95,7 +95,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         }
 
         holder.nowPlaying.setVisibility((game.appId == currentAppId) ? View.VISIBLE : View.GONE);
-        
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
