@@ -9,7 +9,7 @@
     <string name="steamguard">Steam Guard kód</string>
     <string name="login">Přihlásit se</string>
     <string name="start_idling">Začít farmit</string>
-    <string name="desc_start">Idles your games until all trading cards have dropped.</string>
+    <string name="desc_start">Farmí tvé hry, dokud  nezíská všechny karty.</string>
     <string name="stop_idling">Zastavit službu</string>
     <string name="desc_stop">Zastaví Steam službu a zavře aplikaci</string>
     <string name="idling_finished">Farmení dokončeno.</string>
@@ -17,7 +17,7 @@
     <string name="settings">Nastavení</string>
     <string name="logout">Odhlásit se</string>
     <string name="redeem">Aktivovat produkt</string>
-    <string name="redeem_msg">Vlož ID produkty nebo ID hry zdarma</string>
+    <string name="redeem_msg">Vlož produktový klíč</string>
     <string name="ok">OK</string>
     <string name="cat_idle">Nastavení Farmení</string>
     <string name="pref_offline">Offline Farmení</string>
