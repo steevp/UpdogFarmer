@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
@@ -106,6 +107,7 @@ public class SteamService extends Service {
     private SteamFriends steamFriends;
     private FreeLicense freeLicense;
     private SteamWebHandler webHandler = SteamWebHandler.getInstance();
+    private PowerManager.WakeLock wakeLock;
 
     private int farmIndex = 0;
     private List<Game> gamesToFarm;
@@ -370,6 +372,10 @@ public class SteamService extends Service {
         steamFriends = steamClient.getHandler(SteamFriends.class);
         steamClient.addHandler(new FreeLicense());
         freeLicense = steamClient.getHandler(FreeLicense.class);
+        // Acquire WakeLock to keep the CPU from sleeping
+        final PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "IdleDaddyWakeLock");
+        wakeLock.acquire();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create notification channel
             createChannel();
@@ -401,6 +407,7 @@ public class SteamService extends Service {
         stopFarming();
         executor.shutdownNow();
         scheduler.shutdownNow();
+        wakeLock.release();
         // Somebody was getting IllegalArgumentException from this, possibly because I was calling
         // super.onDestroy() at the beginning, but I'll still catch it just to be safe.
         try {
