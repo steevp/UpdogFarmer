@@ -12,7 +12,8 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:layout_gravity="center_vertical"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@drawable/game_item_background">
 
         <ImageView
             android:id="@+id/logo"
@@ -27,15 +28,6 @@
             android:textSize="@dimen/text_size_small"
             android:maxLines="1"
             android:ellipsize="end" />
-
-        <TextView
-            android:id="@+id/now_playing"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/now_playing"
-            android:textSize="@dimen/text_size_small"
-            android:textColor="@color/green"
-            android:visibility="gone" />
 
     </LinearLayout>
 
