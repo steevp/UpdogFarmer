@@ -64,6 +64,7 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamfriends.callbacks.PersonaStat
 import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.callbacks.NotificationUpdateCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamnotifications.types.NotificationType;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.SteamUser;
+import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.AccountInfoCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOffCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOnCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoginKeyCallback;
@@ -860,10 +861,6 @@ public class SteamService extends Service {
                             }
                         }
                     });
-
-                    if (!Prefs.getOffline()) {
-                        steamFriends.setPersonaState(EPersonaState.Online);
-                    }
                 } else {
                     if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
                         // Probably no longer valid
@@ -1043,6 +1040,32 @@ public class SteamService extends Service {
                         }
                     });
                 }
+            }
+        });
+        msg.handle(AccountInfoCallback.class, new ActionT<AccountInfoCallback>() {
+            @Override
+            public void call(AccountInfoCallback callback) {
+                if (Prefs.getOffline()) {
+                    return;
+                }
+
+                // Try to delay calling setPersonaState until persona name is ready. Thanks ASF
+                int tries = 0;
+                String nickname;
+                while (tries < 5) {
+                    nickname = steamFriends.getPersonaName();
+                    if (nickname != null && !nickname.equals("[unassigned]")) {
+                        break;
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    tries++;
+                }
+
+                steamFriends.setPersonaState(EPersonaState.Online);
             }
         });
     }
