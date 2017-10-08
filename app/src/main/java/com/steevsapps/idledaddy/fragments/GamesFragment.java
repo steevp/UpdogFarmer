@@ -22,12 +22,13 @@ import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GamesFragment extends Fragment implements SearchView.OnQueryTextListener {
     private final static String TAG = GamesFragment.class.getSimpleName();
     private final static String STEAM_ID = "STEAM_ID";
-    private final static String CURRENT_APPID = "CURRENT_APPID";
+    private final static String CURRENT_APPIDS = "CURRENT_APPIDS";
 
     private RecyclerView recyclerView;
     private GamesAdapter adapter;
@@ -39,20 +40,20 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     private FloatingActionButton fab;
 
     private long steamId;
-    private int currentAppId;
+    private ArrayList<Integer> currentAppIds;
 
-    public static GamesFragment newInstance(long steamId, int currentAppId) {
+    public static GamesFragment newInstance(long steamId, ArrayList<Integer> currentAppIds) {
         final GamesFragment fragment = new GamesFragment();
         final Bundle args = new Bundle();
         args.putLong(STEAM_ID, steamId);
-        args.putInt(CURRENT_APPID, currentAppId);
+        args.putIntegerArrayList(CURRENT_APPIDS, currentAppIds);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public void update(int appId) {
-        currentAppId = appId;
-        adapter.setCurrentAppId(appId);
+    public void update(ArrayList<Integer> appIds) {
+        currentAppIds = appIds;
+        adapter.setCurrentAppIds(appIds);
     }
 
     @Override
@@ -60,9 +61,9 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         super.onCreate(savedInstanceState);
         steamId = getArguments().getLong(STEAM_ID);
         if (savedInstanceState != null) {
-            currentAppId = savedInstanceState.getInt(CURRENT_APPID);
+            currentAppIds = savedInstanceState.getIntegerArrayList(CURRENT_APPIDS);
         } else {
-            currentAppId = getArguments().getInt(CURRENT_APPID);
+            currentAppIds = getArguments().getIntegerArrayList(CURRENT_APPIDS);
             if (steamId == 0) {
                 Toast.makeText(getActivity(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
             }
@@ -73,7 +74,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(CURRENT_APPID, adapter.getCurrentAppId());
+        outState.putIntegerArrayList(CURRENT_APPIDS, currentAppIds);
     }
 
     @Nullable
@@ -85,7 +86,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         adapter = new GamesAdapter(recyclerView.getContext());
-        adapter.setCurrentAppId(currentAppId);
+        adapter.setCurrentAppIds(currentAppIds);
         recyclerView.setAdapter(adapter);
         emptyView = view.findViewById(R.id.empty_view);
         progressBar = view.findViewById(R.id.progress);
@@ -97,7 +98,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         dataFragment = (DataFragment) getActivity().getSupportFragmentManager().findFragmentByTag("data");
         if (dataFragment != null) {
             // Restore games list
-            Log.i(TAG, "Restoring " + currentAppId);
+            Log.i(TAG, "Restoring games list");
             updateGames(dataFragment.getData());
         } else {
             // Fetch games list
