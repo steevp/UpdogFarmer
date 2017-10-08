@@ -25,7 +25,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     private List<Game> dataSetCopy = new ArrayList<>();
     private Context context;
     private GamePickedListener callback;
-    private int currentAppId = 0;
+    private ArrayList<Integer> currentAppIds;
 
     public GamesAdapter(Context c) {
         context = c;
@@ -65,15 +65,9 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public void setCurrentAppId(int appId) {
-        if (appId != currentAppId) {
-            currentAppId = appId;
-            notifyDataSetChanged();
-        }
-    }
-
-    public int getCurrentAppId() {
-        return currentAppId;
+    public void setCurrentAppIds(ArrayList<Integer> appIds) {
+        currentAppIds = appIds;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -83,7 +77,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final Game game = dataSet.get(position);
         holder.name.setText(game.name);
         if (!Prefs.minimizeData()) {
@@ -94,13 +88,20 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
             holder.logo.setImageResource(R.drawable.ic_image_white_48dp);
         }
 
-        holder.nowPlaying.setVisibility((game.appId == currentAppId) ? View.VISIBLE : View.GONE);
+        holder.nowPlaying.setVisibility(currentAppIds.contains(game.appId) ? View.VISIBLE : View.GONE);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setCurrentAppId(game.appId);
-                callback.onGamePicked(game);
+                if (!currentAppIds.contains(game.appId) && currentAppIds.size() < 32) {
+                    currentAppIds.add(game.appId);
+                    holder.nowPlaying.setVisibility(View.VISIBLE);
+                    callback.onGamePicked(game);
+                } else {
+                    currentAppIds.remove(Integer.valueOf(game.appId));
+                    holder.nowPlaying.setVisibility(View.GONE);
+                    callback.onGameRemoved(game);
+                }
             }
         });
     }

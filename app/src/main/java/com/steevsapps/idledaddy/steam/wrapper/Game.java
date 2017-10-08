@@ -37,4 +37,34 @@ public class Game implements Comparable<Game> {
         }
         return hoursPlayed < game.hoursPlayed ? -1 : 1;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        final Game otherGame = (Game) obj;
+        return otherGame.appId == appId && otherGame.name.equals(name) &&
+                otherGame.iconUrl.equals(iconUrl) && otherGame.hoursPlayed == hoursPlayed &&
+                otherGame.dropsRemaining == dropsRemaining;
+    }
+
+    @Override
+    public int hashCode() {
+        // Start with a non-zero constant. Prime is preferred
+        int result = 17;
+        // Include a hash for each field
+        result = 31 * result + appId;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + iconUrl.hashCode();
+        result = 31 * result + Float.floatToIntBits(hoursPlayed);
+        result = 31 * result + dropsRemaining;
+        return result;
+    }
 }

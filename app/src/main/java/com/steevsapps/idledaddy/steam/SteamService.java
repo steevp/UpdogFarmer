@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,7 @@ public class SteamService extends Service {
 
     private int farmIndex = 0;
     private List<Game> gamesToFarm;
-    private Game currentGame;
+    private List<Game> currentGames = new ArrayList<>();
     private int gameCount = 0;
     private int cardCount = 0;
     private String personaName = "";
@@ -217,15 +218,19 @@ public class SteamService extends Service {
     private final TimeoutTask timeoutTask = new TimeoutTask();
 
     public void startFarming() {
-        farming = true;
-        executor.execute(farmTask);
+        if (!farming) {
+            farming = true;
+            executor.execute(farmTask);
+        }
     }
 
     public void stopFarming() {
-        farming = false;
-        farmIndex = 0;
-        currentGame = null;
-        unscheduleFarmTask();
+        if (farming) {
+            farming = false;
+            farmIndex = 0;
+            currentGames.clear();
+            unscheduleFarmTask();
+        }
     }
 
     /**
@@ -239,14 +244,17 @@ public class SteamService extends Service {
         if (farming) {
             Log.i(TAG, "Resume farming");
             executor.execute(farmTask);
-        } else if (currentGame != null) {
+        } else if (currentGames.size() == 1) {
             Log.i(TAG, "Resume playing");
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    idleSingle(currentGame);
+                    idleSingle(currentGames.get(0));
                 }
             });
+        } else if (currentGames.size() > 1) {
+            Log.i(TAG, "Resume playing (multiple)");
+            idleMultiple(currentGames);
         }
     }
 
@@ -446,11 +454,12 @@ public class SteamService extends Service {
         return farming;
     }
 
-    public int getCurrentAppId() {
-        if (currentGame != null) {
-            return currentGame.appId;
+    public ArrayList<Integer> getCurrentAppIds() {
+        final ArrayList<Integer> appIds = new ArrayList<>();
+        for (Game game : currentGames) {
+            appIds.add(game.appId);
         }
-        return 0;
+        return appIds;
     }
 
     public int getGameCount() {
@@ -583,18 +592,20 @@ public class SteamService extends Service {
         notificationManager.notify(NOTIF_ID, buildNotification(text));
     }
 
-    public void idleSingle(Game game) {
+    private void idleSingle(Game game) {
         Log.i(TAG, "Now playing " + game.name);
-        currentGame = game;
+        currentGames.clear();
+        currentGames.add(game);
         playGame(game.appId);
         showIdleNotification(game);
     }
 
-    public void idleMultiple(List<Game> games) {
+    private void idleMultiple(List<Game> games) {
         Log.i(TAG, "Idling multiple");
-        currentGame = null;
+        final List<Game> gamesCopy = new ArrayList<>(games);
+        currentGames.clear();
 
-        int size = games.size();
+        int size = gamesCopy.size();
         if (size > 32) {
             size = 32;
         }
@@ -602,7 +613,8 @@ public class SteamService extends Service {
         final int[] appIds = new int[size];
         final StringBuilder msg = new StringBuilder();
         for (int i=0;i<size;i++) {
-            final Game game = gamesToFarm.get(i);
+            final Game game = gamesCopy.get(i);
+            currentGames.add(game);
             appIds[i] = game.appId;
             msg.append(game.name);
             if (i + 1 < size) {
@@ -612,6 +624,27 @@ public class SteamService extends Service {
 
         playGames(appIds);
         showMultipleNotification(msg.toString());
+    }
+
+    public void addGame(Game game) {
+        if (currentGames.isEmpty()) {
+            idleSingle(game);
+        } else {
+            currentGames.add(game);
+            idleMultiple(currentGames);
+        }
+    }
+
+    public void removeGame(Game game) {
+        currentGames.remove(game);
+        if (currentGames.size() == 1) {
+            idleSingle(currentGames.get(0));
+        } else if (currentGames.size() > 1) {
+            idleMultiple(currentGames);
+        } else {
+            stopPlaying();
+            updateNotification(getString(R.string.stopped));
+        }
     }
 
     public void start() {
@@ -1046,7 +1079,7 @@ public class SteamService extends Service {
     }
 
     private void stopPlaying() {
-        currentGame = null;
+        currentGames.clear();
         steamUser.setPlayingGame(0);
     }
 

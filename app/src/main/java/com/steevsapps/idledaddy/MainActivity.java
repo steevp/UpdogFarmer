@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case R.id.games:
                 setTitle(R.string.games);
-                fragment = GamesFragment.newInstance(steamService.getSteamId(), steamService.getCurrentAppId());
+                fragment = GamesFragment.newInstance(steamService.getSteamId(), steamService.getCurrentAppIds());
                 break;
             case R.id.settings:
                 setTitle(R.string.settings);
@@ -491,7 +491,7 @@ public class MainActivity extends AppCompatActivity
         if (fragment instanceof HomeFragment) {
             ((HomeFragment) fragment).update(loggedIn, farming);
         } else if (fragment instanceof GamesFragment) {
-            ((GamesFragment) fragment).update(steamService.getCurrentAppId());
+            ((GamesFragment) fragment).update(steamService.getCurrentAppIds());
         }
     }
 
@@ -516,7 +516,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onGamePicked(Game game) {
         steamService.stopFarming();
-        steamService.idleSingle(game);
+        steamService.addGame(game);
+    }
+
+    @Override
+    public void onGameRemoved(Game game) {
+        steamService.stopFarming();
+        steamService.removeGame(game);
     }
 
     @Override
