@@ -88,18 +88,18 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
             holder.logo.setImageResource(R.drawable.ic_image_white_48dp);
         }
 
-        holder.nowPlaying.setVisibility(currentAppIds.contains(game.appId) ? View.VISIBLE : View.GONE);
+        holder.itemView.setActivated(currentAppIds.contains(game.appId));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!currentAppIds.contains(game.appId) && currentAppIds.size() < 32) {
                     currentAppIds.add(game.appId);
-                    holder.nowPlaying.setVisibility(View.VISIBLE);
+                    holder.itemView.setActivated(true);
                     callback.onGamePicked(game);
                 } else {
                     currentAppIds.remove(Integer.valueOf(game.appId));
-                    holder.nowPlaying.setVisibility(View.GONE);
+                    holder.itemView.setActivated(false);
                     callback.onGameRemoved(game);
                 }
             }
@@ -114,13 +114,11 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private ImageView logo;
-        private TextView nowPlaying;
 
         private ViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             logo = itemView.findViewById(R.id.logo);
-            nowPlaying = itemView.findViewById(R.id.now_playing);
         }
     }
 }
