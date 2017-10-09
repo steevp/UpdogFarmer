@@ -61,6 +61,10 @@ public class Prefs {
         writePref(CM_SERVERS, servers);
     }
 
+    public static void writeBlacklist(List<String> blacklist) {
+        writePref(BLACKLIST, Utils.arrayToString(blacklist));
+    }
+
     public static String getUsername() {
         return prefs.getString(USERNAME, "");
     }

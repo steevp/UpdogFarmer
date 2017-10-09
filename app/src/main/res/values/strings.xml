@@ -33,6 +33,8 @@
     <string name="pref_blacklist">Blacklist</string>
     <string name="sum_blacklist">Blacklist games you don\'t want to farm cards for.</string>
     <string name="blacklist_hint">Enter an appid and click +</string>
+    <string name="add_to_blacklist">Add game to blacklist</string>
+    <string name="added_to_blacklist">Game added to blacklist</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
     <string name="home">Home</string>
