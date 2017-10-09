@@ -30,6 +30,9 @@
     <string name="sum_minimize_data">Don\'t download the game art.</string>
     <string name="pref_parental_pin">Parental PIN</string>
     <string name="sum_parental_pin">Enter your parental PIN to unlock Family View.</string>
+    <string name="pref_blacklist">Blacklist</string>
+    <string name="sum_blacklist">Blacklist games you don\'t want to farm cards for.</string>
+    <string name="blacklist_hint">Enter an appid and click +</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
     <string name="home">Home</string>
