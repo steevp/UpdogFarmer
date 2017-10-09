@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,15 +25,7 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.View
     }
 
     public String getValue() {
-        final StringBuilder builder = new StringBuilder();
-        for (int i=0,size=dataSet.size();i<size;i++) {
-            final String string = dataSet.get(i);
-            builder.append(string);
-            if (i + 1 < size) {
-                builder.append(",");
-            }
-        }
-        return builder.toString();
+        return Utils.arrayToString(dataSet);
     }
 
     public void addItem(String item) {
