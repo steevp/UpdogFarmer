@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="game_long_press_options">
+        <item>@string/add_to_blacklist</item>
+    </string-array>
+</resources>

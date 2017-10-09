@@ -33,6 +33,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
+import com.steevsapps.idledaddy.dialogs.GameOptionsDialog;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
 import com.steevsapps.idledaddy.fragments.DataFragment;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
@@ -523,6 +524,12 @@ public class MainActivity extends AppCompatActivity
     public void onGameRemoved(Game game) {
         steamService.stopFarming();
         steamService.removeGame(game);
+    }
+
+    @Override
+    public void onGameLongPressed(Game game) {
+        // Show game options
+        GameOptionsDialog.newInstance(game).show(getSupportFragmentManager(), GameOptionsDialog.TAG);
     }
 
     @Override

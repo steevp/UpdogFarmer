@@ -921,15 +921,7 @@ public class SteamService extends Service {
                 final String[] servers = callback.getServerList();
                 if (servers.length > 0) {
                     Log.i(TAG, "Saving CM servers");
-                    final StringBuilder serverString = new StringBuilder();
-                    for (int i=0,size=servers.length;i<size;i++) {
-                        serverString.append(servers[i]);
-                        if (i + 1 < size) {
-                            serverString.append(",");
-                        }
-                    }
-                    Log.i(TAG, serverString.toString());
-                    Prefs.writeCmServers(serverString.toString());
+                    Prefs.writeCmServers(Utils.arrayToString(servers));
                 }
             }
         });
