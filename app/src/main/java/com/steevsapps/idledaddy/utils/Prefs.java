@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,6 +23,7 @@ public class Prefs {
     private final static String SIMPLE = "simple";
     private final static String MINIMIZE_DATA = "minimize_data";
     private final static String PARENTAL_PIN = "parental_pin";
+    private final static String BLACKLIST = "blacklist";
 
     private static SharedPreferences prefs;
 
@@ -91,6 +95,11 @@ public class Prefs {
 
     public static String getParentalPin() {
         return prefs.getString(PARENTAL_PIN, "");
+    }
+
+    public static List<String> getBlacklist() {
+        final String[] blacklist = prefs.getString(BLACKLIST, "").split(",");
+        return new ArrayList<>(Arrays.asList(blacklist));
     }
 
     private static void writePref(String key, String value) {
