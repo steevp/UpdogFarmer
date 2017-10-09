@@ -9,7 +9,7 @@
     <string name="steamguard">Kod bezpieczeństwa Steam Guard</string>
     <string name="login">Zaloguj</string>
     <string name="start_idling">Rozpocznij</string>
-    <string name="desc_start">Symuluje obecność w grach dopóki wszystkie karty zostaną uzyskane.</string>
+    <string name="desc_start">Symuluje obecność w grach do czasu, aż wszystkie karty zostaną uzyskane.</string>
     <string name="stop_idling">Zatrzymaj</string>
     <string name="desc_stop">Zatrzymuje działanie programu i wychodzi z aplikacji.</string>
     <string name="idling_finished">Wszystkie karty z gier zostały uzyskane.</string>
@@ -25,11 +25,14 @@
     <string name="pref_stay_awake">Utrzymuj urządzenie w aktywności</string>
     <string name="sum_stay_awake">Włącz jeśli twoje urządzenie nie utrzymuje połączenia WiFi podczas uśpienia.</string>
     <string name="pref_simple">Symulacja pojedyncza</string>
-    <string name="sum_simple">Nie symuluje wszystkich gier równocześnie przez 2 godziny, ale każdą grę po kolei dopóki wszystkie karty z danej gry zostaną uzyskane. Jeśli nie jesteś pewny zostaw opcję wyłączoną.</string>
+    <string name="sum_simple">Nie symuluje wszystkich gier równocześnie przez 2 godziny, ale każdą grę po kolei, dopóki wszystkie karty z danej gry zostaną uzyskane. Jeśli nie jesteś pewny zostaw opcję wyłączoną.</string>
     <string name="pref_minimize_data">Zminimalizuj użycie danych</string>
     <string name="sum_minimize_data">Nie pobiera grafik gier.</string>
     <string name="pref_parental_pin">PIN kontroli rodzicielskiej</string>
     <string name="sum_parental_pin">Wpisz swój kod PIN kontroli rodzicielskiej, aby odblokować \'Widok rodzinny\'.</string>
+    <string name="pref_blacklist">Gry wykluczone</string>
+    <string name="sum_blacklist">Lista gier, dla których symulacja będzie pominięta.</string>
+    <string name="blacklist_hint">Wpisz AppID i naciśnij +</string>
     <string name="open_drawer">Otwórz menu</string>
     <string name="close_drawer">Zamknij menu</string>
     <string name="home">Strona główna</string>
@@ -47,16 +50,14 @@
     <string name="invalid_key">Nieprawidłowy klucz</string>
     <string name="activation_failed">Aktywacja zakończona niepowodzeniem</string>
     <plurals name="games_left">
-		<item quantity="one">Pozostała %d gra</item>
-        <item quantity="few">Pozostało %d gier</item>
-        <item quantity="many">Pozostało %d gier</item>
-        <item quantity="other">Pozostało %d gier</item>
+	<item quantity="one">Pozostała %d gra do symulacji</item>
+	<item quantity="few">Pozostały %d gry do symulacji</item>
+    	<item quantity="other">Pozostało %d gier do symulacji</item>
     </plurals>
     <plurals name="card_drops_remaining">
-	    <item quantity="one">%d karta do uzyskania</item>
-        <item quantity="few">%d kart do uzyskania</item>
-        <item quantity="many">%d kart do uzyskania</item>
-        <item quantity="other">%d kart do uzyskania</item>
+	<item quantity="one">%d karta do uzyskania</item>
+	<item quantity="few">%d kart do uzyskania</item>
+    	<item quantity="other">%d kart do uzyskania</item>
     </plurals>
     <string name="logged_in_elsewhere">Konto Steam w użyciu. Ponowię działanie, kiedy to będzie możliwe.</string>
     <string name="web_login_failed">Nie można zalogować się na stronie Steam!</string>
