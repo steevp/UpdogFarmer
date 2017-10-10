@@ -37,7 +37,8 @@
         <com.steevsapps.idledaddy.preferences.BlacklistPreference
             android:key="blacklist"
             android:title="@string/pref_blacklist"
-            app:summary="@string/sum_blacklist" />
+            android:summary="@string/sum_blacklist"
+            android:defaultValue="" />
     </PreferenceCategory>
 
 </PreferenceScreen>
