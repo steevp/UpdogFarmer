@@ -2,38 +2,42 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditTextPreference
-        android:key="parental_pin"
-        android:title="@string/pref_parental_pin"
-        android:summary="@string/sum_parental_pin" />
+    <PreferenceCategory android:title="@string/cat_general">
+        <SwitchPreference
+            android:key="minimize_data"
+            android:title="@string/pref_minimize_data"
+            android:summary="@string/sum_minimize_data"
+            android:defaultValue="false" />
 
-    <SwitchPreference
-        android:key="offline"
-        android:title="@string/pref_offline"
-        android:summary="@string/sum_offline"
-        android:defaultValue="false" />
+        <SwitchPreference
+            android:key="stay_awake"
+            android:title="@string/pref_stay_awake"
+            android:summary="@string/sum_stay_awake"
+            android:defaultValue="false" />
 
-    <SwitchPreference
-        android:key="stay_awake"
-        android:title="@string/pref_stay_awake"
-        android:summary="@string/sum_stay_awake"
-        android:defaultValue="false" />
+        <EditTextPreference
+            android:key="parental_pin"
+            android:title="@string/pref_parental_pin"
+            android:summary="@string/sum_parental_pin" />
+    </PreferenceCategory>
 
-    <SwitchPreference
-        android:key="simple"
-        android:title="@string/pref_simple"
-        android:summary="@string/sum_simple"
-        android:defaultValue="false" />
+    <PreferenceCategory android:title="@string/cat_idle">
+        <SwitchPreference
+            android:key="simple"
+            android:title="@string/pref_simple"
+            android:summary="@string/sum_simple"
+            android:defaultValue="false" />
 
-    <SwitchPreference
-        android:key="minimize_data"
-        android:title="@string/pref_minimize_data"
-        android:summary="@string/sum_minimize_data"
-        android:defaultValue="false" />
+        <SwitchPreference
+            android:key="offline"
+            android:title="@string/pref_offline"
+            android:summary="@string/sum_offline"
+            android:defaultValue="false" />
 
-    <com.steevsapps.idledaddy.preferences.BlacklistPreference
-        android:key="blacklist"
-        android:title="@string/pref_blacklist"
-        app:summary="@string/sum_blacklist" />
+        <com.steevsapps.idledaddy.preferences.BlacklistPreference
+            android:key="blacklist"
+            android:title="@string/pref_blacklist"
+            app:summary="@string/sum_blacklist" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

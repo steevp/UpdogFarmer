@@ -121,10 +121,11 @@ public class SteamService extends Service {
     private String personaName = "";
     private String avatarHash = "";
 
-    private volatile boolean running = false;
-    private volatile boolean connected = false;
-    private volatile boolean farming = false;
-    private volatile boolean paused = false;
+    private volatile boolean running = false; // Service running
+    private volatile boolean connected = false; // Connected to Steam
+    private volatile boolean farming = false; // Currently farming
+    private volatile boolean paused = false; // Game paused
+    private volatile boolean waiting = false; // Waiting for user to stop playing
 
     private long steamId;
     private boolean loggedIn = false;
@@ -197,7 +198,7 @@ public class SteamService extends Service {
                     steamClient.disconnect();
                 } else if (notInGame) {
                     Log.i(TAG, "Resuming...");
-                    paused = false;
+                    waiting = false;
                     steamClient.disconnect();
                     waitHandle.cancel(false);
                 }
@@ -243,7 +244,7 @@ public class SteamService extends Service {
      * Resume farming/idling
      */
     private void resumeFarming() {
-        if (paused) {
+        if (paused || waiting) {
             return;
         }
 
@@ -265,7 +266,7 @@ public class SteamService extends Service {
     }
 
     private void farm() {
-        if (paused) {
+        if (paused || waiting) {
             return;
         }
         Log.i(TAG, "Checking remaining card drops");
@@ -866,8 +867,8 @@ public class SteamService extends Service {
                 if (callback.getResult() == EResult.LoggedInElsewhere) {
                     updateNotification(getString(R.string.logged_in_elsewhere));
                     unscheduleFarmTask();
-                    if (!paused) {
-                        paused = true;
+                    if (!waiting) {
+                        waiting = true;
                         waitHandle = scheduler.scheduleAtFixedRate(waitTask, 0, 30, TimeUnit.SECONDS);
                     }
                 } else {
