@@ -365,22 +365,18 @@ public class SteamService extends Service {
     private void pauseGame() {
         paused = true;
         stopPlaying();
-        final PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
-        final PendingIntent resumeIntent = PendingIntent.getBroadcast(this, 0, new Intent(RESUME_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
-        final Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_notification)
-                .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.paused))
-                .setContentIntent(pi)
-                .addAction(R.drawable.ic_play_arrow_white_48dp, getString(R.string.resume), resumeIntent)
-                .build();
-        final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        nm.notify(NOTIF_ID, notification);
+        showPausedNotification();
     }
 
     private void resumeGame() {
         paused = false;
-        resumeFarming();
+        if (currentGames.size() == 1) {
+            Log.i(TAG, "Resume playing");
+            idleSingle(currentGames.get(0));
+        } else if (currentGames.size() > 1) {
+            Log.i(TAG, "Resume playing (multiple)");
+            idleMultiple(currentGames);
+        }
     }
 
     private void scheduleFarmTask() {
@@ -565,13 +561,13 @@ public class SteamService extends Service {
         // Add the stop and pause actions
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
         final PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent(PAUSE_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
-        builder.addAction(R.drawable.ic_stop_white_48dp, getString(R.string.stop), stopIntent);
-        builder.addAction(R.drawable.ic_pause_white_48dp, getString(R.string.pause), pauseIntent);
+        builder.addAction(R.drawable.ic_stop_white_32dp, getString(R.string.stop), stopIntent);
+        builder.addAction(R.drawable.ic_pause_white_32dp, getString(R.string.pause), pauseIntent);
 
         if (farming) {
             // Add the skip action
             final PendingIntent skipIntent = PendingIntent.getBroadcast(this, 0, new Intent(SKIP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
-            builder.addAction(R.drawable.ic_skip_next_white_48dp, getString(R.string.skip), skipIntent);
+            builder.addAction(R.drawable.ic_skip_next_white_32dp, getString(R.string.skip), skipIntent);
         }
 
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -618,10 +614,24 @@ public class SteamService extends Service {
                 .setContentText(getString(R.string.idling_multiple))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent)
-                .addAction(R.drawable.ic_stop_white_48dp, getString(R.string.stop), stopIntent)
-                .addAction(R.drawable.ic_pause_white_48dp, getString(R.string.pause), pauseIntent)
+                .addAction(R.drawable.ic_stop_white_32dp, getString(R.string.stop), stopIntent)
+                .addAction(R.drawable.ic_pause_white_32dp, getString(R.string.pause), pauseIntent)
                 .build();
 
+        final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.notify(NOTIF_ID, notification);
+    }
+
+    private void showPausedNotification() {
+        final PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+        final PendingIntent resumeIntent = PendingIntent.getBroadcast(this, 0, new Intent(RESUME_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        final Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.paused))
+                .setContentIntent(pi)
+                .addAction(R.drawable.ic_play_arrow_white_32dp, getString(R.string.resume), resumeIntent)
+                .build();
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.notify(NOTIF_ID, notification);
     }
@@ -877,7 +887,12 @@ public class SteamService extends Service {
                 if (result == EResult.OK) {
                     loggedIn = true;
                     steamId = steamClient.getSteamId().convertToLong();
-                    updateNotification(getString(R.string.logged_in));
+                    // Don't hide the paused notification
+                    if (!paused) {
+                        updateNotification(getString(R.string.logged_in));
+                    } else {
+                        showPausedNotification();
+                    }
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
