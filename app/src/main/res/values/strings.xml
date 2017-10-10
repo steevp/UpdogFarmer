@@ -63,10 +63,13 @@
     <string name="web_login_failed">Failed to log in to Steam website!</string>
     <string name="login_key_expired">Login key expired!</string>
     <string name="stopped">Stopped</string>
+    <string name="paused">Paused</string>
     <string name="idling_multiple">Idling multiple</string>
     <string name="logged_out">Logged out</string>
     <string name="about">About</string>
     <string name="stop">Stop</string>
     <string name="skip">Skip</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
     <string name="activated">Activated: %s</string>
 </resources>
