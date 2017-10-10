@@ -103,6 +103,8 @@ public class SteamService extends Service {
     // Actions
     public final static String SKIP_INTENT = "SKIP_INTENT";
     public final static String STOP_INTENT = "STOP_INTENT";
+    public final static String PAUSE_INTENT = "PAUSE_INTENT";
+    public final static String RESUME_INTENT = "RESUME_INTENT";
 
     private SteamClient steamClient;
     private SteamUser steamUser;
@@ -122,7 +124,7 @@ public class SteamService extends Service {
     private volatile boolean running = false;
     private volatile boolean connected = false;
     private volatile boolean farming = false;
-    private volatile boolean waiting = false;
+    private volatile boolean paused = false;
 
     private long steamId;
     private boolean loggedIn = false;
@@ -151,16 +153,19 @@ public class SteamService extends Service {
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SKIP_INTENT)) {
-                // Skip clicked
-                skipGame();
-            } else if (intent.getAction().equals(STOP_INTENT)) {
-                Log.i(TAG, "received stop intent");
-                stopPlaying();
-                stopFarming();
-                updateNotification(getString(R.string.stopped));
-                LocalBroadcastManager.getInstance(SteamService.this)
-                        .sendBroadcast(new Intent(STOP_EVENT));
+            switch (intent.getAction()) {
+                case SKIP_INTENT:
+                    skipGame();
+                    break;
+                case STOP_INTENT:
+                    stopGame();
+                    break;
+                case PAUSE_INTENT:
+                    pauseGame();
+                    break;
+                case RESUME_INTENT:
+                    resumeGame();
+                    break;
             }
         }
     };
@@ -191,8 +196,8 @@ public class SteamService extends Service {
                     Log.i(TAG, "Invalid cookie data or no internet, reconnecting...");
                     steamClient.disconnect();
                 } else if (notInGame) {
-                    Log.i(TAG, "Finished");
-                    waiting = false;
+                    Log.i(TAG, "Resuming...");
+                    paused = false;
                     steamClient.disconnect();
                     waitHandle.cancel(false);
                 }
@@ -238,7 +243,7 @@ public class SteamService extends Service {
      * Resume farming/idling
      */
     private void resumeFarming() {
-        if (waiting) {
+        if (paused) {
             return;
         }
 
@@ -260,6 +265,9 @@ public class SteamService extends Service {
     }
 
     private void farm() {
+        if (paused) {
+            return;
+        }
         Log.i(TAG, "Checking remaining card drops");
         for (int i=0;i<3;i++) {
             gamesToFarm = webHandler.getRemainingGames();
@@ -347,6 +355,34 @@ public class SteamService extends Service {
         idleSingle(gamesToFarm.get(farmIndex));
     }
 
+    private void stopGame() {
+        stopPlaying();
+        stopFarming();
+        updateNotification(getString(R.string.stopped));
+        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(STOP_EVENT));
+    }
+
+    private void pauseGame() {
+        paused = true;
+        stopPlaying();
+        final PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+        final PendingIntent resumeIntent = PendingIntent.getBroadcast(this, 0, new Intent(RESUME_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        final Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.paused))
+                .setContentIntent(pi)
+                .addAction(R.drawable.ic_play_arrow_white_48dp, getString(R.string.resume), resumeIntent)
+                .build();
+        final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.notify(NOTIF_ID, notification);
+    }
+
+    private void resumeGame() {
+        paused = false;
+        resumeFarming();
+    }
+
     private void scheduleFarmTask() {
         if (farmHandle == null || farmHandle.isCancelled()) {
             Log.i(TAG, "Starting farmtask");
@@ -402,6 +438,8 @@ public class SteamService extends Service {
             final IntentFilter filter = new IntentFilter();
             filter.addAction(SKIP_INTENT);
             filter.addAction(STOP_INTENT);
+            filter.addAction(PAUSE_INTENT);
+            filter.addAction(RESUME_INTENT);
             registerReceiver(receiver, filter);
             start();
         }
@@ -524,9 +562,11 @@ public class SteamService extends Service {
             builder.setSubText(getResources().getQuantityString(R.plurals.card_drops_remaining, game.dropsRemaining, game.dropsRemaining));
         }
 
-        // Add the stop action
+        // Add the stop and pause actions
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        final PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent(PAUSE_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
         builder.addAction(R.drawable.ic_stop_white_48dp, getString(R.string.stop), stopIntent);
+        builder.addAction(R.drawable.ic_pause_white_48dp, getString(R.string.pause), pauseIntent);
 
         if (farming) {
             // Add the skip action
@@ -566,8 +606,9 @@ public class SteamService extends Service {
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 
-        // Add stop action
+        // Add stop and pause actions
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        final PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent(PAUSE_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
 
         final Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setStyle(new NotificationCompat.BigTextStyle()
@@ -578,6 +619,7 @@ public class SteamService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent)
                 .addAction(R.drawable.ic_stop_white_48dp, getString(R.string.stop), stopIntent)
+                .addAction(R.drawable.ic_pause_white_48dp, getString(R.string.pause), pauseIntent)
                 .build();
 
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -814,8 +856,8 @@ public class SteamService extends Service {
                 if (callback.getResult() == EResult.LoggedInElsewhere) {
                     updateNotification(getString(R.string.logged_in_elsewhere));
                     unscheduleFarmTask();
-                    if (!waiting) {
-                        waiting = true;
+                    if (!paused) {
+                        paused = true;
                         waitHandle = scheduler.scheduleAtFixedRate(waitTask, 0, 30, TimeUnit.SECONDS);
                     }
                 } else {
@@ -930,7 +972,7 @@ public class SteamService extends Service {
             public void call(NotificationUpdateCallback callback) {
                 Log.i(TAG, "New notifications " + callback.getNotificationCounts().toString());
                 for (Map.Entry<NotificationType,Integer> entry: callback.getNotificationCounts().entrySet()) {
-                    if (entry.getKey() == NotificationType.ITEMS && entry.getValue() > 0  && farming && !waiting) {
+                    if (entry.getKey() == NotificationType.ITEMS && entry.getValue() > 0  && farming) {
                         // Possible card drop
                         executor.execute(farmTask);
                         break;
@@ -1094,7 +1136,9 @@ public class SteamService extends Service {
     }
 
     private void stopPlaying() {
-        currentGames.clear();
+        if (!paused) {
+            currentGames.clear();
+        }
         steamUser.setPlayingGame(0);
     }
 
