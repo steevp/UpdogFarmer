@@ -1,6 +1,7 @@
 package com.steevsapps.idledaddy.preferences;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
 
@@ -27,13 +28,18 @@ public class BlacklistPreference extends DialogPreference {
     }
 
     @Override
+    protected Object onGetDefaultValue(TypedArray a, int index) {
+        return a.getString(index);
+    }
+
+    @Override
     protected void onSetInitialValue(boolean restorePersistedValue, Object defaultValue) {
         if (restorePersistedValue) {
             // Restore persisted value
             currentValue = getPersistedString("");
         } else {
             // Set default value
-            currentValue = "";
+            currentValue = defaultValue.toString();
             persistString(currentValue);
         }
     }
