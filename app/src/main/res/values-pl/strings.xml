@@ -10,8 +10,8 @@
     <string name="login">Zaloguj</string>
     <string name="start_idling">Rozpocznij</string>
     <string name="desc_start">Symuluje obecność w grach do czasu, aż wszystkie karty zostaną uzyskane.</string>
-    <string name="stop_idling">Zatrzymaj</string>
-    <string name="desc_stop">Zatrzymuje działanie programu i wychodzi z aplikacji.</string>
+    <string name="stop_idling">Zakończ</string>
+    <string name="desc_stop">Kończy działanie programu i wychodzi z aplikacji.</string>
     <string name="idling_finished">Wszystkie karty z gier zostały uzyskane.</string>
     <string name="search">Szukaj</string>
     <string name="settings">Ustawienia</string>
@@ -33,6 +33,8 @@
     <string name="pref_blacklist">Gry wykluczone</string>
     <string name="sum_blacklist">Lista gier, dla których symulacja będzie pominięta.</string>
     <string name="blacklist_hint">Wpisz AppID i naciśnij +</string>
+    <string name="add_to_blacklist">Dodaj grę do listy wykluczonych</string>
+    <string name="added_to_blacklist">Gra dodana do listy wykluczonch</string>
     <string name="open_drawer">Otwórz menu</string>
     <string name="close_drawer">Zamknij menu</string>
     <string name="home">Strona główna</string>
@@ -63,10 +65,13 @@
     <string name="web_login_failed">Nie można zalogować się na stronie Steam!</string>
     <string name="login_key_expired">Klucz logowania wygasł!</string>
     <string name="stopped">Zatrzymano</string>
+    <string name="paused">Spauzowano</string>
     <string name="idling_multiple">Symulacja równoczesna</string>
     <string name="logged_out">Wylogowano</string>
     <string name="about">O programie</string>
     <string name="stop">Stop</string>
     <string name="skip">Pomiń</string>
+    <string name="pause">Pauza</string>
+    <string name="resume">Wznów</string>
     <string name="activated">Aktywowano: %s</string>
 </resources>
