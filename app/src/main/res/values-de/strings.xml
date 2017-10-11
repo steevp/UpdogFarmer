@@ -17,7 +17,7 @@
     <string name="settings">Einstellungen</string>
     <string name="logout">Abmelden</string>
     <string name="redeem">Aktiviere einen Steam Produkt Key</string>
-    <string name="redeem_msg">Gebe deinen Steam Produkt Key hier ein:</string>
+    <string name="redeem_msg">Gebe deinen Steam Produkt Key oder die ID eines kostenlosen Spiels hier ein:</string>
     <string name="ok">OK</string>
     <string name="cat_idle">Idle Einstellungen</string>
     <string name="pref_offline">Offline Farmen</string>
@@ -30,6 +30,11 @@
     <string name="sum_minimize_data">Lädt das Cover des Spiels nicht herunter.</string>
     <string name="pref_parental_pin">Parental PIN</string>
     <string name="sum_parental_pin">Gebe die Parental PIN ein um die Familienansicht zu entsperren.</string>
+    <string name="pref_blacklist">Blackliste</string>
+    <string name="sum_blacklist">Füge Spiele zur Blackliste hinzu wenn du nicht willst das bei diesen Sammelkarten gefarmt werden.</string>
+    <string name="blacklist_hint">Gebe die Spiele ID ein und klicke auf das +</string>
+    <string name="add_to_blacklist">Füge Spiel zur Blackliste hinzu</string>
+    <string name="added_to_blacklist">Spiel wurde zur Blackliste hinzugefügt</string>
     <string name="open_drawer">Öffne das Menü</string>
     <string name="close_drawer">Schließe das Menü</string>
     <string name="home">Startseite</string>
@@ -54,14 +59,15 @@
         <item quantity="one">%d Karte fehlt noch</item>
         <item quantity="other">%d Karten fehlen noch</item>
     </plurals>
-    <string name="logged_in_elsewhere">Steam wird bereits benutzt. Es wird fortgesetzt sobald dies möglich ist.</string>
+    <string name="logged_in_elsewhere">Steam wird bereits benutzt. Fortsetzung folgt sobald möglich.</string>
     <string name="web_login_failed">Fehlgeschlagene Anmeldung zu der Steam Website!</string>
     <string name="login_key_expired">Anmelde Key abgelaufen!</string>
     <string name="stopped">Gestoppt</string>
     <string name="idling_multiple">Mehrere Spiele laufen inaktiv im Hintergrund</string>
     <string name="logged_out">Abgemeldet</string>
-    <string name="about">Über</string>
+    <string name="pref_about">Über</string>
+    <string name="sum_about">Quellcode, Kredite, etc.</string>
     <string name="stop">Stoppen</string>
-<string name="skip">Überspringen</string>
-<string name="activated">Aktiviert: %s</string>
+    <string name="skip">Überspringen</string>
+    <string name="activated">Aktiviert: %s</string>
 </resources>
