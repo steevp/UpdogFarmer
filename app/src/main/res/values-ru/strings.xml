@@ -19,7 +19,7 @@
     <string name="redeem">Активировать продукт</string>
     <string name="redeem_msg">Введите ваш код продукта здесь:</string>
     <string name="ok">OK</string>
-    <string name="cat_idle">Idle settings</string>
+    <string name="cat_idle">Настройки фарма</string>
     <string name="pref_offline">Оффлайн фарм</string>
     <string name="sum_offline">Меняет ваш статус на Не в сети, поэтому ваши друзья не будут видеть, что у вас запускается.</string>
     <string name="pref_stay_awake">Держать экран включенным </string>
@@ -34,37 +34,36 @@
     <string name="close_drawer">Close drawer</string>
     <string name="home">Домой</string>
     <string name="games">Игры</string>
-    <string name="no_games_found">Не удалось получить список игр. Убедитесь, что ваш профиль открытый.</string>
+    <string name="no_games_found">Не удалось получить список игр. Убедитесь, что ваш профиль открыт.</string>
     <string name="now_playing">Запущено</string>
     <string name="error_not_logged_in">Вы должны быть в сети Steam</string>
     <string name="invalid_password">Неверный пароль</string>
     <string name="steamguard_required">Необходим код Steam Guard</string>
     <string name="invalid_code">Неверный код</string>
-    <string name="timeout_error">Время соединения истекло. Пожалуйста, попробуйте снова</string>
-    <string name="channel_name">Idle Daddy notifications</string>
+    <string name="timeout_error">Время соединения истекло. Пожалуйста, попробуйте снова.</string>
+    <string name="channel_name">Уведомления Idle Daddy</string>
     <string name="now_playing2">Запущено %s</string>
     <string name="product_already_owned">У вас уже есть этот продукт</string>
     <string name="invalid_key">Недейтвительный ключ</string>
     <string name="activation_failed">Не удалось активировать</string>
     <plurals name="games_left">
         <item quantity="one">%d игра осталась</item>
-        <item quantity="few">%d игра осталась</item>
+        <item quantity="few">%d игр осталось</item>
         <item quantity="many">%d игр осталось</item>
         <item quantity="other">%d игр осталось</item>
     </plurals>
     <plurals name="card_drops_remaining">
         <item quantity="one">%d карточка выпадет</item>
-        <item quantity="few">%d карточка выпадет</item>
+        <item quantity="few">%d карточек выпадет</item>
         <item quantity="many">%d карточек выпадет</item>
         <item quantity="other">%d карточек выпадет</item>
     </plurals>
-    <string name="logged_in_elsewhere">Steam используется. Будет продолжено, когда станет возможно.</string>
+    <string name="logged_in_elsewhere">Steam используется. Фарм будет продолжен, когда станет возможно.</string>
     <string name="web_login_failed">Не удалось войти на сайт Steam!</string>
     <string name="login_key_expired">Истек ключ входа в систему!</string>
     <string name="stopped">Остановлено</string>
-    <string name="idling_multiple">Idling multiple</string>
+    <string name="idling_multiple">Фармится несколько игр</string>
     <string name="logged_out">Вы вышли</string>
-    <!-- I Google translated these: -->
     <string name="stop">Стоп</string>
-    <string name="skip">Пропускать</string>
+    <string name="skip">Пропустить</string>
 </resources>
