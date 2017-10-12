@@ -36,6 +36,8 @@
     <string name="blacklist_hint">Enter an appid and click +</string>
     <string name="add_to_blacklist">Add game to blacklist</string>
     <string name="added_to_blacklist">Game added to blacklist</string>
+    <string name="remove_from_blacklist">Remove game from blacklist</string>
+    <string name="removed_from_blacklist">Game removed from blacklist</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
     <string name="home">Home</string>

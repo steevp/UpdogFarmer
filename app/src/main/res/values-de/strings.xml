@@ -65,7 +65,6 @@
     <string name="stopped">Gestoppt</string>
     <string name="idling_multiple">Mehrere Spiele laufen inaktiv im Hintergrund</string>
     <string name="logged_out">Abgemeldet</string>
-    <string name="sum_about">Quellcode, Kredite, etc.</string>
     <string name="stop">Stoppen</string>
     <string name="skip">Überspringen</string>
     <string name="activated">Aktiviert: %s</string>
