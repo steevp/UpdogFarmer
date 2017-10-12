@@ -43,7 +43,7 @@
     <string name="resume">Retomar</string>
     <string name="open_drawer">Abrir gaveta</string>
     <string name="close_drawer">Fechar gaveta</string>
-    <string name="home">Casa</string>
+    <string name="home">Menu Principal</string>
     <string name="games">Jogos</string>
     <string name="no_games_found">Não conseguimos recuperar a lista de jogos. Verifique se o seu perfil está definido para público.</string>
     <string name="now_playing">Agora jogando</string>
