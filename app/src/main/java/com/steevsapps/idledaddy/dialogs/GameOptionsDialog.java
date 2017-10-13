@@ -25,6 +25,7 @@ public class GameOptionsDialog extends DialogFragment {
     private final static String APPID = "APPID";
     private String title;
     private String appId;
+    private boolean blacklisted;
 
     public static GameOptionsDialog newInstance(Game game) {
         final GameOptionsDialog fragment = new GameOptionsDialog();
@@ -41,31 +42,39 @@ public class GameOptionsDialog extends DialogFragment {
         final Bundle args = getArguments();
         title = args.getString(TITLE);
         appId = args.getString(APPID);
+        blacklisted = Prefs.getBlacklist().contains(appId);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final String[] options = getResources().getStringArray(R.array.game_long_press_options);
+        if (blacklisted) {
+            // Already blacklisted
+            options[0] = getString(R.string.remove_from_blacklist);
+        }
         return new AlertDialog.Builder(getActivity())
                 .setTitle(title)
-                .setItems(R.array.game_long_press_options, new DialogInterface.OnClickListener() {
+                .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int position) {
                         if (position == 0) {
-                            // Blacklist
-                            addToBlacklist();
+                            addRemoveBlacklist();
                         }
                     }
                 })
                 .create();
     }
 
-    private void addToBlacklist() {
+    private void addRemoveBlacklist() {
+        final String msg;
         final List<String> blacklist = Prefs.getBlacklist();
-        if (!blacklist.contains(appId)) {
+        if (blacklisted) {
+            blacklist.remove(appId);
+        } else {
             blacklist.add(0, appId);
-            Prefs.writeBlacklist(blacklist);
-            Toast.makeText(getActivity(), R.string.added_to_blacklist, Toast.LENGTH_LONG).show();
         }
+        Prefs.writeBlacklist(blacklist);
+        Toast.makeText(getActivity(), blacklisted ? R.string.removed_from_blacklist : R.string.added_to_blacklist, Toast.LENGTH_LONG).show();
     }
 }
