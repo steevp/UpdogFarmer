@@ -17,7 +17,7 @@
     <string name="settings">Ayarlar</string>
     <string name="logout">Çıkış</string>
     <string name="redeem">Ürün Aktivasyonu</string>
-    <string name="redeem_msg">Ürün kodu veya ücretsiz oyun ID'si girin.</string>
+    <string name="redeem_msg">Ürün kodu veya ücretsiz oyun ID\'si girin.</string>
     <string name="ok">Tamam</string>
     <string name="cat_idle">Kart Düşürme</string>
     <string name="cat_general">Genel</string>
@@ -29,11 +29,11 @@
     <string name="sum_simple">Oyunlarınızı bütün kartlar düşene kadar tek tek çalıştırır, oyun sürenizi 2 saate getirmeye çalışmaz. Ne yaptığınızdan emin değilseniz bunu devre dışı bırakın.</string>
     <string name="pref_minimize_data">Veri kullanımını azalt</string>
     <string name="sum_minimize_data">Resimleri indirmeyi devre dışı bırak.</string>
-    <string name="pref_parental_pin">Aile PIN'i</string>
-    <string name="sum_parental_pin">Aile Görünümünü açmak için PIN'i girin.</string>
+    <string name="pref_parental_pin">Aile PIN\'i</string>
+    <string name="sum_parental_pin">Aile Görünümünü açmak için PIN\'i girin.</string>
     <string name="pref_blacklist">Karaliste</string>
     <string name="sum_blacklist">Karalistedeki oyunlar çalıştırılmayacaktır.</string>
-    <string name="blacklist_hint">Bir uygulama ID'si girin ve +'ya basın</string>
+    <string name="blacklist_hint">Bir uygulama ID\'si girin ve +\'ya basın</string>
     <string name="add_to_blacklist">Oyunu Karalisteye ekle</string>
     <string name="added_to_blacklist">Oyun Karalisteye eklendi</string>
     <string name="remove_from_blacklist">Oyunu Karalisteden çıkart</string>
