@@ -20,6 +20,7 @@
     <string name="redeem_msg">Gebe deinen Steam Produkt Key oder die ID eines kostenlosen Spiels hier ein:</string>
     <string name="ok">OK</string>
     <string name="cat_idle">Idle Einstellungen</string>
+    <string name="cat_general">Generell</string>
     <string name="pref_offline">Offline Farmen</string>
     <string name="sum_offline">Du wirst bei jedem als offline angezeigt also sieht keiner das du inaktiv Spiele spielst.</string>
     <string name="pref_stay_awake">Lasse das Gerät an</string>
@@ -63,10 +64,15 @@
     <string name="web_login_failed">Fehlgeschlagene Anmeldung zu der Steam Website!</string>
     <string name="login_key_expired">Anmelde Key abgelaufen!</string>
     <string name="stopped">Gestoppt</string>
+    <string name="paused">Pausiert</string>
     <string name="idling_multiple">Mehrere Spiele laufen inaktiv im Hintergrund</string>
     <string name="logged_out">Abgemeldet</string>
+    <string name="about">Über</string>
     <string name="stop">Stoppen</string>
     <string name="skip">Überspringen</string>
+    <string name="pause">Pause</string>
+    <string name="resume">Fortsetzen</string>
+<string name="remove_from_blacklist">Entferne Spiele von der Blackliste</string>
+<string name="removed_from_blacklist">Spiel wurde von der Blackliste entfernt</string>
     <string name="activated">Aktiviert: %s</string>
-    <string name="about">Über</string>
 </resources>
