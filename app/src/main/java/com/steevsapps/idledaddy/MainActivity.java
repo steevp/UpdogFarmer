@@ -540,7 +540,7 @@ public class MainActivity extends AppCompatActivity
             getSupportFragmentManager()
                     .beginTransaction()
                     .remove(taskFragment)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
         // Update GamesFragment
         final Fragment fragment = getCurrentFragment();
