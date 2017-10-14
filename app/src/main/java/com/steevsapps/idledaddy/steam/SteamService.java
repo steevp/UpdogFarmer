@@ -735,6 +735,7 @@ public class SteamService extends Service {
 
     public void logoff() {
         Log.i(TAG, "logging off");
+        steamId = 0;
         stopFarming();
         steamUser.logOff();
         Prefs.writeUsername("");
