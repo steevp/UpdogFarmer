@@ -66,4 +66,5 @@
     <string name="logged_out">Вы вышли</string>
     <string name="stop">Стоп</string>
     <string name="skip">Пропустить</string>
+    <string name="about">О программе</string>
 </resources>

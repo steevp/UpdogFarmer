@@ -72,7 +72,7 @@
     <string name="skip">Überspringen</string>
     <string name="pause">Pause</string>
     <string name="resume">Fortsetzen</string>
-<string name="remove_from_blacklist">Entferne Spiele von der Blackliste</string>
-<string name="removed_from_blacklist">Spiel wurde von der Blackliste entfernt</string>
+    <string name="remove_from_blacklist">Entferne Spiele von der Blackliste</string>
+    <string name="removed_from_blacklist">Spiel wurde von der Blackliste entfernt</string>
     <string name="activated">Aktiviert: %s</string>
 </resources>
