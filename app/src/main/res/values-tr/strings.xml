@@ -75,4 +75,6 @@
     <string name="pause">Duraklat</string>
     <string name="resume">Devam et</string>
     <string name="activated">Active edildi: %s</string>
+    <string name="refresh">Yenile</string>
+    <string name="last_session">Son Oturum</string>
 </resources>
