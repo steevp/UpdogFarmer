@@ -20,6 +20,7 @@
     <string name="redeem_msg">Wpisz kod produktu lub ID darmowej gry</string>
     <string name="ok">OK</string>
     <string name="cat_idle">Ustawienia symulacji</string>
+    <string name="cat_general">Ustawienia ogólne</string>
     <string name="pref_offline">Symulacja ukryta</string>
     <string name="sum_offline">Symulacja gier pozostaje niewidoczna dla znajomych.</string>
     <string name="pref_stay_awake">Utrzymuj urządzenie w aktywności</string>
@@ -35,6 +36,8 @@
     <string name="blacklist_hint">Wpisz AppID i naciśnij +</string>
     <string name="add_to_blacklist">Dodaj grę do listy wykluczonych</string>
     <string name="added_to_blacklist">Gra dodana do listy wykluczonch</string>
+    <string name="remove_from_blacklist">Usuń grę z listy wykluczonych</string>
+    <string name="removed_from_blacklist">Gra usunięta z listy wykluczonych</string>
     <string name="open_drawer">Otwórz menu</string>
     <string name="close_drawer">Zamknij menu</string>
     <string name="home">Strona główna</string>
@@ -74,4 +77,6 @@
     <string name="pause">Pauza</string>
     <string name="resume">Wznów</string>
     <string name="activated">Aktywowano: %s</string>
+    <string name="refresh">Odśwież</string>
+    <string name="last_session">Ostatnia sesja</string>
 </resources>
