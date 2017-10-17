@@ -1,12 +1,14 @@
 package com.steevsapps.idledaddy.steam.wrapper;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import org.json.JSONObject;
 
 import java.util.Locale;
 
-public class Game implements Comparable<Game> {
+public class Game implements Comparable<Game>, Parcelable {
     private final static String IMG_URL = "http://media.steampowered.com/steamcommunity/public/images/apps/%d/%s.jpg";
     public int appId;
     public String name;
@@ -28,6 +30,14 @@ public class Game implements Comparable<Game> {
         this.iconUrl = "http://cdn.akamai.steamstatic.com/steam/apps/" + appId + "/header_292x136.jpg";
         this.hoursPlayed = hoursPlayed;
         this.dropsRemaining = dropsRemaining;
+    }
+
+    private Game(Parcel parcel) {
+        appId = parcel.readInt();
+        name = parcel.readString();
+        iconUrl = parcel.readString();
+        hoursPlayed = parcel.readFloat();
+        dropsRemaining = parcel.readInt();
     }
 
     @Override
@@ -67,4 +77,30 @@ public class Game implements Comparable<Game> {
         result = 31 * result + dropsRemaining;
         return result;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(appId);
+        parcel.writeString(name);
+        parcel.writeString(iconUrl);
+        parcel.writeFloat(hoursPlayed);
+        parcel.writeInt(dropsRemaining);
+    }
+
+    public final static Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {
+        @Override
+        public Game createFromParcel(Parcel parcel) {
+            return new Game(parcel);
+        }
+
+        @Override
+        public Game[] newArray(int i) {
+            return new Game[i];
+        }
+    };
 }

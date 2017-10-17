@@ -27,7 +27,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,7 @@ import com.steevsapps.idledaddy.fragments.SettingsFragment;
 import com.steevsapps.idledaddy.listeners.DialogListener;
 import com.steevsapps.idledaddy.listeners.FetchGamesListener;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
+import com.steevsapps.idledaddy.listeners.SpinnerInteractionListener;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
@@ -72,6 +75,8 @@ public class MainActivity extends AppCompatActivity
     private NavigationView drawerView;
     private ActionBarDrawerToggle drawerToggle;
     private ImageView logoutToggle;
+    private Spinner spinnerNav;
+
     private boolean logoutExpanded = false;
     private int drawerItemId;
 
@@ -198,6 +203,16 @@ public class MainActivity extends AppCompatActivity
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Setup the navigation spinner (Games fragment only)
+        spinnerNav = findViewById(R.id.spinner_nav);
+        final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.spinner_nav_options, R.layout.simple_spinner_title);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerNav.setAdapter(adapter);
+        final SpinnerInteractionListener listener = new SpinnerInteractionListener(getSupportFragmentManager());
+        spinnerNav.setOnItemSelectedListener(listener);
+        spinnerNav.setOnTouchListener(listener);
+
         drawerLayout = findViewById(R.id.drawer_layout);
         // On tablets we use the DrawerView but not the DrawerLayout
         if (drawerLayout != null) {
@@ -263,23 +278,6 @@ public class MainActivity extends AppCompatActivity
                 loggedIn = steamService.isLoggedIn();
                 farming = steamService.isFarming();
                 updateStatus();
-                final Fragment fragment = getCurrentFragment();
-                if (fragment instanceof HomeFragment) {
-                    drawerItemId = R.id.home;
-                    setTitle(R.string.app_name);
-                    drawerView.getMenu().findItem(R.id.home).setChecked(true);
-                    if (farming) {
-                        showDropInfo();
-                    }
-                } else if (fragment instanceof GamesFragment) {
-                    drawerItemId = R.id.games;
-                    setTitle(R.string.games);
-                    drawerView.getMenu().findItem(R.id.games).setChecked(true);
-                } else if (fragment instanceof SettingsFragment) {
-                    drawerItemId = R.id.settings;
-                    setTitle(R.string.settings);
-                    drawerView.getMenu().findItem(R.id.settings).setChecked(true);
-                }
             }
         });
 
@@ -349,20 +347,16 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         }
 
-        drawerItemId = id;
-        drawerView.getMenu().findItem(id).setChecked(true);
         Fragment fragment;
         switch (id) {
             case R.id.home:
-                setTitle(R.string.app_name);
                 fragment = HomeFragment.newInstance(loggedIn, farming);
                 break;
             case R.id.games:
-                setTitle(R.string.games);
-                fragment = GamesFragment.newInstance(steamService.getSteamId(), steamService.getCurrentAppIds());
+                fragment = GamesFragment.newInstance(steamService.getSteamId(),
+                        steamService.getCurrentGames(), spinnerNav.getSelectedItemPosition());
                 break;
             case R.id.settings:
-                setTitle(R.string.settings);
                 fragment = SettingsFragment.newInstance();
                 break;
             default:
@@ -386,6 +380,20 @@ public class MainActivity extends AppCompatActivity
         if (drawerLayout != null) {
             drawerLayout.closeDrawer(drawerView);
         }
+    }
+
+    /**
+     * Show the navigation spinner (Games fragment only)
+     */
+    private void showSpinnerNav() {
+        spinnerNav.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * Hide it
+     */
+    private void hideSpinnerNav() {
+        spinnerNav.setVisibility(View.GONE);
     }
 
     private void applySettings() {
@@ -431,6 +439,7 @@ public class MainActivity extends AppCompatActivity
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         doUnbindService();
         prefs.unregisterOnSharedPreferenceChangeListener(this);
+
     }
 
     @Override
@@ -490,9 +499,25 @@ public class MainActivity extends AppCompatActivity
         invalidateOptionsMenu();
         final Fragment fragment = getCurrentFragment();
         if (fragment instanceof HomeFragment) {
+            drawerItemId = R.id.home;
+            setTitle(R.string.app_name);
+            hideSpinnerNav();
+            drawerView.getMenu().findItem(R.id.home).setChecked(true);
+            if (farming) {
+                showDropInfo();
+            }
             ((HomeFragment) fragment).update(loggedIn, farming);
         } else if (fragment instanceof GamesFragment) {
-            ((GamesFragment) fragment).update(steamService.getCurrentAppIds());
+            drawerItemId = R.id.games;
+            setTitle("");
+            showSpinnerNav();
+            drawerView.getMenu().findItem(R.id.games).setChecked(true);
+            ((GamesFragment) fragment).update(steamService.getCurrentGames());
+        } else if (fragment instanceof SettingsFragment) {
+            drawerItemId = R.id.settings;
+            setTitle(R.string.settings);
+            hideSpinnerNav();
+            drawerView.getMenu().findItem(R.id.settings).setChecked(true);
         }
     }
 
@@ -503,6 +528,16 @@ public class MainActivity extends AppCompatActivity
         final Fragment fragment = getCurrentFragment();
         if (fragment instanceof HomeFragment) {
             ((HomeFragment) fragment).showDropInfo(steamService.getGameCount(), steamService.getCardCount());
+        }
+    }
+
+    /**
+     * Set games list for the games fragment
+     */
+    private void setGames(List<Game> games) {
+        final Fragment fragment = getCurrentFragment();
+        if (fragment instanceof  GamesFragment) {
+            ((GamesFragment) fragment).setGames(games);
         }
     }
 
@@ -543,10 +578,7 @@ public class MainActivity extends AppCompatActivity
                     .commitAllowingStateLoss();
         }
         // Update GamesFragment
-        final Fragment fragment = getCurrentFragment();
-        if (fragment instanceof GamesFragment) {
-            ((GamesFragment) fragment).updateGames(games);
-        }
+        setGames(games);
     }
 
     @Override

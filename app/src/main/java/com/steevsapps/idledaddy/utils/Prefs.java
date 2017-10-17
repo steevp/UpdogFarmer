@@ -4,6 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.steevsapps.idledaddy.steam.wrapper.Game;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +29,7 @@ public class Prefs {
     private final static String MINIMIZE_DATA = "minimize_data";
     private final static String PARENTAL_PIN = "parental_pin";
     private final static String BLACKLIST = "blacklist";
+    private final static String LAST_SESSION = "last_session";
 
     private static SharedPreferences prefs;
 
@@ -65,6 +71,11 @@ public class Prefs {
         writePref(BLACKLIST, Utils.arrayToString(blacklist));
     }
 
+    public static void writeLastSession(List<Game> games) {
+        final String json = new Gson().toJson(games);
+        writePref(LAST_SESSION, json);
+    }
+
     public static String getUsername() {
         return prefs.getString(USERNAME, "");
     }
@@ -104,6 +115,12 @@ public class Prefs {
     public static List<String> getBlacklist() {
         final String[] blacklist = prefs.getString(BLACKLIST, "").split(",");
         return new ArrayList<>(Arrays.asList(blacklist));
+    }
+
+    public static List<Game> getLastSession() {
+        final String json = prefs.getString(LAST_SESSION, "");
+        final Type type = new TypeToken<List<Game>>(){}.getType();
+        return new Gson().fromJson(json, type);
     }
 
     private static void writePref(String key, String value) {
