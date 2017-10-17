@@ -67,4 +67,18 @@
     <string name="stop">Стоп</string>
     <string name="skip">Пропустить</string>
     <string name="about">О программе</string>
+    <string name="cat_general">Общие</string>
+    <string name="pref_blacklist">Чёрный список</string>
+    <string name="sum_blacklist">Игры, которые вы не хотите фармить.</string>
+    <string name="blacklist_hint">Введите id игры и нажмите +</string>
+    <string name="add_to_blacklist">Добавить игру в чёрный список</string>
+    <string name="added_to_blacklist">Игра добавлена в чёрный список</string>
+    <string name="remove_from_blacklist">Убрать игру из чёрного списка</string>
+    <string name="removed_from_blacklist">Игра убрана из чёрного списка</string>
+    <string name="paused">На паузе</string>
+    <string name="pause">Пауза</string>
+    <string name="resume">Продолжить</string>
+    <string name="activated">Активировано: %s</string>
+    <string name="refresh">Обновить</string>
+    <string name="last_session">Последняя сессия</string>
 </resources>
