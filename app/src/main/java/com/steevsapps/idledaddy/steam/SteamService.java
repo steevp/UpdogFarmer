@@ -490,12 +490,11 @@ public class SteamService extends Service {
         return farming;
     }
 
-    public ArrayList<Integer> getCurrentAppIds() {
-        final ArrayList<Integer> appIds = new ArrayList<>();
-        for (Game game : currentGames) {
-            appIds.add(game.appId);
-        }
-        return appIds;
+    /**
+     * Get the games we're currently idling
+     */
+    public ArrayList<Game> getCurrentGames() {
+        return  new ArrayList<>(currentGames);
     }
 
     public int getGameCount() {
