@@ -192,6 +192,7 @@ public class SteamWebHandler {
             }
         }
 
+        final List<String> blacklist = Prefs.getBlacklist();
         Matcher m;
         for (Element b: badges) {
             // Get app id
@@ -203,6 +204,12 @@ public class SteamWebHandler {
             if (!m.find()) {
                 continue;
             }
+
+            if (blacklist.contains(m.group(1))) {
+                // Skip appids in the blacklist
+                continue;
+            }
+
             final int appId = Integer.parseInt(m.group(1));
 
             // Get remaining card drops

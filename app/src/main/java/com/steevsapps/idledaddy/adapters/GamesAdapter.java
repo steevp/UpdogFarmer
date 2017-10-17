@@ -25,7 +25,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     private List<Game> dataSetCopy = new ArrayList<>();
     private Context context;
     private GamePickedListener callback;
-    private ArrayList<Integer> currentAppIds;
+    private ArrayList<Game> currentGames;
 
     public GamesAdapter(Context c) {
         context = c;
@@ -65,8 +65,8 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    public void setCurrentAppIds(ArrayList<Integer> appIds) {
-        currentAppIds = appIds;
+    public void setCurrentGames(ArrayList<Game> games) {
+        currentGames = games;
         notifyDataSetChanged();
     }
 
@@ -88,20 +88,28 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
             holder.logo.setImageResource(R.drawable.ic_image_white_48dp);
         }
 
-        holder.itemView.setActivated(currentAppIds.contains(game.appId));
+        holder.itemView.setActivated(currentGames.contains(game));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!currentAppIds.contains(game.appId) && currentAppIds.size() < 32) {
-                    currentAppIds.add(game.appId);
+                if (!currentGames.contains(game) && currentGames.size() < 32) {
+                    currentGames.add(game);
                     holder.itemView.setActivated(true);
                     callback.onGamePicked(game);
                 } else {
-                    currentAppIds.remove(Integer.valueOf(game.appId));
+                    currentGames.remove(game);
                     holder.itemView.setActivated(false);
                     callback.onGameRemoved(game);
                 }
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                callback.onGameLongPressed(game);
+                return true;
             }
         });
     }

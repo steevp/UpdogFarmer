@@ -130,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements TimeoutListener 
             getSupportFragmentManager()
                     .beginTransaction()
                     .remove(timeout)
-                    .commit();
+                    .commitAllowingStateLoss();
         }
     }
 

@@ -103,6 +103,8 @@ public class SteamService extends Service {
     // Actions
     public final static String SKIP_INTENT = "SKIP_INTENT";
     public final static String STOP_INTENT = "STOP_INTENT";
+    public final static String PAUSE_INTENT = "PAUSE_INTENT";
+    public final static String RESUME_INTENT = "RESUME_INTENT";
 
     private SteamClient steamClient;
     private SteamUser steamUser;
@@ -119,10 +121,11 @@ public class SteamService extends Service {
     private String personaName = "";
     private String avatarHash = "";
 
-    private volatile boolean running = false;
-    private volatile boolean connected = false;
-    private volatile boolean farming = false;
-    private volatile boolean waiting = false;
+    private volatile boolean running = false; // Service running
+    private volatile boolean connected = false; // Connected to Steam
+    private volatile boolean farming = false; // Currently farming
+    private volatile boolean paused = false; // Game paused
+    private volatile boolean waiting = false; // Waiting for user to stop playing
 
     private long steamId;
     private boolean loggedIn = false;
@@ -151,16 +154,19 @@ public class SteamService extends Service {
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SKIP_INTENT)) {
-                // Skip clicked
-                skipGame();
-            } else if (intent.getAction().equals(STOP_INTENT)) {
-                Log.i(TAG, "received stop intent");
-                stopPlaying();
-                stopFarming();
-                updateNotification(getString(R.string.stopped));
-                LocalBroadcastManager.getInstance(SteamService.this)
-                        .sendBroadcast(new Intent(STOP_EVENT));
+            switch (intent.getAction()) {
+                case SKIP_INTENT:
+                    skipGame();
+                    break;
+                case STOP_INTENT:
+                    stopGame();
+                    break;
+                case PAUSE_INTENT:
+                    pauseGame();
+                    break;
+                case RESUME_INTENT:
+                    resumeGame();
+                    break;
             }
         }
     };
@@ -191,7 +197,7 @@ public class SteamService extends Service {
                     Log.i(TAG, "Invalid cookie data or no internet, reconnecting...");
                     steamClient.disconnect();
                 } else if (notInGame) {
-                    Log.i(TAG, "Finished");
+                    Log.i(TAG, "Resuming...");
                     waiting = false;
                     steamClient.disconnect();
                     waitHandle.cancel(false);
@@ -238,7 +244,7 @@ public class SteamService extends Service {
      * Resume farming/idling
      */
     private void resumeFarming() {
-        if (waiting) {
+        if (paused || waiting) {
             return;
         }
 
@@ -260,6 +266,9 @@ public class SteamService extends Service {
     }
 
     private void farm() {
+        if (paused || waiting) {
+            return;
+        }
         Log.i(TAG, "Checking remaining card drops");
         for (int i=0;i<3;i++) {
             gamesToFarm = webHandler.getRemainingGames();
@@ -347,6 +356,30 @@ public class SteamService extends Service {
         idleSingle(gamesToFarm.get(farmIndex));
     }
 
+    private void stopGame() {
+        stopPlaying();
+        stopFarming();
+        updateNotification(getString(R.string.stopped));
+        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(STOP_EVENT));
+    }
+
+    private void pauseGame() {
+        paused = true;
+        stopPlaying();
+        showPausedNotification();
+    }
+
+    private void resumeGame() {
+        paused = false;
+        if (currentGames.size() == 1) {
+            Log.i(TAG, "Resume playing");
+            idleSingle(currentGames.get(0));
+        } else if (currentGames.size() > 1) {
+            Log.i(TAG, "Resume playing (multiple)");
+            idleMultiple(currentGames);
+        }
+    }
+
     private void scheduleFarmTask() {
         if (farmHandle == null || farmHandle.isCancelled()) {
             Log.i(TAG, "Starting farmtask");
@@ -402,6 +435,8 @@ public class SteamService extends Service {
             final IntentFilter filter = new IntentFilter();
             filter.addAction(SKIP_INTENT);
             filter.addAction(STOP_INTENT);
+            filter.addAction(PAUSE_INTENT);
+            filter.addAction(RESUME_INTENT);
             registerReceiver(receiver, filter);
             start();
         }
@@ -455,12 +490,11 @@ public class SteamService extends Service {
         return farming;
     }
 
-    public ArrayList<Integer> getCurrentAppIds() {
-        final ArrayList<Integer> appIds = new ArrayList<>();
-        for (Game game : currentGames) {
-            appIds.add(game.appId);
-        }
-        return appIds;
+    /**
+     * Get the games we're currently idling
+     */
+    public ArrayList<Game> getCurrentGames() {
+        return  new ArrayList<>(currentGames);
     }
 
     public int getGameCount() {
@@ -524,14 +558,16 @@ public class SteamService extends Service {
             builder.setSubText(getResources().getQuantityString(R.plurals.card_drops_remaining, game.dropsRemaining, game.dropsRemaining));
         }
 
-        // Add the stop action
+        // Add the stop and pause actions
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
-        builder.addAction(R.drawable.ic_stop_white_48dp, getString(R.string.stop), stopIntent);
+        final PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent(PAUSE_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        builder.addAction(R.drawable.ic_stop_white_32dp, getString(R.string.stop), stopIntent);
+        builder.addAction(R.drawable.ic_pause_white_32dp, getString(R.string.pause), pauseIntent);
 
         if (farming) {
             // Add the skip action
             final PendingIntent skipIntent = PendingIntent.getBroadcast(this, 0, new Intent(SKIP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
-            builder.addAction(R.drawable.ic_skip_next_white_48dp, getString(R.string.skip), skipIntent);
+            builder.addAction(R.drawable.ic_skip_next_white_32dp, getString(R.string.skip), skipIntent);
         }
 
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -566,8 +602,9 @@ public class SteamService extends Service {
         final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 
-        // Add stop action
+        // Add stop and pause actions
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        final PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent(PAUSE_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
 
         final Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setStyle(new NotificationCompat.BigTextStyle()
@@ -577,9 +614,24 @@ public class SteamService extends Service {
                 .setContentText(getString(R.string.idling_multiple))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent)
-                .addAction(R.drawable.ic_stop_white_48dp, getString(R.string.stop), stopIntent)
+                .addAction(R.drawable.ic_stop_white_32dp, getString(R.string.stop), stopIntent)
+                .addAction(R.drawable.ic_pause_white_32dp, getString(R.string.pause), pauseIntent)
                 .build();
 
+        final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        nm.notify(NOTIF_ID, notification);
+    }
+
+    private void showPausedNotification() {
+        final PendingIntent pi = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), 0);
+        final PendingIntent resumeIntent = PendingIntent.getBroadcast(this, 0, new Intent(RESUME_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
+        final Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(getString(R.string.app_name))
+                .setContentText(getString(R.string.paused))
+                .setContentIntent(pi)
+                .addAction(R.drawable.ic_play_arrow_white_32dp, getString(R.string.resume), resumeIntent)
+                .build();
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.notify(NOTIF_ID, notification);
     }
@@ -682,6 +734,7 @@ public class SteamService extends Service {
 
     public void logoff() {
         Log.i(TAG, "logging off");
+        steamId = 0;
         stopFarming();
         steamUser.logOff();
         Prefs.writeUsername("");
@@ -835,7 +888,12 @@ public class SteamService extends Service {
                 if (result == EResult.OK) {
                     loggedIn = true;
                     steamId = steamClient.getSteamId().convertToLong();
-                    updateNotification(getString(R.string.logged_in));
+                    // Don't hide the paused notification
+                    if (!paused) {
+                        updateNotification(getString(R.string.logged_in));
+                    } else {
+                        showPausedNotification();
+                    }
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
@@ -921,15 +979,7 @@ public class SteamService extends Service {
                 final String[] servers = callback.getServerList();
                 if (servers.length > 0) {
                     Log.i(TAG, "Saving CM servers");
-                    final StringBuilder serverString = new StringBuilder();
-                    for (int i=0,size=servers.length;i<size;i++) {
-                        serverString.append(servers[i]);
-                        if (i + 1 < size) {
-                            serverString.append(",");
-                        }
-                    }
-                    Log.i(TAG, serverString.toString());
-                    Prefs.writeCmServers(serverString.toString());
+                    Prefs.writeCmServers(Utils.arrayToString(servers));
                 }
             }
         });
@@ -938,7 +988,7 @@ public class SteamService extends Service {
             public void call(NotificationUpdateCallback callback) {
                 Log.i(TAG, "New notifications " + callback.getNotificationCounts().toString());
                 for (Map.Entry<NotificationType,Integer> entry: callback.getNotificationCounts().entrySet()) {
-                    if (entry.getKey() == NotificationType.ITEMS && entry.getValue() > 0  && farming && !waiting) {
+                    if (entry.getKey() == NotificationType.ITEMS && entry.getValue() > 0  && farming) {
                         // Possible card drop
                         executor.execute(farmTask);
                         break;
@@ -1102,7 +1152,9 @@ public class SteamService extends Service {
     }
 
     private void stopPlaying() {
-        currentGames.clear();
+        if (!paused) {
+            currentGames.clear();
+        }
         steamUser.setPlayingGame(0);
     }
 

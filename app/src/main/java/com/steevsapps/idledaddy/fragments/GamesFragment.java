@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -14,46 +15,54 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.utils.Prefs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GamesFragment extends Fragment implements SearchView.OnQueryTextListener {
+public class GamesFragment extends Fragment implements SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener {
     private final static String TAG = GamesFragment.class.getSimpleName();
     private final static String STEAM_ID = "STEAM_ID";
-    private final static String CURRENT_APPIDS = "CURRENT_APPIDS";
+    private final static String CURRENT_GAMES = "CURRENT_GAMES";
+    private final static String CURRENT_TAB = "CURRENT_TAB";
 
+    private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
     private GamesAdapter adapter;
     private GridLayoutManager layoutManager;
     private SearchView searchView;
     private TextView emptyView;
-    private ProgressBar progressBar;
     private DataFragment dataFragment;
     private FloatingActionButton fab;
 
     private long steamId;
-    private ArrayList<Integer> currentAppIds;
+    private ArrayList<Game> currentGames;
 
-    public static GamesFragment newInstance(long steamId, ArrayList<Integer> currentAppIds) {
+    // Spinner nav items
+    private final static int TAB_GAMES = 0;
+    private final static int TAB_LAST = 1;
+    private int currentTab = TAB_GAMES;
+
+
+    public static GamesFragment newInstance(long steamId, ArrayList<Game> currentGames, int position) {
         final GamesFragment fragment = new GamesFragment();
         final Bundle args = new Bundle();
         args.putLong(STEAM_ID, steamId);
-        args.putIntegerArrayList(CURRENT_APPIDS, currentAppIds);
+        args.putParcelableArrayList(CURRENT_GAMES, currentGames);
+        args.putInt(CURRENT_TAB, position);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public void update(ArrayList<Integer> appIds) {
-        currentAppIds = appIds;
-        adapter.setCurrentAppIds(appIds);
+    public void update(ArrayList<Game> games) {
+        currentGames = games;
+        adapter.setCurrentGames(currentGames);
     }
 
     @Override
@@ -61,9 +70,11 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         super.onCreate(savedInstanceState);
         steamId = getArguments().getLong(STEAM_ID);
         if (savedInstanceState != null) {
-            currentAppIds = savedInstanceState.getIntegerArrayList(CURRENT_APPIDS);
+            currentGames = savedInstanceState.getParcelableArrayList(CURRENT_GAMES);
+            currentTab = savedInstanceState.getInt(CURRENT_TAB);
         } else {
-            currentAppIds = getArguments().getIntegerArrayList(CURRENT_APPIDS);
+            currentGames = getArguments().getParcelableArrayList(CURRENT_GAMES);
+            currentTab = getArguments().getInt(CURRENT_TAB);
             if (steamId == 0) {
                 Toast.makeText(getActivity(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
             }
@@ -72,47 +83,46 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     }
 
     @Override
+    public void onPause() {
+        if (!currentGames.isEmpty()) {
+            // Save idling session
+            Prefs.writeLastSession(currentGames);
+        }
+        super.onPause();
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putIntegerArrayList(CURRENT_APPIDS, currentAppIds);
+        outState.putParcelableArrayList(CURRENT_GAMES, currentGames);
+        outState.putInt(CURRENT_TAB, currentTab);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.games_fragment, container, false);
+        refreshLayout = view.findViewById(R.id.refresh_layout);
+        refreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
+        refreshLayout.setOnRefreshListener(this);
+
         recyclerView = view.findViewById(R.id.games_list);
         layoutManager = new GridLayoutManager(recyclerView.getContext(), getResources().getInteger(R.integer.game_columns));
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         adapter = new GamesAdapter(recyclerView.getContext());
-        adapter.setCurrentAppIds(currentAppIds);
+        adapter.setCurrentGames(currentGames);
         recyclerView.setAdapter(adapter);
+
         emptyView = view.findViewById(R.id.empty_view);
-        progressBar = view.findViewById(R.id.progress);
         fab = view.findViewById(R.id.redeem);
         // Show redeem button if user is logged in
         if (steamId > 0) {
             fab.show();
         }
-        dataFragment = (DataFragment) getActivity().getSupportFragmentManager().findFragmentByTag("data");
-        if (dataFragment != null) {
-            // Restore games list
-            Log.i(TAG, "Restoring games list");
-            updateGames(dataFragment.getData());
-        } else {
-            // Fetch games list
-            dataFragment = new DataFragment();
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(dataFragment, "data")
-                    .commit();
-            final FetchGamesFragment taskFragment = FetchGamesFragment.newInstance(steamId);
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(taskFragment, "task_fragment")
-                    .commit();
-        }
+        dataFragment = getDataFragment();
+        loadData();
+
         return view;
     }
 
@@ -123,6 +133,15 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(this);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.refresh) {
+            fetchGames();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -138,16 +157,73 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         return true;
     }
 
+    private void loadData() {
+        if (dataFragment != null) {
+            // Restore games list
+            Log.i(TAG, "Restoring games list");
+            setGames(dataFragment.getData());
+        } else {
+            // Add data fragment to store games during configuration changes
+            dataFragment = new DataFragment();
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(dataFragment, "data")
+                    .commit();
+            fetchGames();
+        }
+    }
+
+    /**
+     * Switch to the 'Games' tab
+     */
+    public void switchToGames() {
+        currentTab = TAB_GAMES;
+        fetchGames();
+    }
+
+    /**
+     * Switch to the 'Last Session' tab
+     */
+    public void switchToLastSession() {
+        currentTab = TAB_LAST;
+        fetchGames();
+    }
+
+    @Nullable
+    private DataFragment getDataFragment() {
+        return (DataFragment) getActivity().getSupportFragmentManager().findFragmentByTag("data");
+    }
+
+    private void fetchGames() {
+        if (currentTab == TAB_GAMES) {
+            // Fetch games from Steam
+            refreshLayout.setRefreshing(true);
+            final FetchGamesFragment taskFragment = FetchGamesFragment.newInstance(steamId);
+            getActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(taskFragment, "task_fragment")
+                    .commit();
+        } else if (currentTab == TAB_LAST) {
+            // Load last idling session
+            final List<Game> games = !currentGames.isEmpty() ? currentGames : Prefs.getLastSession();
+            setGames(games);
+        }
+
+    }
+
     /**
      * Update games list
      * @param games the list of games
      */
-    public void updateGames(List<Game> games) {
+    public void setGames(List<Game> games) {
         dataFragment.setData(games);
         adapter.setData(games);
-        progressBar.setVisibility(View.GONE);
-        if (games.isEmpty()) {
-            emptyView.setVisibility(View.VISIBLE);
-        }
+        refreshLayout.setRefreshing(false);
+        emptyView.setVisibility(games.isEmpty() ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onRefresh() {
+        fetchGames();
     }
 }

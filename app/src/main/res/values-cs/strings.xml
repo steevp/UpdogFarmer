@@ -66,4 +66,17 @@
     <string name="stop">Zastavit</string>
     <string name="skip">Přeskočit</string>
     <string name="activated">Aktivováno: %s</string>
+    <string name="cat_general">Obecné</string>
+    <string name="pref_blacklist">Blacklist</string>
+    <string name="sum_blacklist">Hry, které nechceš farmit přidej do blacklistu.</string>
+    <string name="blacklist_hint">Vlož appid a klikni na +</string>
+    <string name="add_to_blacklist">Přidat hru do blacklistu</string>
+    <string name="added_to_blacklist">Hra byla přidána do blacklistu</string>
+    <string name="remove_from_blacklist">Odebrat hru z blacklistu</string>
+    <string name="removed_from_blacklist">Hra byla odebrána z blacklistu</string>
+    <string name="paused">Pozastaveno</string>
+    <string name="pause">Pozastavit</string>
+    <string name="resume">Pokračovat</string>
+    <string name="refresh">Obnovit</string>
+    <string name="last_session">Poslední Sezení</string>
 </resources>

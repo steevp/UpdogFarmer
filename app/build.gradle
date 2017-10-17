@@ -7,19 +7,31 @@ android {
         applicationId "com.steevsapps.idledaddy"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 32
-        versionName "2.0.9"
+        versionCode 34
+        versionName "2.0.11"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
-    dexOptions {
-        jumboMode = true
+    productFlavors {
+        dev {
+            // Only enable multi-dex for dev builds (prod doesn't need it because of proguard).
+            // minSdk 21 enables pre-dexing to speed up the build process.
+            minSdkVersion 21
+            multiDexEnabled true
+        }
+
+        prod {
+            // The actual minSdkVersion for the production version.
+            minSdkVersion 15
+        }
     }
 
     lintOptions {
@@ -48,5 +60,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.8.0'
     compile "com.android.support:support-v4:$supportLibraryVersion"
     compile 'com.google.android.gms:play-services-ads:11.0.4'
+    compile 'com.google.code.gson:gson:2.8.2'
     testCompile 'junit:junit:4.12'
 }
