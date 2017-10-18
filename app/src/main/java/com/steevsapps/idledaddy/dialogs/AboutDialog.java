@@ -11,6 +11,8 @@ import android.webkit.WebView;
 
 import com.steevsapps.idledaddy.R;
 
+import java.util.Locale;
+
 public class AboutDialog extends DialogFragment {
     public final static String TAG = AboutDialog.class.getSimpleName();
 
@@ -22,7 +24,12 @@ public class AboutDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final WebView webView = (WebView) LayoutInflater.from(getActivity()).inflate(R.layout.about_dialog, null);
-        webView.loadUrl("file:///android_asset/about.html");
+        final String lang = Locale.getDefault().getDisplayLanguage();
+        if (lang.equals("ru")) {
+            webView.loadUrl("file:///android_asset/about-ru.html");
+        } else {
+            webView.loadUrl("file:///android_asset/about.html");
+        }
         webView.setBackgroundColor(Color.TRANSPARENT);
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.about)
