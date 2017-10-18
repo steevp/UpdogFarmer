@@ -120,7 +120,11 @@ public class Prefs {
     public static List<Game> getLastSession() {
         final String json = prefs.getString(LAST_SESSION, "");
         final Type type = new TypeToken<List<Game>>(){}.getType();
-        return new Gson().fromJson(json, type);
+        final List<Game> games = new Gson().fromJson(json, type);
+        if (games == null) {
+            return new ArrayList<>();
+        }
+        return games;
     }
 
     private static void writePref(String key, String value) {
