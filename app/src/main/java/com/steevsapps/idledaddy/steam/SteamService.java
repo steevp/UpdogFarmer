@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -120,6 +119,7 @@ public class SteamService extends Service {
     private int cardCount = 0;
     private String personaName = "";
     private String avatarHash = "";
+    private LogOnDetails logOnDetails = null;
 
     private volatile boolean running = false; // Service running
     private volatile boolean connected = false; // Connected to Steam
@@ -129,10 +129,10 @@ public class SteamService extends Service {
 
     private long steamId;
     private boolean loggedIn = false;
+    private boolean reconnectWithoutDelay = false; // Reconnect without delay
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
-    private Future<?> loginHandle;
     private ScheduledFuture<?> farmHandle;
     private ScheduledFuture<?> waitHandle;
     private ScheduledFuture<?> timeoutHandle;
@@ -446,6 +446,12 @@ public class SteamService extends Service {
     @Override
     public void onDestroy() {
         Log.i(TAG, "Service destroyed");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                steamClient.disconnect();
+            }
+        }).start();
         stopForeground(true);
         running = false;
         stopFarming();
@@ -702,12 +708,11 @@ public class SteamService extends Service {
 
     public void start() {
         running = true;
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                steamClient.connect();
-            }
-        });
+        if (!Prefs.getLoginKey().isEmpty()) {
+            // We can log in using saved credentials
+            connect();
+        }
+        // Schedule the the event handler
         scheduler.scheduleWithFixedDelay(new Runnable() {
             @Override
             public void run() {
@@ -723,30 +728,36 @@ public class SteamService extends Service {
     public void login(final LogOnDetails details) {
         Log.i(TAG, "logging in");
         details.loginId = NOTIF_ID;
-        loginHandle = executor.submit(new Runnable() {
-            @Override
-            public void run() {
-                waitForConnection();
-                steamUser.logOn(details, Prefs.getMachineId());
-            }
-        });
+        logOnDetails = details;
+        if (!connected) {
+            connect();
+        } else {
+            reconnect();
+        }
     }
 
     public void logoff() {
         Log.i(TAG, "logging off");
         steamId = 0;
+        logOnDetails = null;
         stopFarming();
         steamUser.logOff();
         Prefs.writeUsername("");
         Prefs.writeLoginKey("");
-        disconnect();
         updateNotification(getString(R.string.logged_out));
     }
 
-    public void disconnect() {
-        if (loginHandle != null) {
-            loginHandle.cancel(true);
-        }
+    private void connect() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                steamClient.connect();
+            }
+        });
+    }
+
+    private void reconnect() {
+        reconnectWithoutDelay = true;
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -781,11 +792,17 @@ public class SteamService extends Service {
     }
 
     /**
-     * Try to login using saved details in prefs
+     * Perform log in. Needs to happen as soon as we connect or else we'll get an error
+     */
+    private void doLogin() {
+        steamUser.logOn(logOnDetails, Prefs.getMachineId());
+        logOnDetails = null; // No longer need this
+    }
+
+    /**
+     * Log in using saved credentials
      */
     private void attemptRestoreLogin() {
-        // Just in case
-        Prefs.init(this);
         final String username = Prefs.getUsername();
         final String loginKey = Prefs.getLoginKey();
         final byte[] sentryData = readSentryFile();
@@ -800,19 +817,8 @@ public class SteamService extends Service {
             details.sentryFileHash = CryptoHelper.SHAHash(sentryData);
         }
         details.shouldRememberPassword = true;
-        login(details);
-    }
-
-    private void waitForConnection() {
-        while(running && !connected) {
-            try {
-                Log.i(TAG, "Waiting for connection...");
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                break;
-            }
-        }
+        details.loginId = NOTIF_ID;
+        steamUser.logOn(details, Prefs.getMachineId());
     }
 
     private void update() {
@@ -835,7 +841,11 @@ public class SteamService extends Service {
                 Log.i(TAG, "Connected()");
                 stopTimeout();
                 connected = true;
-                attemptRestoreLogin();
+                if (logOnDetails != null) {
+                    doLogin();
+                } else {
+                    attemptRestoreLogin();
+                }
             }
         });
         msg.handle(DisconnectedCallback.class, new ActionT<DisconnectedCallback>() {
@@ -845,7 +855,15 @@ public class SteamService extends Service {
                 stopTimeout();
                 connected = false;
                 loggedIn = false;
-                // Try to reconnect after a 3 second delay
+                // Reconnect delay
+                final int delay;
+                if (reconnectWithoutDelay) {
+                    reconnectWithoutDelay = false;
+                    delay = 0;
+                } else {
+                    delay = 3;
+                }
+                // Try to reconnect
                 scheduler.schedule(new Runnable() {
                     @Override
                     public void run() {
@@ -854,7 +872,7 @@ public class SteamService extends Service {
                         Log.i(TAG, "Reconnecting");
                         steamClient.connect();
                     }
-                }, 3, TimeUnit.SECONDS);
+                }, delay, TimeUnit.SECONDS);
                 // Tell the activity that we've been disconnected from Steam
                 LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(DISCONNECT_EVENT));
             }
@@ -926,9 +944,6 @@ public class SteamService extends Service {
                         Prefs.writeLoginKey("");
                         updateNotification(getString(R.string.login_key_expired));
                     }
-
-                    // Reconnect
-                    steamClient.disconnect();
                 }
 
                 // Tell LoginActivity the result
