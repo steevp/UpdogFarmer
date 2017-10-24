@@ -15,7 +15,7 @@ public class TimeoutFragment extends Fragment {
     public final static String TAG = TimeoutFragment.class.getSimpleName();
     private TimeoutListener callback;
 
-    private final static int TIMEOUT_MILLIS = 20000;
+    private final static int TIMEOUT_MILLIS = 25000;
     private final Handler timeoutHandler = new Handler();
     private final Runnable timeoutRunnable = new Runnable() {
         @Override
