@@ -738,12 +738,14 @@ public class SteamService extends Service {
 
     public void logoff() {
         Log.i(TAG, "logging off");
+        loggedIn = false;
+        avatarHash = "";
+        personaName = "";
         steamId = 0;
         logOnDetails = null;
         stopFarming();
         steamUser.logOff();
-        Prefs.writeUsername("");
-        Prefs.writeLoginKey("");
+        Prefs.clearUser();
         updateNotification(getString(R.string.logged_out));
     }
 
