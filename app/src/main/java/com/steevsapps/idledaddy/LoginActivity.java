@@ -214,6 +214,5 @@ public class LoginActivity extends AppCompatActivity implements TimeoutListener 
         loginButton.setEnabled(true);
         progress.setVisibility(View.GONE);
         Snackbar.make(coordinatorLayout, R.string.timeout_error, Snackbar.LENGTH_LONG).show();
-        steamService.disconnect();
     }
 }
