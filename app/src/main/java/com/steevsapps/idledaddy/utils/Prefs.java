@@ -47,6 +47,20 @@ public class Prefs {
         }
     }
 
+    /**
+     * Clear all preferences related to user
+     */
+    public static void clearUser() {
+        final SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(USERNAME, "")
+                .putString(LOGIN_KEY, "")
+                .putString(SENTRY_HASH, "")
+                .putString(BLACKLIST, "")
+                .putString(LAST_SESSION, "")
+                .putString(PARENTAL_PIN, "")
+                .apply();
+    }
+
     public static SharedPreferences getPrefs() {
         return prefs;
     }
@@ -130,12 +144,6 @@ public class Prefs {
     private static void writePref(String key, String value) {
         final SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
-        editor.apply();
-    }
-
-    private static void writePref(String key, int value) {
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(key, value);
         editor.apply();
     }
 }
