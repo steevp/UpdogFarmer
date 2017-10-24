@@ -129,7 +129,6 @@ public class SteamService extends Service {
 
     private long steamId;
     private boolean loggedIn = false;
-    private boolean reconnectWithoutDelay = false; // Reconnect without delay
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
@@ -732,7 +731,7 @@ public class SteamService extends Service {
         if (!connected) {
             connect();
         } else {
-            reconnect();
+            disconnect();
         }
     }
 
@@ -758,8 +757,7 @@ public class SteamService extends Service {
         });
     }
 
-    private void reconnect() {
-        reconnectWithoutDelay = true;
+    private void disconnect() {
         executor.execute(new Runnable() {
             @Override
             public void run() {
@@ -857,15 +855,7 @@ public class SteamService extends Service {
                 stopTimeout();
                 connected = false;
                 loggedIn = false;
-                // Reconnect delay
-                final int delay;
-                if (reconnectWithoutDelay) {
-                    reconnectWithoutDelay = false;
-                    delay = 0;
-                } else {
-                    delay = 3;
-                }
-                // Try to reconnect
+                // Try to reconnect after a 3 second delay
                 scheduler.schedule(new Runnable() {
                     @Override
                     public void run() {
@@ -874,7 +864,7 @@ public class SteamService extends Service {
                         Log.i(TAG, "Reconnecting");
                         steamClient.connect();
                     }
-                }, delay, TimeUnit.SECONDS);
+                }, 3, TimeUnit.SECONDS);
                 // Tell the activity that we've been disconnected from Steam
                 LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(DISCONNECT_EVENT));
             }
