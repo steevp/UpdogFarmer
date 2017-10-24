@@ -937,13 +937,11 @@ public class SteamService extends Service {
                             }
                         }
                     });
-                } else {
-                    if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
-                        // Probably no longer valid
-                        Log.i(TAG, "Login key expired");
-                        Prefs.writeLoginKey("");
-                        updateNotification(getString(R.string.login_key_expired));
-                    }
+                } else if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
+                    // Probably no longer valid
+                    Log.i(TAG, "Login key expired");
+                    Prefs.writeLoginKey("");
+                    updateNotification(getString(R.string.login_key_expired));
                 }
 
                 // Tell LoginActivity the result
