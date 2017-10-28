@@ -69,6 +69,7 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoggedOnCallba
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.LoginKeyCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.PurchaseResponseCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.UpdateMachineAuthCallback;
+import uk.co.thomasc.steamkit.steam3.handlers.steamuser.callbacks.WebAPIUserNonceCallback;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.MachineAuthDetails;
 import uk.co.thomasc.steamkit.steam3.steamclient.SteamClient;
@@ -288,7 +289,8 @@ public class SteamService extends Service {
 
         if (gamesToFarm == null) {
             Log.i(TAG, "Invalid cookie data or no internet, reconnecting");
-            steamClient.disconnect();
+            //steamClient.disconnect();
+            steamUser.requestWebAPIUserNonce();
             return;
         }
 
@@ -821,6 +823,27 @@ public class SteamService extends Service {
         steamUser.logOn(details, Prefs.getMachineId());
     }
 
+    private boolean attemptAuthentication(String nonce) {
+        Log.i(TAG, "Attempting SteamWeb authentication");
+        for (int i=0;i<3;i++) {
+            if (webHandler.authenticate(steamClient, nonce)) {
+                Log.i(TAG, "Authenticated!");
+                return true;
+            }
+
+            if (i + 1 < 3) {
+                Log.i(TAG, "Retrying...");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
     private void update() {
         while (true) {
             final CallbackMsg msg = steamClient.getCallback(true);
@@ -907,25 +930,13 @@ public class SteamService extends Service {
                     executor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            boolean gotAuth = false;
-                            for (int i=0;i<3;i++) {
-                                gotAuth = webHandler.authenticate(steamClient, webApiUserNonce);
-                                Log.i(TAG, "Got auth? "  + gotAuth);
-                                if (gotAuth) {
-                                    break;
-                                }
-                                Log.i(TAG, "retrying...");
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
+                            final boolean gotAuth = attemptAuthentication(webApiUserNonce);
 
                             if (gotAuth) {
                                 resumeFarming();
                             } else {
-                                updateNotification(getString(R.string.web_login_failed));
+                                // Request a new WebAPI user authentication nonce
+                                steamUser.requestWebAPIUserNonce();
                             }
                         }
                     });
@@ -1121,6 +1132,24 @@ public class SteamService extends Service {
                 }
 
                 steamFriends.setPersonaState(EPersonaState.Online);
+            }
+        });
+        msg.handle(WebAPIUserNonceCallback.class, new ActionT<WebAPIUserNonceCallback>() {
+            @Override
+            public void call(final WebAPIUserNonceCallback callback) {
+                Log.i(TAG, "Got new WebAPI user authentication nonce");
+                executor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        final boolean gotAuth = attemptAuthentication(callback.getNonce());
+
+                        if (gotAuth) {
+                            resumeFarming();
+                        } else {
+                            updateNotification(getString(R.string.web_login_failed));
+                        }
+                    }
+                });
             }
         });
     }
