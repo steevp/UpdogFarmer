@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity
     private final static String TITLE = "TITLE";
     private final static String LOGOUT_EXPANDED = "LOGOUT_EXPANDED";
 
-    private String title;
+    private String title = "";
 
     private boolean loggedIn = false;
     private boolean farming = false;
@@ -349,9 +349,9 @@ public class MainActivity extends AppCompatActivity
      * Activate a Steam key sent from another app
      */
     private void handleKeyIntent(Intent intent) {
-        final String key = intent.getStringExtra(Intent.EXTRA_TEXT).trim();
-        if (loggedIn) {
-            steamService.redeemKey(key);
+        final String key = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (loggedIn && key != null) {
+            steamService.redeemKey(key.trim());
         } else {
             Toast.makeText(getApplicationContext(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
         }
