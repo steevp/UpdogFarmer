@@ -11,9 +11,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.steevsapps.idledaddy.R;
 
 public class HomeFragment extends Fragment {
@@ -32,8 +29,6 @@ public class HomeFragment extends Fragment {
 
     private Button startIdling;
     private Button stopIdling;
-
-    private AdView adView;
 
     private boolean loggedIn = false;
     private boolean farming = false;
@@ -77,20 +72,8 @@ public class HomeFragment extends Fragment {
         cardCountText = view.findViewById(R.id.card_count);
         gameCountText = view.findViewById(R.id.game_count);
         startIdling = view.findViewById(R.id.start_idling);
-        adView = view.findViewById(R.id.adView);
         updateStatus();
-        loadAds();
         return view;
-    }
-
-    private void loadAds() {
-        MobileAds.initialize(getActivity(), "***REMOVED***");
-        final AdRequest adRequest = new AdRequest.Builder()
-                // Seems ok to leave in production???
-                .addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99")
-                .addTestDevice("E8F66CC8599C1F21FDBC86370F926F88")
-                .build();
-        adView.loadAd(adRequest);
     }
 
     private void setStatusOnline() {

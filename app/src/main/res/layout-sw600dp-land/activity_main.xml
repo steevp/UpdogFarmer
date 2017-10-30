@@ -19,10 +19,28 @@
             app:menu="@menu/menu_navigation"
             app:headerLayout="@layout/drawer_header" />
 
-        <FrameLayout
-            android:id="@+id/content_frame"
+        <LinearLayout
+            android:id="@+id/main_container"
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:id="@+id/content_frame"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <ViewStub
+                android:id="@+id/ad_inflater"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout="@layout/banner_ad"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

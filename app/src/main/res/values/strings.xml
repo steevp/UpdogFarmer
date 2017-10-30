@@ -77,4 +77,5 @@
     <string name="activated">Activated: %s</string>
     <string name="refresh">Refresh</string>
     <string name="last_session">Last Session</string>
+    <string name="remove_ads">Remove ads</string>
 </resources>
