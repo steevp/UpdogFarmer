@@ -7,8 +7,8 @@ android {
         applicationId "com.steevsapps.idledaddy"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 37
-        versionName "2.0.14"
+        versionCode 38
+        versionName "2.0.15"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -60,6 +60,7 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.8.0'
     compile "com.android.support:support-v4:$supportLibraryVersion"
     compile 'com.google.android.gms:play-services-ads:11.0.4'
+    compile 'com.android.billingclient:billing:1.0'
     compile 'com.google.code.gson:gson:2.8.2'
     testCompile 'junit:junit:4.12'
 }

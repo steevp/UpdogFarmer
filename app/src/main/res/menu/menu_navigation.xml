@@ -28,5 +28,9 @@
         <item android:id="@+id/about"
             android:icon="@drawable/ic_info_outline_white_24dp"
             android:title="@string/about" />
+        <item android:id="@+id/remove_ads"
+            android:icon="@drawable/ic_thumb_up_white_24dp"
+            android:title="@string/remove_ads"
+            android:visible="false" />
     </group>
 </menu>

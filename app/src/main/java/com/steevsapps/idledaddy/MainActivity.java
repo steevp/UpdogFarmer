@@ -26,14 +26,22 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.billingclient.api.Purchase;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.steevsapps.idledaddy.billing.BillingManager;
+import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.GameOptionsDialog;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
@@ -57,7 +65,7 @@ import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 
 
 public class MainActivity extends AppCompatActivity
-        implements DialogListener, GamePickedListener, FetchGamesListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        implements BillingUpdatesListener, DialogListener, GamePickedListener, FetchGamesListener, SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String DRAWER_ITEM = "DRAWER_ITEM";
     private final static String TITLE = "TITLE";
@@ -69,6 +77,7 @@ public class MainActivity extends AppCompatActivity
     private boolean farming = false;
 
     // Views
+    private LinearLayout mainContainer;
     private ImageView avatarView;
     private TextView usernameView;
     private DrawerLayout drawerLayout;
@@ -76,6 +85,11 @@ public class MainActivity extends AppCompatActivity
     private ActionBarDrawerToggle drawerToggle;
     private ImageView logoutToggle;
     private Spinner spinnerNav;
+
+    private ViewStub adInflater;
+    private AdView adView;
+
+    private BillingManager billingManager;
 
     private boolean logoutExpanded = false;
     private int drawerItemId;
@@ -203,6 +217,11 @@ public class MainActivity extends AppCompatActivity
         final Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        mainContainer = findViewById(R.id.main_container);
+
+        // Setup Billing Manager
+        billingManager = new BillingManager(this);
+
         // Setup the navigation spinner (Games fragment only)
         spinnerNav = findViewById(R.id.spinner_nav);
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -247,6 +266,10 @@ public class MainActivity extends AppCompatActivity
                         AboutDialog.newInstance().show(getSupportFragmentManager(), AboutDialog.TAG);
                         closeDrawer();
                         break;
+                    case R.id.remove_ads:
+                        billingManager.launchPurchaseFlow();
+                        closeDrawer();
+                        break;
                     default:
                         // Go to page
                         selectItem(item.getItemId(), true);
@@ -280,6 +303,9 @@ public class MainActivity extends AppCompatActivity
                 updateStatus();
             }
         });
+
+        // Ads
+        adInflater = findViewById(R.id.ad_inflater);
 
         if (savedInstanceState != null) {
             drawerItemId = savedInstanceState.getInt(DRAWER_ITEM);
@@ -443,6 +469,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onDestroy() {
+        billingManager.destroy();
+        super.onDestroy();
+    }
+
+    @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         final boolean loggedIn = steamService != null && steamService.isLoggedIn();
         drawerView.getHeaderView(0).setClickable(loggedIn);
@@ -594,5 +626,41 @@ public class MainActivity extends AppCompatActivity
             // Change status
             steamService.changeStatus(Prefs.getOffline() ? EPersonaState.Offline : EPersonaState.Online);
         }
+    }
+
+    @Override
+    public void onBillingClientSetupFinished() {
+        if (billingManager.shouldDisplayAds()) {
+            loadAds();
+            drawerView.getMenu().findItem(R.id.remove_ads).setVisible(true);
+        }
+    }
+
+    @Override
+    public void onPurchasesUpdated(List<Purchase> purchases) {
+        if (!billingManager.shouldDisplayAds()) {
+            removeAds();
+            drawerView.getMenu().findItem(R.id.remove_ads).setVisible(false);
+        }
+    }
+
+    /**
+     * Inflate adView and load the ad request
+     */
+    private void loadAds() {
+        adView = (AdView) adInflater.inflate();
+        MobileAds.initialize(this, "ca-app-pub-6413501894389361~6190763130");
+        final AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99")
+                .addTestDevice("E8F66CC8599C1F21FDBC86370F926F88")
+                .build();
+        adView.loadAd(adRequest);
+    }
+
+    /**
+     * Remove the adView
+     */
+    private void removeAds() {
+        mainContainer.removeView(adView);
     }
 }
