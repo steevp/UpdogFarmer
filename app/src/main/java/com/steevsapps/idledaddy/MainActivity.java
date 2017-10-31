@@ -648,7 +648,9 @@ public class MainActivity extends AppCompatActivity
      * Inflate adView and load the ad request
      */
     private void loadAds() {
-        adView = (AdView) adInflater.inflate();
+        if (adView == null) {
+            adView = (AdView) adInflater.inflate();
+        }
         MobileAds.initialize(this, "***REMOVED***");
         final AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99")
