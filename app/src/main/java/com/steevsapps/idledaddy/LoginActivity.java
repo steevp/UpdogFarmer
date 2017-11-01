@@ -1,24 +1,21 @@
 package com.steevsapps.idledaddy;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.steevsapps.idledaddy.base.BaseActivity;
 import com.steevsapps.idledaddy.fragments.TimeoutFragment;
 import com.steevsapps.idledaddy.listeners.TimeoutListener;
 import com.steevsapps.idledaddy.steam.SteamService;
@@ -29,25 +26,11 @@ import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
 
 import static com.steevsapps.idledaddy.steam.SteamService.LOGIN_EVENT;
 
-public class LoginActivity extends AppCompatActivity implements TimeoutListener {
+public class LoginActivity extends BaseActivity implements TimeoutListener {
     private final static String TAG = LoginActivity.class.getSimpleName();
 
     private final static String LOGIN_IN_PROGRESS = "LOGIN_IN_PROGRESS";
     private final static String TWO_FACTOR_REQUIRED = "TWO_FACTOR_REQUIRED";
-
-    boolean isBound;
-    private SteamService steamService;
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            steamService = ((SteamService.LocalBinder) service).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            steamService = null;
-        }
-    };
 
     private boolean loginInProgress;
     private boolean twoFactorRequired;
@@ -61,7 +44,7 @@ public class LoginActivity extends AppCompatActivity implements TimeoutListener 
     private ProgressBar progress;
 
     // Used to receive messages from SteamService
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(SteamService.LOGIN_EVENT)) {
@@ -92,20 +75,6 @@ public class LoginActivity extends AppCompatActivity implements TimeoutListener 
             }
         }
     };
-
-    private void doBindService() {
-        bindService(new Intent(LoginActivity.this, SteamService.class),
-                connection, Context.BIND_AUTO_CREATE);
-        isBound = true;
-    }
-
-    private void doUnbindService() {
-        if (isBound) {
-            // Detach our existing connection
-            unbindService(connection);
-            isBound = false;
-        }
-    }
 
     /**
      * Start timeout handler in case the server doesn't respond
@@ -172,7 +141,6 @@ public class LoginActivity extends AppCompatActivity implements TimeoutListener 
     @Override
     protected void onPause() {
         super.onPause();
-        doUnbindService();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
         if (isFinishing()) {
@@ -183,7 +151,6 @@ public class LoginActivity extends AppCompatActivity implements TimeoutListener 
     @Override
     protected void onResume() {
         super.onResume();
-        doBindService();
         final IntentFilter filter = new IntentFilter(LOGIN_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
@@ -203,7 +170,7 @@ public class LoginActivity extends AppCompatActivity implements TimeoutListener 
                 details.authCode(twoFactorInput.getEditText().getText().toString().trim());
             }
             details.shouldRememberPassword = true;
-            steamService.login(details);
+            getService().login(details);
             startTimeout();
         }
     }
