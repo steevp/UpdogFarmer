@@ -1,26 +1,21 @@
 package com.steevsapps.idledaddy;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -40,6 +35,7 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.steevsapps.idledaddy.base.BaseActivity;
 import com.steevsapps.idledaddy.billing.BillingManager;
 import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
@@ -64,15 +60,14 @@ import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 
 
-public class MainActivity extends AppCompatActivity
-        implements BillingUpdatesListener, DialogListener, GamePickedListener, FetchGamesListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends BaseActivity implements BillingUpdatesListener, DialogListener,
+        GamePickedListener, FetchGamesListener, SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String DRAWER_ITEM = "DRAWER_ITEM";
     private final static String TITLE = "TITLE";
     private final static String LOGOUT_EXPANDED = "LOGOUT_EXPANDED";
 
     private String title = "";
-
     private boolean loggedIn = false;
     private boolean farming = false;
 
@@ -85,7 +80,6 @@ public class MainActivity extends AppCompatActivity
     private ActionBarDrawerToggle drawerToggle;
     private ImageView logoutToggle;
     private Spinner spinnerNav;
-
     private ViewStub adInflater;
     private AdView adView;
 
@@ -95,35 +89,7 @@ public class MainActivity extends AppCompatActivity
     private int drawerItemId;
 
     private SharedPreferences prefs;
-
-    // Service connection
-    private boolean isBound;
     private SteamService steamService;
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder service) {
-            Log.i(TAG, "Service connected");
-            steamService = ((SteamService.LocalBinder) service).getService();
-            loggedIn = steamService.isLoggedIn();
-            farming = steamService.isFarming();
-            updateStatus();
-            updateDrawerHeader(null);
-            if (farming) {
-                showDropInfo();
-            }
-
-            // Check if a Steam key was sent to us from another app
-            final Intent intent = getIntent();
-            if (Intent.ACTION_SEND.equals(intent.getAction())) {
-                handleKeyIntent(intent);
-            }
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            steamService = null;
-        }
-    };
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -147,28 +113,8 @@ public class MainActivity extends AppCompatActivity
         }
     };
 
-    private void doBindService() {
-        if (!isBound) {
-            Log.i(TAG, "binding service");
-            bindService(new Intent(MainActivity.this, SteamService.class),
-                    connection, Context.BIND_AUTO_CREATE);
-            isBound = true;
-        }
-    }
-
-    private void doUnbindService() {
-        if (isBound) {
-            Log.i(TAG, "unbinding service");
-            // Detach our existing connection
-            unbindService(connection);
-            isBound = false;
-        }
-    }
-
     private void doLogout() {
-        if (steamService != null) {
-            steamService.logoff();
-        }
+        steamService.logoff();
         closeDrawer();
         avatarView.setImageResource(R.color.transparent);
         usernameView.setText("");
@@ -206,6 +152,25 @@ public class MainActivity extends AppCompatActivity
                     avatarHash.substring(0, 2),
                     avatarHash);
             Glide.with(this).load(avatar).into(avatarView);
+        }
+    }
+
+    @Override
+    protected void onServiceConnected() {
+        Log.i(TAG, "Service connected");
+        steamService = getService();
+        loggedIn = steamService.isLoggedIn();
+        farming = steamService.isFarming();
+        updateStatus();
+        updateDrawerHeader(null);
+        if (farming) {
+            showDropInfo();
+        }
+
+        // Check if a Steam key was sent to us from another app
+        final Intent intent = getIntent();
+        if (Intent.ACTION_SEND.equals(intent.getAction())) {
+            handleKeyIntent(intent);
         }
     }
 
@@ -453,7 +418,6 @@ public class MainActivity extends AppCompatActivity
         filter.addAction(SteamService.FARM_EVENT);
         filter.addAction(SteamService.PERSONA_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
-        startSteam();
         // Listen for preference changes
         prefs = Prefs.getPrefs();
         prefs.registerOnSharedPreferenceChangeListener(this);
@@ -463,7 +427,6 @@ public class MainActivity extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
-        doUnbindService();
         prefs.unregisterOnSharedPreferenceChangeListener(this);
 
     }
@@ -511,17 +474,6 @@ public class MainActivity extends AppCompatActivity
                 RedeemDialog.newInstance().show(getSupportFragmentManager(), "redeem");
                 break;
         }
-    }
-
-    private void startSteam() {
-        ContextCompat.startForegroundService(this, SteamService.createIntent(this));
-        doBindService();
-    }
-
-    private void stopSteam() {
-        doUnbindService();
-        stopService(SteamService.createIntent(this));
-        finish();
     }
 
     /**
