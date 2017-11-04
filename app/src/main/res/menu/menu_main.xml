@@ -4,4 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
+    <item
+        android:id="@+id/logcat"
+        android:title="@string/logcat"
+        app:showAsAction="never"
+        android:orderInCategory="100" />
+
 </menu>

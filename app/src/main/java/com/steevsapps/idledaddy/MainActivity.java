@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -52,6 +53,7 @@ import com.steevsapps.idledaddy.listeners.SpinnerInteractionListener;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Prefs;
+import com.steevsapps.idledaddy.utils.Utils;
 
 import java.util.List;
 import java.util.Locale;
@@ -455,7 +457,24 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         if (drawerToggle != null && drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+        switch (item.getItemId()) {
+            case R.id.logcat:
+                sendLogcat();
+                return true;
+        }
         return false;
+    }
+
+    /**
+     * Send Logcat output via email
+     */
+    private void sendLogcat() {
+        final Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"steevsapps@gmail.com"});
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Idle Daddy Logcat");
+        intent.putExtra(Intent.EXTRA_TEXT, Utils.getLogcat());
+        startActivity(intent);
     }
 
     public void clickHandler(View v) {

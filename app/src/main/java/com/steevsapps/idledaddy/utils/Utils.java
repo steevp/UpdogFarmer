@@ -1,5 +1,8 @@
 package com.steevsapps.idledaddy.utils;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,6 +44,26 @@ public class Utils {
      */
     public static String arrayToString(String[] array) {
         return arrayToString(Arrays.asList(array));
+    }
+
+    /**
+     * Dump Logcat
+     */
+    public static String getLogcat() {
+        try {
+            final Process p = Runtime.getRuntime().exec("logcat -d");
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            final StringBuilder builder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                builder.append(line);
+                builder.append("\n");
+            }
+            return builder.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
