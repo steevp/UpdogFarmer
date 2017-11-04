@@ -78,4 +78,5 @@
     <string name="refresh">Refresh</string>
     <string name="last_session">Last Session</string>
     <string name="remove_ads">Remove ads</string>
+    <string name="logcat">Logcat</string>
 </resources>
