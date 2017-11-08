@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Idle Daddy简体中文</string>
+    <string name="app_name">Idle Daddy</string>
     <string name="status">状态</string>
     <string name="logged_in">已登陆</string>
     <string name="tap_to_login">点我登陆</string>
@@ -9,7 +9,7 @@
     <string name="steamguard">Steam令牌</string>
     <string name="login">登陆</string>
     <string name="start_idling">开始挂卡</string>
-    <string name="desc_start">正在挂卡直到所有集换式卡牌掉落</string>
+    <string name="desc_start">开始挂卡直到所有集换式卡牌掉落</string>
     <string name="stop_idling">停止服务</string>
     <string name="desc_stop">停止挂卡服务并关闭程序</string>
     <string name="idling_finished">挂卡完毕</string>
@@ -19,7 +19,7 @@
     <string name="redeem">激活密钥</string>
     <string name="redeem_msg">输入产品代码 或者免费游戏的ID</string>
     <string name="ok">OK</string>
-    <string name="cat_idle">挂卡中……</string>
+    <string name="cat_idle">挂卡</string>
     <string name="cat_general">常规</string>
     <string name="pref_offline">离线挂卡</string>
     <string name="sum_offline">将你的状态设置为 \'离线\' ，你的好友们将不会知道你在挂卡。</string>
@@ -29,12 +29,12 @@
     <string name="sum_simple">一个接一个的轮流挂卡，在你的游戏时长到达2小时前依次切换，如果不确定是否需要，关闭此项功能即可。</string>
     <string name="pref_minimize_data">省流模式</string>
     <string name="sum_minimize_data">不下载任何图片，节省网络流量。</string>
-    <string name="pref_parental_pin">私人密码 （PIN）</string>
-    <string name="sum_parental_pin">输入您的PIN以解锁主视图。</string>
+    <string name="pref_parental_pin">家庭监护密码 （PIN）</string>
+    <string name="sum_parental_pin">输入您的PIN以解锁\'家庭监护\'，未解锁状态下某些游戏将不能挂卡。</string>
     <string name="pref_blacklist">黑名单</string>
-    <string name="sum_blacklist">将你不想挂卡的游戏加入黑名单。</string>
+    <string name="sum_blacklist">将你不想挂卡的游戏加入黑名单</string>
     <string name="blacklist_hint">输入一个appid然后点击+</string>
-    <string name="add_to_blacklist">将游戏加入黑名单。</string>
+    <string name="add_to_blacklist">将游戏加入黑名单</string>
     <string name="added_to_blacklist">游戏已加入黑名单</string>
     <string name="remove_from_blacklist">将游戏从黑名单移除</string>
     <string name="removed_from_blacklist">游戏已从黑名单移除</string>
@@ -42,7 +42,7 @@
     <string name="close_drawer">关闭抽屉</string>
     <string name="home">主页</string>
     <string name="games">游戏</string>
-    <string name="no_games_found">无法检索游戏列表。确保您的个人资料已设定为公开。</string>
+    <string name="no_games_found">无法检索游戏列表。请确保您的个人资料已设定为公开。</string>
     <string name="now_playing">正在玩</string>
     <string name="error_not_logged_in">必须登陆Steam</string>
     <string name="invalid_password">密码无效</string>
@@ -76,5 +76,7 @@
     <string name="resume">继续</string>
     <string name="activated">已激活: %s</string>
     <string name="refresh">刷新</string>
-    <string name="last_session">上次会话</string>
+    <string name="last_session">上个会话</string>
+	<string name="remove_ads">移除广告</string>
+    <string name="logcat">日志</string>
 </resources>
