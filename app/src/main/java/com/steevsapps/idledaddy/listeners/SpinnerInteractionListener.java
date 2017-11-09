@@ -17,10 +17,6 @@ public class SpinnerInteractionListener implements AdapterView.OnItemSelectedLis
     private boolean userSelect = false;
     private FragmentManager fm;
 
-    // Spinner item ids
-    private final static int GAMES = 0;
-    private final static int LAST_SESSION = 1;
-
     public SpinnerInteractionListener(FragmentManager fm) {
         this.fm = fm;
     }
@@ -48,13 +44,17 @@ public class SpinnerInteractionListener implements AdapterView.OnItemSelectedLis
         if (fragment instanceof GamesFragment) {
             final GamesFragment gamesFragment = (GamesFragment) fragment;
             switch (position) {
-                case GAMES:
+                case GamesFragment.TAB_GAMES:
                     // Library
                     gamesFragment.switchToGames();
                     break;
-                case LAST_SESSION:
+                case GamesFragment.TAB_LAST:
                     // Last idling session
                     gamesFragment.switchToLastSession();
+                    break;
+                case GamesFragment.TAB_BLACKLIST:
+                    // Blacklisted games
+                    gamesFragment.switchToBlacklist();
                     break;
             }
         }
