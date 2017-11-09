@@ -31,6 +31,7 @@ public class PrefsManager {
     private final static String BLACKLIST = "blacklist";
     private final static String LAST_SESSION = "last_session";
     private final static String HOURS_UNTIL_DROPS = "hours_until_drops";
+    private final static String INCLUDE_FREE_GAMES = "include_free_games";
 
     private static SharedPreferences prefs;
 
@@ -142,6 +143,10 @@ public class PrefsManager {
 
     public static int getHoursUntilDrops() {
         return Integer.parseInt(prefs.getString(HOURS_UNTIL_DROPS, "3"));
+    }
+
+    public static boolean includeFreeGames() {
+        return prefs.getBoolean(INCLUDE_FREE_GAMES, false);
     }
 
     private static void writePref(String key, String value) {
