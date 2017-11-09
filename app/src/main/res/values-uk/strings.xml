@@ -24,8 +24,6 @@
     <string name="sum_offline">Виберіть статус Offline щоб ваші друзі не бачили фарм.</string>
     <string name="pref_stay_awake">Тримати пристрій включеним</string>
     <string name="sum_stay_awake">Цей пристрій не подключений до WiFi під час сну.</string>
-    <string name="pref_simple">Звичайний фарминг</string>
-    <string name="sum_simple"> Фармити ваші ігри по черзі поки всі карти не випадуть, не використовуєтся на іграх до 2 годин. Якщо ви не впевнені, вийдіть щоб виключити.</string>
     <string name="pref_minimize_data">Використовувати меньше данних</string>
     <string name="sum_minimize_data">Не вдалось завантажит зоображення гри.</string>
     <string name="pref_parental_pin">Батьківський PIN</string>

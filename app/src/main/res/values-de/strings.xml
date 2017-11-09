@@ -25,8 +25,6 @@
     <string name="sum_offline">Du wirst bei jedem als offline angezeigt also sieht keiner das du inaktiv Spiele spielst.</string>
     <string name="pref_stay_awake">Lasse das Gerät an</string>
     <string name="sum_stay_awake">Schalte dies an wenn dein Gerät WiFi nicht anlässt während es im Standbymodus ist.</string>
-    <string name="pref_simple">Einfaches Farmen</string>
-    <string name="sum_simple">Schalte dies an wenn du willst das ein Spiel nach dem anderen läuft und nicht alle gleichzeitig. Dabei wird versucht das Spiel nicht erst auf zwei Stunden zu bringen. Wenn du dir unsicher bist lasse dies aus.</string>
     <string name="pref_minimize_data">Minimiere den Datenverbrauch</string>
     <string name="sum_minimize_data">Lädt das Cover des Spiels nicht herunter.</string>
     <string name="pref_parental_pin">Familien PIN</string>

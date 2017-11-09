@@ -24,8 +24,6 @@
     <string name="sum_offline">Меняет ваш статус на Не в сети, поэтому ваши друзья не будут видеть, что у вас запускается.</string>
     <string name="pref_stay_awake">Держать экран включенным </string>
     <string name="sum_stay_awake">Включите это, если ваше устройство не поддерживает WiFi во время спящего режима.</string>
-    <string name="pref_simple">Простой фарм</string>
-    <string name="sum_simple">Запускает ваши игры одну за одной до тех пор, пока не выпадут все карточки. Не пытайтесь наиграть в них 2 часа в первую очередь. Если не уверены, то оставьте опцию выключенной.</string>
     <string name="pref_minimize_data">Минимизировать использование данных</string>
     <string name="sum_minimize_data">Не скачивать обложки игр.</string>
     <string name="pref_parental_pin">Родительский PIN-код</string>

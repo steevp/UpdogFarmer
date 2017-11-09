@@ -25,8 +25,6 @@
     <string name="sum_offline">Define seu status como Offline para que seus amigos não o vejam no idle</string>
     <string name="pref_stay_awake">Manter o dispositivo ligado</string>
     <string name="sum_stay_awake">Ative isso se o seu dispositivo não manter Wi-Fi ligado durante o sono.</string>
-    <string name="pref_simple">Cultivo simples</string>
-    <string name="sum_simple">Idle seus jogos, um por um até que todos os cartões tenham caído, não tente levá-los até 2 horas primeiro. Se não tiver certeza, deixe esta desativada.</string>
     <string name="pref_minimize_data">Minimizar o uso de dados</string>
     <string name="sum_minimize_data">Não fazer o download da arte do jogo.</string>
     <string name="pref_parental_pin">PIN parental</string>
