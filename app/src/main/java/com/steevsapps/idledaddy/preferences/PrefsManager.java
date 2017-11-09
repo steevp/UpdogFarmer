@@ -142,7 +142,7 @@ public class PrefsManager {
     }
 
     public static int getHoursUntilDrops() {
-        return Integer.parseInt(prefs.getString(HOURS_UNTIL_DROPS, "3"));
+        return prefs.getInt(HOURS_UNTIL_DROPS, 3);
     }
 
     public static boolean includeFreeGames() {

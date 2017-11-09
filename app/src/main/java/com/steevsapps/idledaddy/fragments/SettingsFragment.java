@@ -8,6 +8,8 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.preferences.BlacklistDialog;
 import com.steevsapps.idledaddy.preferences.BlacklistPreference;
+import com.steevsapps.idledaddy.preferences.NumPickerDialog;
+import com.steevsapps.idledaddy.preferences.NumPickerPreference;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     private final static String TAG = SettingsFragment.class.getSimpleName();
@@ -28,6 +30,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (preference instanceof BlacklistPreference) {
             // Show blacklist dialog
             final BlacklistDialog fragment = BlacklistDialog.newInstance(preference);
+            fragment.setTargetFragment(this, 0);
+            fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+        } else if (preference instanceof NumPickerPreference) {
+            final NumPickerDialog fragment = NumPickerDialog.newInstance(preference);
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
         } else {

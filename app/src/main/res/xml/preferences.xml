@@ -35,12 +35,10 @@
             android:summary="@string/sum_offline"
             android:defaultValue="false" />
 
-        <ListPreference
+        <com.steevsapps.idledaddy.preferences.NumPickerPreference
             android:key="hours_until_drops"
             android:title="@string/pref_hours_until"
             android:summary="@string/sum_hours_until"
-            android:entries="@array/hours_until_entries"
-            android:entryValues="@array/hours_until_values"
             android:defaultValue="3" />
 
         <com.steevsapps.idledaddy.preferences.BlacklistPreference
