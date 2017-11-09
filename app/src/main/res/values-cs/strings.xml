@@ -24,8 +24,6 @@
     <string name="sum_offline">Nastaví tvúj stav na Offline, takže tví přátelé neuvidí, že něco hraješ.</string>
     <string name="pref_stay_awake">Neuspávat zařízení</string>
     <string name="sum_stay_awake">Tuto funkci aktivuj, pokud tvé zařízení nepodporuje zapnutou wi-fi v režimu spánku.</string>
-    <string name="pref_simple">Jednoduché farmení</string>
-    <string name="sum_simple">Farmí tvé hry po jedné, dokud nezíská všechny karty, nepokouší se nejdříve na nich nahrát 2 hodiny. Pokud nejsi touto funkcí jist, nech ji vypnutou.</string>
     <string name="pref_minimize_data">Šetření dat</string>
     <string name="sum_minimize_data">Nestahuje náhledy her.</string>
     <string name="pref_parental_pin">Rodičovský PIN</string>

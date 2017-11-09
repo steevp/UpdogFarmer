@@ -25,8 +25,6 @@
     <string name="sum_offline">Symulacja gier pozostaje niewidoczna dla znajomych.</string>
     <string name="pref_stay_awake">Utrzymuj urządzenie w aktywności</string>
     <string name="sum_stay_awake">Włącz jeśli twoje urządzenie nie utrzymuje połączenia WiFi podczas uśpienia.</string>
-    <string name="pref_simple">Symulacja pojedyncza</string>
-    <string name="sum_simple">Nie symuluje wszystkich gier równocześnie przez 2 godziny, ale każdą grę po kolei, dopóki wszystkie karty z danej gry zostaną uzyskane. Jeśli nie jesteś pewny zostaw opcję wyłączoną.</string>
     <string name="pref_minimize_data">Zminimalizuj użycie danych</string>
     <string name="sum_minimize_data">Nie pobiera grafik gier.</string>
     <string name="pref_parental_pin">PIN kontroli rodzicielskiej</string>

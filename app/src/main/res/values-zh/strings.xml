@@ -25,8 +25,6 @@
     <string name="sum_offline">將你的狀態設置為 \'離線\' ，你的好友們將不會知道你在掛卡。</string>
     <string name="pref_stay_awake">保持設備喚醒</string>
     <string name="sum_stay_awake">如果你的設備在睡眠期間不維持WiFi開啟狀態，請開啟此項功能。</string>
-    <string name="pref_simple">簡易掛卡模式</string>
-    <string name="sum_simple">一個接一個的輪流掛卡，在你的遊戲時長到達2小時前依次切換，如果不確定是否需要，關閉此項功能即可。</string>
     <string name="pref_minimize_data">省流模式</string>
     <string name="sum_minimize_data">不下載任何圖片，節省網絡流量。</string>
     <string name="pref_parental_pin">家庭監護密碼 （PIN）</string>

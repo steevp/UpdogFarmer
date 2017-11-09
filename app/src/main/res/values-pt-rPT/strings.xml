@@ -25,8 +25,6 @@
     <string name="sum_offline">Define o seu estado como offline para que os seus amigos não o vejam a coletar</string>
     <string name="pref_stay_awake">Manter dispositivo activo</string>
     <string name="sum_stay_awake">Ligue isto se o seu dispositivo não mantêm o WiFi ligado em modo inactivo</string>
-    <string name="pref_simple">Modo simples</string>
-    <string name="sum_simple">Corre todos os jogos um-por-um até receber todas as cartas sem que primeiro corra todos até terem 2 horas cada. Em caso de dúvida, deixe isto desligado</string>
     <string name="pref_minimize_data">Minimizar utilização de dados</string>
     <string name="sum_minimize_data">Não descarrega a imagem do jogo</string>
     <string name="pref_parental_pin">Código parental</string>

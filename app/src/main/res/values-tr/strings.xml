@@ -25,8 +25,6 @@
     <string name="sum_offline">Durmunuzu \'Çevrimdışı\' olarak değiştirin bu sayede arkadaşlarınız kart düşürdüğünüzü anlamaz.</string>
     <string name="pref_stay_awake">Cihazı uyanık tut</string>
     <string name="sum_stay_awake">Eğer cihazınız kapalıyken Wi-Fi kullanamıyorsa bunu seçin.</string>
-    <string name="pref_simple">Basit Kart Düşürme</string>
-    <string name="sum_simple">Oyunlarınızı bütün kartlar düşene kadar tek tek çalıştırır, oyun sürenizi 2 saate getirmeye çalışmaz. Ne yaptığınızdan emin değilseniz bunu devre dışı bırakın.</string>
     <string name="pref_minimize_data">Veri kullanımını azalt</string>
     <string name="sum_minimize_data">Resimleri indirmeyi devre dışı bırak.</string>
     <string name="pref_parental_pin">Aile PIN\'i</string>

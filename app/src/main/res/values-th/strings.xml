@@ -26,8 +26,6 @@
     <string name="sum_offline">ตั้งสถานะของคุณเป็น \'ออฟไลน์\' เพื่อให้เพื่อนของคุณมองไม่เห็นว่าคุณกำลังเปิดเกมทิ้งไว้</string>
     <string name="pref_stay_awake">เปิดหน้าจอค้างไว้</string>
     <string name="sum_stay_awake">เปิดใช้งานสิ่งนี้ถ้าเครื่องของคุณไม่สามารถเปิด WiFi ค้างเอาไว้ได้เมื่อปิดหน้าจอ</string>
-    <string name="pref_simple">การฟาร์มแบบธรรมดา</string>
-    <string name="sum_simple">เปิดเกมของคุณทิ้งไว้แบบครั้งละเกมจนกว่าการ์ดทั้งหมดจะดรอปครบ, ไม่เปิดทีละหลายเกมใน 2 ชั่วโมงแรก ถ้าไม่มั่นใจให้ปิดการใช้งานเอาไว้</string>
     <string name="pref_minimize_data">ลดการใช้งานข้อมูล</string>
     <string name="sum_minimize_data">ปิดการใช้งานการดาวน์โหลดภาพ</string>
     <string name="pref_parental_pin">รหัส PIN ผู้ปกครอง</string>

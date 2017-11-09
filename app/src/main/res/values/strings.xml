@@ -25,8 +25,6 @@
     <string name="sum_offline">Sets your status as \'Offline\' so your friends won\'t see you idling.</string>
     <string name="pref_stay_awake">Keep Device Awake</string>
     <string name="sum_stay_awake">Enable this if your device doesn\'t keep WiFi on during sleep.</string>
-    <string name="pref_simple">Simple Farming</string>
-    <string name="sum_simple">Idles your games one-by-one until all cards have dropped, doesn\'t try to bring them up to 2 hrs first. If unsure, leave this disabled.</string>
     <string name="pref_minimize_data">Minimize data usage</string>
     <string name="sum_minimize_data">Disable downloading any images.</string>
     <string name="pref_parental_pin">Parental PIN</string>

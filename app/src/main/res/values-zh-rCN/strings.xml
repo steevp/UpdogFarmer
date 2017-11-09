@@ -25,8 +25,6 @@
     <string name="sum_offline">将你的状态设置为 \'离线\' ，你的好友们将不会知道你在挂卡。</string>
     <string name="pref_stay_awake">保持设备唤醒</string>
     <string name="sum_stay_awake">如果你的设备在睡眠期间不维持WiFi开启状态，请开启此项功能。</string>
-    <string name="pref_simple">简易挂卡模式</string>
-    <string name="sum_simple">一个接一个的轮流挂卡，在你的游戏时长到达2小时前依次切换，如果不确定是否需要，关闭此项功能即可。</string>
     <string name="pref_minimize_data">省流模式</string>
     <string name="sum_minimize_data">不下载任何图片，节省网络流量。</string>
     <string name="pref_parental_pin">家庭监护密码 （PIN）</string>
