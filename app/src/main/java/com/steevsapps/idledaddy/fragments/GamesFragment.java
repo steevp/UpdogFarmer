@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
-import com.steevsapps.idledaddy.utils.Prefs;
+import com.steevsapps.idledaddy.preferences.PrefsManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,7 +86,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     public void onPause() {
         if (!currentGames.isEmpty()) {
             // Save idling session
-            Prefs.writeLastSession(currentGames);
+            PrefsManager.writeLastSession(currentGames);
         }
         super.onPause();
     }
@@ -205,7 +205,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
                     .commit();
         } else if (currentTab == TAB_LAST) {
             // Load last idling session
-            final List<Game> games = !currentGames.isEmpty() ? currentGames : Prefs.getLastSession();
+            final List<Game> games = !currentGames.isEmpty() ? currentGames : PrefsManager.getLastSession();
             setGames(games);
         }
 
