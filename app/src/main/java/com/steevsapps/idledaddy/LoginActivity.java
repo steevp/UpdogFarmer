@@ -19,7 +19,7 @@ import com.steevsapps.idledaddy.base.BaseActivity;
 import com.steevsapps.idledaddy.fragments.TimeoutFragment;
 import com.steevsapps.idledaddy.listeners.TimeoutListener;
 import com.steevsapps.idledaddy.steam.SteamService;
-import com.steevsapps.idledaddy.utils.Prefs;
+import com.steevsapps.idledaddy.preferences.PrefsManager;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
@@ -69,7 +69,7 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
                     }
                 } else {
                     // Save username
-                    Prefs.writeUsername(usernameInput.getEditText().getText().toString().trim());
+                    PrefsManager.writeUsername(usernameInput.getEditText().getText().toString().trim());
                     finish();
                 }
             }
@@ -127,7 +127,7 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
             progress.setVisibility(loginInProgress ? View.VISIBLE : View.GONE);
         } else {
             // Restore saved username if any
-            usernameInput.getEditText().setText(Prefs.getUsername());
+            usernameInput.getEditText().setText(PrefsManager.getUsername());
         }
     }
 

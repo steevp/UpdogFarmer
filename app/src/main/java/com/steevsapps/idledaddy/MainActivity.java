@@ -52,7 +52,7 @@ import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.listeners.SpinnerInteractionListener;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
-import com.steevsapps.idledaddy.utils.Prefs;
+import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.util.List;
@@ -148,7 +148,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             usernameView.setText(personaName);
         }
 
-        if (!Prefs.minimizeData() && !avatarHash.isEmpty() && !avatarHash.equals("0000000000000000000000000000000000000000")) {
+        if (!PrefsManager.minimizeData() && !avatarHash.isEmpty() && !avatarHash.equals("0000000000000000000000000000000000000000")) {
             final String avatar = String.format(Locale.US,
                     "http://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/%s/%s_full.jpg",
                     avatarHash.substring(0, 2),
@@ -390,7 +390,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     }
 
     private void applySettings() {
-        if (Prefs.stayAwake()) {
+        if (PrefsManager.stayAwake()) {
             // Don't let the screen turn off
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
@@ -421,7 +421,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         filter.addAction(SteamService.PERSONA_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         // Listen for preference changes
-        prefs = Prefs.getPrefs();
+        prefs = PrefsManager.getPrefs();
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -587,7 +587,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals("stay_awake")) {
-            if (Prefs.stayAwake()) {
+            if (PrefsManager.stayAwake()) {
                 // Don't let the screen turn off
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
@@ -595,7 +595,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             }
         } else if (key.equals("offline")) {
             // Change status
-            steamService.changeStatus(Prefs.getOffline() ? EPersonaState.Offline : EPersonaState.Online);
+            steamService.changeStatus(PrefsManager.getOffline() ? EPersonaState.Offline : EPersonaState.Online);
         }
     }
 

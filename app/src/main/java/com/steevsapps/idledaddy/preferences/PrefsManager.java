@@ -1,4 +1,4 @@
-package com.steevsapps.idledaddy.utils;
+package com.steevsapps.idledaddy.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.utils.Utils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.UUID;
 /**
  * SharedPreferences manager
  */
-public class Prefs {
+public class PrefsManager {
     private final static String USERNAME = "username";
     private final static String LOGIN_KEY = "login_key";
     private final static String MACHINE_ID = "machine_id";
@@ -33,7 +34,7 @@ public class Prefs {
 
     private static SharedPreferences prefs;
 
-    private Prefs() {
+    private PrefsManager() {
     }
 
     public static void init(Context c) {

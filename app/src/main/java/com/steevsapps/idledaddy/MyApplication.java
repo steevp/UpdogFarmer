@@ -2,7 +2,7 @@ package com.steevsapps.idledaddy;
 
 import android.app.Application;
 
-import com.steevsapps.idledaddy.utils.Prefs;
+import com.steevsapps.idledaddy.preferences.PrefsManager;
 
 import uk.co.thomasc.steamkit.steam3.CMClient;
 
@@ -12,10 +12,10 @@ public class MyApplication extends Application {
         super.onCreate();
 
         // Init SharePreferences manager
-        Prefs.init(this);
+        PrefsManager.init(this);
 
         // Update CM Servers
-        final String servers = Prefs.getCmServers();
+        final String servers = PrefsManager.getCmServers();
         if (!servers.isEmpty()) {
             CMClient.updateCMServers(servers.split(","));
         }

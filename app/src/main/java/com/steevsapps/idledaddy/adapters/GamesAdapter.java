@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide;
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
-import com.steevsapps.idledaddy.utils.Prefs;
+import com.steevsapps.idledaddy.preferences.PrefsManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -80,7 +80,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Game game = dataSet.get(position);
         holder.name.setText(game.name);
-        if (!Prefs.minimizeData()) {
+        if (!PrefsManager.minimizeData()) {
             Glide.with(context)
                     .load(game.iconUrl)
                     .into(holder.logo);

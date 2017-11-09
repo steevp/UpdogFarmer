@@ -35,7 +35,7 @@ import com.steevsapps.idledaddy.handlers.FreeLicense;
 import com.steevsapps.idledaddy.handlers.FreeLicenseCallback;
 import com.steevsapps.idledaddy.listeners.LogcatDebugListener;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
-import com.steevsapps.idledaddy.utils.Prefs;
+import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.io.File;
@@ -325,7 +325,7 @@ public class SteamService extends Service {
         final Game game = gamesToFarm.get(farmIndex);
 
         // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
-        if (game.hoursPlayed >= Prefs.getHoursUntilDrops() || gamesToFarm.size() == 1 || farmIndex > 0) {
+        if (game.hoursPlayed >= PrefsManager.getHoursUntilDrops() || gamesToFarm.size() == 1 || farmIndex > 0) {
             // Idle a single game
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
@@ -578,7 +578,7 @@ public class SteamService extends Service {
         }
 
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (!Prefs.minimizeData()) {
+        if (!PrefsManager.minimizeData()) {
             // Load game icon into notification
             Glide.with(getApplicationContext())
                     .load(game.iconUrl)
@@ -709,7 +709,7 @@ public class SteamService extends Service {
 
     public void start() {
         running = true;
-        if (!Prefs.getLoginKey().isEmpty()) {
+        if (!PrefsManager.getLoginKey().isEmpty()) {
             // We can log in using saved credentials
             connect();
         }
@@ -746,7 +746,7 @@ public class SteamService extends Service {
         logOnDetails = null;
         stopFarming();
         steamUser.logOff();
-        Prefs.clearUser();
+        PrefsManager.clearUser();
         updateNotification(getString(R.string.logged_out));
     }
 
@@ -797,7 +797,7 @@ public class SteamService extends Service {
      * Perform log in. Needs to happen as soon as we connect or else we'll get an error
      */
     private void doLogin() {
-        steamUser.logOn(logOnDetails, Prefs.getMachineId());
+        steamUser.logOn(logOnDetails, PrefsManager.getMachineId());
         logOnDetails = null; // No longer need this
     }
 
@@ -805,8 +805,8 @@ public class SteamService extends Service {
      * Log in using saved credentials
      */
     private void attemptRestoreLogin() {
-        final String username = Prefs.getUsername();
-        final String loginKey = Prefs.getLoginKey();
+        final String username = PrefsManager.getUsername();
+        final String loginKey = PrefsManager.getLoginKey();
         final byte[] sentryData = readSentryFile();
         if (username.isEmpty() || loginKey.isEmpty()) {
             return;
@@ -820,7 +820,7 @@ public class SteamService extends Service {
         }
         details.shouldRememberPassword = true;
         details.loginId = NOTIF_ID;
-        steamUser.logOn(details, Prefs.getMachineId());
+        steamUser.logOn(details, PrefsManager.getMachineId());
     }
 
     private boolean attemptAuthentication(String nonce) {
@@ -940,10 +940,10 @@ public class SteamService extends Service {
                             }
                         }
                     });
-                } else if (result == EResult.InvalidPassword && !Prefs.getLoginKey().isEmpty()) {
+                } else if (result == EResult.InvalidPassword && !PrefsManager.getLoginKey().isEmpty()) {
                     // Probably no longer valid
                     Log.i(TAG, "Login key expired");
-                    Prefs.writeLoginKey("");
+                    PrefsManager.writeLoginKey("");
                     updateNotification(getString(R.string.login_key_expired));
                 }
 
@@ -957,7 +957,7 @@ public class SteamService extends Service {
             @Override
             public void call(LoginKeyCallback callback) {
                 Log.i(TAG, "Saving loginkey");
-                Prefs.writeLoginKey(callback.getLoginKey());
+                PrefsManager.writeLoginKey(callback.getLoginKey());
             }
         });
         msg.handle(JobCallback.class, new ActionT<JobCallback>() {
@@ -985,7 +985,7 @@ public class SteamService extends Service {
                     steamUser.sendMachineAuthResponse(auth);
 
                     final String sentryHash = Utils.bytesToHex(sha1);
-                    Prefs.writeSentryHash(sentryHash);
+                    PrefsManager.writeSentryHash(sentryHash);
                 }
             }
         });
@@ -995,7 +995,7 @@ public class SteamService extends Service {
                 final String[] servers = callback.getServerList();
                 if (servers.length > 0) {
                     Log.i(TAG, "Saving CM servers");
-                    Prefs.writeCmServers(Utils.arrayToString(servers));
+                    PrefsManager.writeCmServers(Utils.arrayToString(servers));
                 }
             }
         });
@@ -1111,7 +1111,7 @@ public class SteamService extends Service {
         msg.handle(AccountInfoCallback.class, new ActionT<AccountInfoCallback>() {
             @Override
             public void call(AccountInfoCallback callback) {
-                if (Prefs.getOffline()) {
+                if (PrefsManager.getOffline()) {
                     return;
                 }
 
@@ -1195,7 +1195,7 @@ public class SteamService extends Service {
     private void writeSentryFile(byte[] data) {
         final File sentryFolder = new File(getFilesDir(), "sentry");
         if (sentryFolder.exists() || sentryFolder.mkdir()) {
-            final File sentryFile = new File(sentryFolder, Prefs.getUsername() + ".sentry");
+            final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
             FileOutputStream fos = null;
             try {
                 Log.i(TAG, "Writing sentry file to " + sentryFile.getAbsolutePath());
@@ -1217,7 +1217,7 @@ public class SteamService extends Service {
 
     private byte[] readSentryFile() {
         final File sentryFolder = new File(getFilesDir(), "sentry");
-        final File sentryFile = new File(sentryFolder, Prefs.getUsername() + ".sentry");
+        final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
         if (sentryFile.exists()) {
             Log.i(TAG, "Reading sentry file " + sentryFile.getAbsolutePath());
             FileInputStream fis = null;

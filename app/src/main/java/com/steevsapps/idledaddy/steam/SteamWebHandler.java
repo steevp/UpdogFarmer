@@ -2,7 +2,7 @@ package com.steevsapps.idledaddy.steam;
 
 import com.steevsapps.idledaddy.Secrets;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
-import com.steevsapps.idledaddy.utils.Prefs;
+import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import org.json.JSONArray;
@@ -115,7 +115,7 @@ public class SteamWebHandler {
 
         authenticated = true;
 
-        final String pin = Prefs.getParentalPin().trim();
+        final String pin = PrefsManager.getParentalPin().trim();
         if (!pin.isEmpty()) {
             // Unlock family view
             steamParental = unlockParental(pin);
@@ -137,7 +137,7 @@ public class SteamWebHandler {
         cookies.put("sessionid", sessionId);
         cookies.put("steamLogin", token);
         cookies.put("steamLoginSecure", tokenSecure);
-        final String sentryHash = Prefs.getSentryHash().trim();
+        final String sentryHash = PrefsManager.getSentryHash().trim();
         if (!sentryHash.isEmpty()) {
             cookies.put("steamMachineAuth" + steamId, sentryHash);
         }
@@ -192,7 +192,7 @@ public class SteamWebHandler {
             }
         }
 
-        final List<String> blacklist = Prefs.getBlacklist();
+        final List<String> blacklist = PrefsManager.getBlacklist();
         Matcher m;
         for (Element b: badges) {
             // Get app id
