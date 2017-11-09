@@ -325,8 +325,8 @@ public class SteamService extends Service {
         final Game game = gamesToFarm.get(farmIndex);
 
         // TODO: Steam only updates play time every half hour, so maybe we should keep track of it ourselves
-        if (game.hoursPlayed >= 2 || gamesToFarm.size() == 1 || Prefs.simpleFarming() || farmIndex > 0) {
-            // If a game has over 2 hrs we can just idle it
+        if (game.hoursPlayed >= Prefs.getHoursUntilDrops() || gamesToFarm.size() == 1 || farmIndex > 0) {
+            // Idle a single game
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {

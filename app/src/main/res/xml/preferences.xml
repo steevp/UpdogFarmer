@@ -22,17 +22,20 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/cat_idle">
-        <SwitchPreference
-            android:key="simple"
-            android:title="@string/pref_simple"
-            android:summary="@string/sum_simple"
-            android:defaultValue="false" />
 
         <SwitchPreference
             android:key="offline"
             android:title="@string/pref_offline"
             android:summary="@string/sum_offline"
             android:defaultValue="false" />
+
+        <ListPreference
+            android:key="hours_until_drops"
+            android:title="@string/pref_hours_until"
+            android:summary="@string/sum_hours_until"
+            android:entries="@array/hours_until_entries"
+            android:entryValues="@array/hours_until_values"
+            android:defaultValue="3" />
 
         <com.steevsapps.idledaddy.preferences.BlacklistPreference
             android:key="blacklist"

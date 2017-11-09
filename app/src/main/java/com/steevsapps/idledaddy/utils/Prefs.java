@@ -25,11 +25,11 @@ public class Prefs {
     private final static String CM_SERVERS = "cm_servers";
     private final static String OFFLINE = "offline";
     private final static String STAY_AWAKE = "stay_awake";
-    private final static String SIMPLE = "simple";
     private final static String MINIMIZE_DATA = "minimize_data";
     private final static String PARENTAL_PIN = "parental_pin";
     private final static String BLACKLIST = "blacklist";
     private final static String LAST_SESSION = "last_session";
+    private final static String HOURS_UNTIL_DROPS = "hours_until_drops";
 
     private static SharedPreferences prefs;
 
@@ -118,8 +118,6 @@ public class Prefs {
         return prefs.getBoolean(STAY_AWAKE, false);
     }
 
-    public static boolean simpleFarming() { return  prefs.getBoolean(SIMPLE, false); }
-
     public static boolean minimizeData() { return prefs.getBoolean(MINIMIZE_DATA, false); }
 
     public static String getParentalPin() {
@@ -139,6 +137,10 @@ public class Prefs {
             return new ArrayList<>();
         }
         return games;
+    }
+
+    public static int getHoursUntilDrops() {
+        return Integer.parseInt(prefs.getString(HOURS_UNTIL_DROPS, "3"));
     }
 
     private static void writePref(String key, String value) {
