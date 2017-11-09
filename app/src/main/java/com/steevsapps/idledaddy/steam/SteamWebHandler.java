@@ -1,8 +1,8 @@
 package com.steevsapps.idledaddy.steam;
 
 import com.steevsapps.idledaddy.Secrets;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import org.json.JSONArray;
@@ -40,7 +40,7 @@ import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
 public class SteamWebHandler {
     private final static String BADGES = "http://steamcommunity.com/my/badges?l=english";
     private final static String INVENTORY = "http://steamcommunity.com/my/inventory";
-    private final static String GAMES_OWNED = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=1&format=json";
+    private final static String GAMES_OWNED = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=%d&format=json";
     private final static String PARENTAL_UNLOCK = "http://store.steampowered.com/parental/ajaxunlock";
     private final static String FREE_LICENSE = "http://store.steampowered.com/checkout/addfreelicense";
     private final static String PROFILE = "http://steamcommunity.com/my/profile?l=english";
@@ -286,7 +286,7 @@ public class SteamWebHandler {
     public static List<Game> getGamesOwned(long steamId) {
         HttpURLConnection conn = null;
         try {
-            final URL url = new URL(String.format(Locale.US, GAMES_OWNED, Secrets.API_KEY, steamId));
+            final URL url = new URL(String.format(Locale.US, GAMES_OWNED, Secrets.API_KEY, steamId, PrefsManager.includeFreeGames() ? 1 : 0));
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
