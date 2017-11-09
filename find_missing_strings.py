@@ -11,7 +11,7 @@ SCRIPT_FOLDER = os.path.abspath(os.path.dirname(sys.argv[0]))
 DEFAULT = SCRIPT_FOLDER + "/app/src/main/res/values/strings.xml"
 # The language we're comparing to
 OTHER = SCRIPT_FOLDER + "/app/src/main/res/values-%s/strings.xml"
-CODES = ["de", "ru", "uk", "pl", "cs", "pt-rPT", "pt-rBR", "tr"]
+CODES = ["de", "ru", "uk", "pl", "cs", "pt-rPT", "pt-rBR", "tr", "th", "zh", "zh-rCN"]
 
 def main():
     d = ET.parse(DEFAULT).getroot()
