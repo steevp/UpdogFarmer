@@ -8,8 +8,8 @@
     <string name="password">Passwort</string>
     <string name="steamguard">Steam Guard Code</string>
     <string name="login">Anmelden</string>
-    <string name="start_idling">Starte Karten Farming</string>
-    <string name="desc_start">Deine Spiele werden im Hintergrund inaktiv laufen bis du alle Sammelkarten hast.</string>
+    <string name="start_idling">Starte das Sammeln der Karten</string>
+    <string name="desc_start">Deine Spiele werden inaktiv im Hintergrund laufen bis du alle Sammelkarten hast.</string>
     <string name="stop_idling">Stoppe den Service</string>
     <string name="desc_stop">Stoppe den Steam Service und schließe die App.</string>
     <string name="idling_finished">Keine Spiele übrig.</string>
@@ -19,11 +19,11 @@
     <string name="redeem">Aktiviere einen Steam Produktschlüssel</string>
     <string name="redeem_msg">Gebe deinen Steam Produktschlüssel oder die ID eines kostenlosen Spiels hier ein:</string>
     <string name="ok">OK</string>
-    <string name="cat_idle">Idle Einstellungen</string>
+    <string name="cat_idle">Sammeln</string>
     <string name="cat_general">Generell</string>
-    <string name="pref_offline">Offline Farmen</string>
-    <string name="sum_offline">Du wirst bei jedem als offline angezeigt also sieht keiner das du inaktiv Spiele spielst.</string>
-    <string name="pref_stay_awake">Lasse das Gerät an</string>
+    <string name="pref_offline">Offline Sammeln</string>
+    <string name="sum_offline">Du wirst bei jedem als offline angezeigt also sieht keiner das du inaktiv Spiele laufen lässt.</string>
+    <string name="pref_stay_awake">Lasse dein Gerät an</string>
     <string name="sum_stay_awake">Schalte dies an wenn dein Gerät WiFi nicht anlässt während es im Standbymodus ist.</string>
     <string name="pref_minimize_data">Minimiere den Datenverbrauch</string>
     <string name="sum_minimize_data">Lädt das Cover des Spiels nicht herunter.</string>
@@ -42,7 +42,7 @@
     <string name="games">Spiele</string>
     <string name="no_games_found">Konnte die Liste der Spiele nicht abrufen. Stelle sicher das du dein Steam Profil auf öffentlich gestellt hast.</string>
     <string name="now_playing">Spiele jetzt</string>
-    <string name="error_not_logged_in">Du must in Steam angemeldet sein</string>
+    <string name="error_not_logged_in">Du musst in Steam angemeldet sein</string>
     <string name="invalid_password">Falsches Passwort</string>
     <string name="steamguard_required">Steam Guard Code erforderlich</string>
     <string name="invalid_code">Falscher Steam Guard Code</string>
@@ -67,12 +67,13 @@
     <string name="paused">Pausiert</string>
     <string name="idling_multiple">Mehrere Spiele laufen inaktiv im Hintergrund</string>
     <string name="logged_out">Abgemeldet</string>
-    <string name="about">Über</string>
+    <string name="about">About</string>
     <string name="stop">Stoppen</string>
     <string name="skip">Überspringen</string>
-    <string name="pause">Pause</string>
+    <string name="pause">Pausieren</string>
     <string name="resume">Fortsetzen</string>
     <string name="activated">Aktiviert: %s</string>
     <string name="refresh">Aktualisieren</string>
     <string name="last_session">Letzte Sitzung</string>
+    <string name="remove_ads">Werbung entfernen</string>
 </resources>
