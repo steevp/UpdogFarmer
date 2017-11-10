@@ -135,7 +135,6 @@ public class SteamService extends Service {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
     private ScheduledFuture<?> farmHandle;
     private ScheduledFuture<?> waitHandle;
-    private ScheduledFuture<?> timeoutHandle;
 
     /**
      * Class for clients to access.  Because we know this service always
@@ -209,20 +208,6 @@ public class SteamService extends Service {
     }
 
     private final WaitTask waitTask = new WaitTask();
-
-    /**
-     * Task to restart connection if it hangs
-     * TODO: determine if this is really needed and if so fix in SteamKit
-     */
-    private final class TimeoutTask implements Runnable {
-        @Override
-        public void run() {
-            Log.i(TAG, "Reconnecting (connection timed out)");
-            steamClient.disconnect();
-        }
-    }
-
-    private final TimeoutTask timeoutTask = new TimeoutTask();
 
     public void startFarming() {
         if (!farming) {
@@ -779,20 +764,6 @@ public class SteamService extends Service {
         }
     }
 
-
-    private void startTimeout() {
-        stopTimeout();
-        Log.i(TAG, "Starting timeout");
-        timeoutHandle = scheduler.schedule(timeoutTask, 15, TimeUnit.SECONDS);
-    }
-
-    private void stopTimeout() {
-        if (timeoutHandle != null) {
-            Log.i(TAG, "Stopping timeout");
-            timeoutHandle.cancel(true);
-        }
-    }
-
     /**
      * Perform log in. Needs to happen as soon as we connect or else we'll get an error
      */
@@ -862,7 +833,6 @@ public class SteamService extends Service {
             @Override
             public void call(ConnectedCallback callback) {
                 Log.i(TAG, "Connected()");
-                stopTimeout();
                 connected = true;
                 if (logOnDetails != null) {
                     doLogin();
@@ -875,15 +845,12 @@ public class SteamService extends Service {
             @Override
             public void call(DisconnectedCallback callback) {
                 Log.i(TAG, "Disconnected()");
-                stopTimeout();
                 connected = false;
                 loggedIn = false;
                 // Try to reconnect after a 5 second delay
                 scheduler.schedule(new Runnable() {
                     @Override
                     public void run() {
-                        // Disconnect in 15 seconds if connection hangs....
-                        startTimeout();
                         Log.i(TAG, "Reconnecting");
                         steamClient.connect();
                     }
@@ -896,7 +863,6 @@ public class SteamService extends Service {
             @Override
             public void call(LoggedOffCallback callback) {
                 Log.i(TAG, "Logoff result " + callback.getResult().toString());
-                stopTimeout();
                 if (callback.getResult() == EResult.LoggedInElsewhere) {
                     updateNotification(getString(R.string.logged_in_elsewhere));
                     unscheduleFarmTask();
