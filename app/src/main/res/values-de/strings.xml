@@ -31,6 +31,10 @@
     <string name="sum_parental_pin">Gebe die Familien PIN ein um die Familienansicht zu entsperren.</string>
     <string name="pref_blacklist">Schwarze Liste</string>
     <string name="sum_blacklist">Füge Spiele zu der schwarzen Liste hinzu wenn du nicht willst das bei diesen Sammelkarten gefarmt werden.</string>
+    <string name="pref_hours_until">Stunden bis die Karten im Inventar sind</string>
+    <string name="sum_hours_until">Die Anzahl der Stunden die ein Spiel benötigt um Karten im Inventar abzulegen. Während dem Sammeln der Karten wird Idle Daddy mehrere Spiele gleichzeitig inaktiv im Hintergrund laufen lassen bis sie diese Zeit erreichen. Für die meisten Benutzer sind hier drei Stunden die beste Wahl.</string>
+    <string name="pref_include_free_games">Einschließlich kostenlos gespielte Spiele</string>
+    <string name="sum_include_free_games">Kostenlose Spiele werden in der Spieleliste angezeigt wenn man sie schonmal gespielt oder gestartet hat</string>
     <string name="blacklist_hint">Gebe die Spiele ID ein und klicke auf das +</string>
     <string name="add_to_blacklist">Füge ein Spiel zu der schwarzen Liste hinzu</string>
     <string name="added_to_blacklist">Spiel wurde zu der schwarzen Liste hinzugefügt</string>
@@ -76,4 +80,5 @@
     <string name="refresh">Aktualisieren</string>
     <string name="last_session">Letzte Sitzung</string>
     <string name="remove_ads">Werbung entfernen</string>
+    <string name="logcat">Logcat</string>
 </resources>
