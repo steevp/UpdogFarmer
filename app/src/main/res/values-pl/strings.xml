@@ -31,6 +31,10 @@
     <string name="sum_parental_pin">Wpisz swój kod PIN kontroli rodzicielskiej, aby odblokować \'Widok rodzinny\'.</string>
     <string name="pref_blacklist">Gry wykluczone</string>
     <string name="sum_blacklist">Lista gier, dla których symulacja będzie pominięta.</string>
+    <string name="pref_hours_until">Godziny równoczesnej symulacji</string>
+    <string name="sum_hours_until">Liczba godzin, po których gry zaczną \'dropić karty\'. Idle Daddy będzie symulował karty równocześnie do czasu osiągnięcia ustawionej ilości godzin. Dla większości użytkowników 3 godziny to wystarczająca ilość czasu.</string>
+    <string name="pref_include_free_games">Symulacja darmowych gier</string>
+    <string name="sum_include_free_games">Standardowo gry, takie jak Team Fortress 2 są wykluczone z symulacji (z technicznego punktu widzenia wszyscy je posiadają). Jeśli ta opcja jest włączona darmowe gry będą pokazywane na liście aktywności, jakby były uruchomione w którymś momencie.</string>
     <string name="blacklist_hint">Wpisz AppID i naciśnij +</string>
     <string name="add_to_blacklist">Dodaj grę do listy wykluczonych</string>
     <string name="added_to_blacklist">Gra dodana do listy wykluczonch</string>
@@ -77,4 +81,6 @@
     <string name="activated">Aktywowano: %s</string>
     <string name="refresh">Odśwież</string>
     <string name="last_session">Ostatnia sesja</string>
+    <string name="remove_ads">Usunięcie reklam</string>
+    <string name="logcat" translatable="false">Logcat</string>
 </resources>
