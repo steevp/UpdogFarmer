@@ -77,4 +77,8 @@
     <string name="last_session">上个会话</string>
 	<string name="remove_ads">移除广告</string>
     <string name="logcat">日志</string>
+    <string name="pref_hours_until">开始挂卡前的小时数</string>
+    <string name="sum_hours_until">游戏开始正式挂卡之前所需到达的小时数。 当你挂卡时, Idle Daddy会同时将多个游戏挂机， 直到它们的游戏时长达到这个数字。 对于大多数用户来说，3小时是最好的选择</string>
+    <string name="pref_include_free_games">包括玩过的免费游戏</string>
+    <string name="sum_include_free_games">默认情况下, 《军团要塞2》之类的免费游戏将被排除在外。 (从技术上来说，每个人都拥有他们)。 如果启用此选项， 并且你在以前玩过它们，它们将会被列入名单</string>
 </resources>
