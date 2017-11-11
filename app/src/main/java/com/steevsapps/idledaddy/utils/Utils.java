@@ -1,8 +1,6 @@
 package com.steevsapps.idledaddy.utils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,23 +45,14 @@ public class Utils {
     }
 
     /**
-     * Dump Logcat
+     * Save Logcat to file
      */
-    public static String getLogcat() {
+    public static void saveLogcat(String path) {
         try {
-            final Process p = Runtime.getRuntime().exec("logcat -d");
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            final StringBuilder builder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-                builder.append("\n");
-            }
-            return builder.toString();
+            Runtime.getRuntime().exec("logcat -f " + path);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
     }
 
 }

@@ -50,11 +50,12 @@ import com.steevsapps.idledaddy.listeners.DialogListener;
 import com.steevsapps.idledaddy.listeners.FetchGamesListener;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.listeners.SpinnerInteractionListener;
+import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
-import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.utils.Utils;
 
+import java.io.File;
 import java.util.List;
 import java.util.Locale;
 
@@ -469,11 +470,13 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
      * Send Logcat output via email
      */
     private void sendLogcat() {
-        final Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:"));
+        final File file = new File(getExternalCacheDir(), "idledaddy-logcat.txt");
+        Utils.saveLogcat(file.getAbsolutePath());
+        final Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"steevsapps@gmail.com"});
         intent.putExtra(Intent.EXTRA_SUBJECT, "Idle Daddy Logcat");
-        intent.putExtra(Intent.EXTRA_TEXT, Utils.getLogcat());
+        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));
         startActivity(intent);
     }
 
