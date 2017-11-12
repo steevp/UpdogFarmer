@@ -56,6 +56,7 @@ import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -470,8 +471,17 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
      * Send Logcat output via email
      */
     private void sendLogcat() {
-        final File file = new File(getExternalCacheDir(), "idledaddy-logcat.txt");
-        Utils.saveLogcat(file.getAbsolutePath());
+        final File cacheDir = getExternalCacheDir();
+        if (cacheDir == null) {
+            Log.i(TAG, "Unable to save Logcat. Shared storage is unavailable!");
+            return;
+        }
+        final File file = new File(cacheDir, "idledaddy-logcat.txt");
+        try {
+            Utils.saveLogcat(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("*/*");
         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"steevsapps@gmail.com"});
