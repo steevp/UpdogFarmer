@@ -25,10 +25,16 @@ public class AboutDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final WebView webView = (WebView) LayoutInflater.from(getActivity()).inflate(R.layout.about_dialog, null);
         final String lang = Locale.getDefault().getDisplayLanguage();
-        if (lang.equals("ru")) {
-            webView.loadUrl("file:///android_asset/about-ru.html");
-        } else {
-            webView.loadUrl("file:///android_asset/about.html");
+        switch (lang) {
+            case "ru":
+                webView.loadUrl("file:///android_asset/about-ru.html");
+                break;
+            case "de":
+                webView.loadUrl("file://android_asset/about-de.html");
+                break;
+            default:
+                webView.loadUrl("file:///android_asset/about.html");
+                break;
         }
         webView.setBackgroundColor(Color.TRANSPARENT);
         return new AlertDialog.Builder(getActivity())

@@ -9,7 +9,7 @@
     <string name="steamguard">Steam Guard Code</string>
     <string name="login">Anmelden</string>
     <string name="start_idling">Starte das Sammeln der Karten</string>
-    <string name="desc_start">Deine Spiele werden inaktiv im Hintergrund laufen bis du alle Sammelkarten hast.</string>
+    <string name="desc_start">Deine Spiele werden inaktiv im Hintergrund laufen, bis du alle Sammelkarten hast.</string>
     <string name="stop_idling">Stoppe den Service</string>
     <string name="desc_stop">Stoppe den Steam Service und schließe die App.</string>
     <string name="idling_finished">Keine Spiele übrig.</string>
@@ -22,19 +22,19 @@
     <string name="cat_idle">Sammeln</string>
     <string name="cat_general">Generell</string>
     <string name="pref_offline">Offline Sammeln</string>
-    <string name="sum_offline">Du wirst bei jedem als offline angezeigt also sieht keiner das du inaktiv Spiele laufen lässt.</string>
+    <string name="sum_offline">Du wirst bei jedem als offline angezeigt, also sieht keiner das du inaktiv Spiele laufen lässt.</string>
     <string name="pref_stay_awake">Lasse dein Gerät an</string>
-    <string name="sum_stay_awake">Schalte dies an wenn dein Gerät WiFi nicht anlässt während es im Standbymodus ist.</string>
+    <string name="sum_stay_awake">Schalte dies an, wenn dein Gerät WiFi nicht anlässt, während es im Standbymodus ist.</string>
     <string name="pref_minimize_data">Minimiere den Datenverbrauch</string>
     <string name="sum_minimize_data">Lädt das Cover des Spiels nicht herunter.</string>
     <string name="pref_parental_pin">Familien PIN</string>
-    <string name="sum_parental_pin">Gebe die Familien PIN ein um die Familienansicht zu entsperren.</string>
+    <string name="sum_parental_pin">Gebe die Familien PIN ein, um die Familienansicht zu entsperren.</string>
     <string name="pref_blacklist">Schwarze Liste</string>
-    <string name="sum_blacklist">Füge Spiele zu der schwarzen Liste hinzu wenn du nicht willst das bei diesen Sammelkarten gefarmt werden.</string>
+    <string name="sum_blacklist">Füge Spiele zu der schwarzen Liste hinzu, wenn du nicht willst das bei diesen Sammelkarten gesammelt werden.</string>
     <string name="pref_hours_until">Stunden bis die Karten im Inventar sind</string>
-    <string name="sum_hours_until">Die Anzahl der Stunden die ein Spiel benötigt um Karten im Inventar abzulegen. Während dem Sammeln der Karten wird Idle Daddy mehrere Spiele gleichzeitig inaktiv im Hintergrund laufen lassen bis sie diese Zeit erreichen. Für die meisten Benutzer sind hier drei Stunden die beste Wahl.</string>
+    <string name="sum_hours_until">Die Anzahl der Stunden die ein Spiel benötigt, um Karten im Inventar abzulegen. Während dem Sammeln der Karten wird Idle Daddy mehrere Spiele gleichzeitig, inaktiv im Hintergrund laufen lassen, bis diese Zeit erreicht wird. Für die meisten Benutzer sind hier drei Stunden die beste Wahl.</string>
     <string name="pref_include_free_games">Einschließlich kostenlos gespielte Spiele</string>
-    <string name="sum_include_free_games">Kostenlose Spiele werden in der Spieleliste angezeigt wenn man sie schonmal gespielt oder gestartet hat</string>
+    <string name="sum_include_free_games">Kostenlose Spiele werden in deiner Spieleliste angezeigt, wenn du sie schonmal gespielt oder gestartet hast</string>
     <string name="blacklist_hint">Gebe die Spiele ID ein und klicke auf das +</string>
     <string name="add_to_blacklist">Füge ein Spiel zu der schwarzen Liste hinzu</string>
     <string name="added_to_blacklist">Spiel wurde zu der schwarzen Liste hinzugefügt</string>
@@ -71,7 +71,7 @@
     <string name="paused">Pausiert</string>
     <string name="idling_multiple">Mehrere Spiele laufen inaktiv im Hintergrund</string>
     <string name="logged_out">Abgemeldet</string>
-    <string name="about">About</string>
+    <string name="about">Über</string>
     <string name="stop">Stoppen</string>
     <string name="skip">Überspringen</string>
     <string name="pause">Pausieren</string>
@@ -80,5 +80,4 @@
     <string name="refresh">Aktualisieren</string>
     <string name="last_session">Letzte Sitzung</string>
     <string name="remove_ads">Werbung entfernen</string>
-    <string name="logcat">Logcat</string>
 </resources>
