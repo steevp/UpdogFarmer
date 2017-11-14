@@ -81,7 +81,7 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         final Game game = dataSet.get(position);
         holder.name.setText(game.name);
         holder.hours.setText(context.getResources()
-                .getQuantityString(R.plurals.hours_on_record, (int) game.hoursPlayed, game.hoursPlayed));
+                .getQuantityString(R.plurals.hours_on_record, (int) Math.ceil(game.hoursPlayed), game.hoursPlayed));
         if (!PrefsManager.minimizeData()) {
             Glide.with(context)
                     .load(game.iconUrl)
