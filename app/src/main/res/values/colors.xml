@@ -6,4 +6,5 @@
     <color name="green">#90BA3C</color>
     <color name="orange">#FFFFBB33</color>
     <color name="transparent">#00000000</color>
+    <color name="textColorSecondary">#9e9e9e</color>
 </resources>
