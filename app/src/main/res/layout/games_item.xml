@@ -29,6 +29,15 @@
             android:maxLines="1"
             android:ellipsize="end" />
 
+        <TextView
+            android:id="@+id/hours"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_small"
+            android:maxLines="1"
+            android:textColor="@color/textColorSecondary"
+            android:ellipsize="end" />
+
     </LinearLayout>
 
 </android.support.v7.widget.CardView>

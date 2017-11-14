@@ -20,7 +20,7 @@ public class Game implements Comparable<Game>, Parcelable {
         appId = obj.optInt("appid", 0);
         name = obj.optString("name", "Unknown app");
         iconUrl = String.format(Locale.US, IMG_URL, appId, obj.optString("img_logo_url"));
-        hoursPlayed = 0;
+        hoursPlayed = obj.optInt("playtime_forever", 0) / 60;
         dropsRemaining = 0;
     }
 

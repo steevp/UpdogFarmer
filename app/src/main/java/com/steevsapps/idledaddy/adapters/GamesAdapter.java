@@ -80,6 +80,8 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Game game = dataSet.get(position);
         holder.name.setText(game.name);
+        holder.hours.setText(context.getResources()
+                .getQuantityString(R.plurals.hours_on_record, (int) game.hoursPlayed, game.hoursPlayed));
         if (!PrefsManager.minimizeData()) {
             Glide.with(context)
                     .load(game.iconUrl)
@@ -122,11 +124,13 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView name;
         private ImageView logo;
+        private TextView hours;
 
         private ViewHolder(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             logo = itemView.findViewById(R.id.logo);
+            hours = itemView.findViewById(R.id.hours);
         }
     }
 }
