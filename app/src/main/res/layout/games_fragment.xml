@@ -20,8 +20,8 @@
 
     <TextView
         android:id="@+id/empty_view"
+        style="@style/AppTheme.TextStyle"
         android:text="@string/no_games_found"
-        android:textSize="@dimen/text_size_default"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
