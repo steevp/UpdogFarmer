@@ -99,6 +99,7 @@ public class SteamService extends Service {
     public final static String PERSONA_EVENT = "PERSONA_EVENT"; // Emitted when we get PersonaStateCallback
     public final static String PERSONA_NAME = "PERSONA_NAME"; // Username
     public final static String AVATAR_HASH = "AVATAR_HASH"; // User avatar hash
+    public final static String NOW_PLAYING = "NOW_PLAYING"; // Emitted when you idle a game
 
     // Actions
     public final static String SKIP_INTENT = "SKIP_INTENT";
@@ -212,6 +213,7 @@ public class SteamService extends Service {
     public void startFarming() {
         if (!farming) {
             farming = true;
+            paused = false;
             executor.execute(farmTask);
         }
     }
@@ -329,7 +331,7 @@ public class SteamService extends Service {
         webHandler.viewInventory();
     }
 
-    private void skipGame() {
+    public void skipGame() {
         if (gamesToFarm == null || gamesToFarm.size() < 2) {
             return;
         }
@@ -342,21 +344,23 @@ public class SteamService extends Service {
         idleSingle(gamesToFarm.get(farmIndex));
     }
 
-    private void stopGame() {
+    public void stopGame() {
+        paused = false;
         stopPlaying();
         stopFarming();
         updateNotification(getString(R.string.stopped));
         LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(STOP_EVENT));
     }
 
-    private void pauseGame() {
+    public void pauseGame() {
         paused = true;
         stopPlaying();
         showPausedNotification();
+        // Tell the activity to update
+        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING));
     }
 
-    private void resumeGame() {
-        paused = false;
+    public void resumeGame() {
         if (currentGames.size() == 1) {
             Log.i(TAG, "Resume playing");
             idleSingle(currentGames.get(0));
@@ -471,15 +475,16 @@ public class SteamService extends Service {
         nm.createNotificationChannel(channel);
     }
 
-    /**
-     * Check if user is logged in
-     */
     public boolean isLoggedIn() {
         return loggedIn;
     }
 
     public boolean isFarming() {
         return farming;
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
     /**
@@ -639,14 +644,18 @@ public class SteamService extends Service {
 
     private void idleSingle(Game game) {
         Log.i(TAG, "Now playing " + game.name);
+        paused = false;
         currentGames.clear();
         currentGames.add(game);
         playGame(game.appId);
         showIdleNotification(game);
+        // Tell the activity
+        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING));
     }
 
     private void idleMultiple(List<Game> games) {
         Log.i(TAG, "Idling multiple");
+        paused = false;
         final List<Game> gamesCopy = new ArrayList<>(games);
         currentGames.clear();
 
@@ -669,9 +678,12 @@ public class SteamService extends Service {
 
         playGames(appIds);
         showMultipleNotification(msg.toString());
+        // Tell the Activity
+        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING));
     }
 
     public void addGame(Game game) {
+        stopFarming();
         if (currentGames.isEmpty()) {
             idleSingle(game);
         } else {
@@ -681,14 +693,14 @@ public class SteamService extends Service {
     }
 
     public void removeGame(Game game) {
+        stopFarming();
         currentGames.remove(game);
         if (currentGames.size() == 1) {
             idleSingle(currentGames.get(0));
         } else if (currentGames.size() > 1) {
             idleMultiple(currentGames);
         } else {
-            stopPlaying();
-            updateNotification(getString(R.string.stopped));
+            stopGame();
         }
     }
 

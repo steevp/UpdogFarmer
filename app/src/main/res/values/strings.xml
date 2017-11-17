@@ -9,9 +9,9 @@
     <string name="steamguard">Steam Guard code</string>
     <string name="login">Login</string>
     <string name="start_idling">Start farming</string>
-    <string name="desc_start">Idles your games until all trading cards have dropped.</string>
-    <string name="stop_idling">Stop service</string>
-    <string name="desc_stop">Stops the Steam service and closes the app.</string>
+    <string name="desc_start">Idle your games until all trading cards have dropped.</string>
+    <string name="stop_idling">Stop Service</string>
+    <string name="desc_stop">Stop the Steam service and quit the app.</string>
     <string name="idling_finished">No games left to idle.</string>
     <string name="search">Search</string>
     <string name="settings">Settings</string>
@@ -19,7 +19,7 @@
     <string name="redeem">Activate Product</string>
     <string name="redeem_msg">Enter a product code or free game ID</string>
     <string name="ok">OK</string>
-    <string name="cat_idle">Farming</string>
+    <string name="cat_idle">Card Farming</string>
     <string name="cat_general">General</string>
     <string name="pref_offline">Offline Farming</string>
     <string name="sum_offline">Sets your status as \'Offline\' so your friends won\'t see you idling.</string>

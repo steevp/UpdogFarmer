@@ -23,19 +23,18 @@
 
         <TextView
             android:id="@+id/name"
+            style="@style/AppTheme.TextStyle.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_small"
             android:maxLines="1"
             android:ellipsize="end" />
 
         <TextView
             android:id="@+id/hours"
+            style="@style/AppTheme.TextStyle.Secondary.Small"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/text_size_small"
             android:maxLines="1"
-            android:textColor="@color/textColorSecondary"
             android:ellipsize="end" />
 
     </LinearLayout>

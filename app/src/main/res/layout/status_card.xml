@@ -2,45 +2,59 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="4dp"
     card_view:cardCornerRadius="4dp"
     card_view:cardUseCompatPadding="true">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:id="@+id/status"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
         android:onClick="clickHandler">
 
         <TextView
-            android:textSize="@dimen/text_size_default"
-            android:layout_width="match_parent"
+            android:id="@+id/textView"
+            style="@style/AppTheme.TextStyle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:text="@string/status"
-            android:gravity="center" />
+            card_view:layout_constraintBottom_toTopOf="@+id/status_text"
+            card_view:layout_constraintEnd_toStartOf="@+id/status_img"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent"
+            card_view:layout_constraintVertical_chainStyle="packed" />
 
         <ImageView
             android:id="@+id/status_img"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/orange"
-            android:src="@drawable/ic_error_white_48dp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_error_white_48dp"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/status_text"
-            android:textSize="@dimen/text_size_default"
-            android:layout_width="match_parent"
+            style="@style/AppTheme.TextStyle.Secondary"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/tap_to_login" />
-    </LinearLayout>
-
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:text="@string/tap_to_login"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toStartOf="@+id/status_img"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toBottomOf="@+id/textView" />
+    </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

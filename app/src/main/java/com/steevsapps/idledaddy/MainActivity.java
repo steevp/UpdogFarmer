@@ -98,21 +98,35 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
             farming = steamService.isFarming();
-            if (intent.getAction().equals(SteamService.LOGIN_EVENT)) {
-                final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
-                loggedIn = result == EResult.OK;
-                updateStatus();
-            } else if (intent.getAction().equals(SteamService.DISCONNECT_EVENT)) {
-                loggedIn = false;
-                updateStatus();
-            } else if (intent.getAction().equals(SteamService.STOP_EVENT)) {
-                loggedIn = steamService.isLoggedIn();
-                updateStatus();
-            } else if (intent.getAction().equals(SteamService.FARM_EVENT)) {
-                showDropInfo();
-            } else if (intent.getAction().equals(SteamService.PERSONA_EVENT)) {
-                updateDrawerHeader(intent);
+            if (action == null) {
+                Log.i(TAG, "Received null action!");
+                return;
+            }
+            switch (action) {
+                case SteamService.LOGIN_EVENT:
+                    final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
+                    loggedIn = result == EResult.OK;
+                    updateStatus();
+                    break;
+                case SteamService.DISCONNECT_EVENT:
+                    loggedIn = false;
+                    updateStatus();
+                    break;
+                case SteamService.STOP_EVENT:
+                    loggedIn = steamService.isLoggedIn();
+                    updateStatus();
+                    break;
+                case SteamService.FARM_EVENT:
+                    showDropInfo();
+                    break;
+                case SteamService.PERSONA_EVENT:
+                    updateDrawerHeader(intent);
+                    break;
+                case SteamService.NOW_PLAYING:
+                    showNowPlaying();
+                    break;
             }
         }
     };
@@ -167,9 +181,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         farming = steamService.isFarming();
         updateStatus();
         updateDrawerHeader(null);
-        if (farming) {
-            showDropInfo();
-        }
 
         // Check if a Steam key was sent to us from another app
         final Intent intent = getIntent();
@@ -421,6 +432,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         filter.addAction(SteamService.STOP_EVENT);
         filter.addAction(SteamService.FARM_EVENT);
         filter.addAction(SteamService.PERSONA_EVENT);
+        filter.addAction(SteamService.NOW_PLAYING);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         // Listen for preference changes
         prefs = PrefsManager.getPrefs();
@@ -507,6 +519,19 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             case R.id.redeem:
                 RedeemDialog.newInstance().show(getSupportFragmentManager(), "redeem");
                 break;
+            case R.id.stop_button:
+                steamService.stopGame();
+                break;
+            case R.id.pause_resume_button:
+                if (steamService.isPaused()) {
+                    steamService.resumeGame();
+                } else {
+                    steamService.pauseGame();
+                }
+                break;
+            case R.id.next_button:
+                steamService.skipGame();
+                break;
         }
     }
 
@@ -521,10 +546,9 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             setTitle(R.string.app_name);
             hideSpinnerNav();
             drawerView.getMenu().findItem(R.id.home).setChecked(true);
-            if (farming) {
-                showDropInfo();
-            }
             ((HomeFragment) fragment).update(loggedIn, farming);
+            showDropInfo();
+            showNowPlaying();
         } else if (fragment instanceof GamesFragment) {
             drawerItemId = R.id.games;
             setTitle("");
@@ -540,12 +564,27 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     }
 
     /**
-     * Show card drop info
+     * Show/hide card drop info
      */
     private void showDropInfo() {
         final Fragment fragment = getCurrentFragment();
         if (fragment instanceof HomeFragment) {
-            ((HomeFragment) fragment).showDropInfo(steamService.getGameCount(), steamService.getCardCount());
+            final HomeFragment homeFragment = (HomeFragment) fragment;
+            if (farming) {
+                homeFragment.showDropInfo(steamService.getGameCount(), steamService.getCardCount());
+            } else {
+                homeFragment.hideDropInfo();
+            }
+        }
+    }
+
+    /**
+     * Show now playing if we're idling any games
+     */
+    private void showNowPlaying() {
+        final Fragment fragment = getCurrentFragment();
+        if (fragment instanceof HomeFragment) {
+            ((HomeFragment) fragment).showNowPlaying(steamService.getCurrentGames(), steamService.isFarming(), steamService.isPaused());
         }
     }
 
@@ -569,13 +608,11 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
 
     @Override
     public void onGamePicked(Game game) {
-        steamService.stopFarming();
         steamService.addGame(game);
     }
 
     @Override
     public void onGameRemoved(Game game) {
-        steamService.stopFarming();
         steamService.removeGame(game);
     }
 

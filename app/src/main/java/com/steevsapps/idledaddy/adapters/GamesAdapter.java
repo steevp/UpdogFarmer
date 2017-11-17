@@ -80,8 +80,9 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final Game game = dataSet.get(position);
         holder.name.setText(game.name);
+        final int quantity = game.hoursPlayed < 1 ? 0 : (int) Math.ceil(game.hoursPlayed);
         holder.hours.setText(context.getResources()
-                .getQuantityString(R.plurals.hours_on_record, (int) Math.ceil(game.hoursPlayed), game.hoursPlayed));
+                .getQuantityString(R.plurals.hours_on_record, quantity, game.hoursPlayed));
         if (!PrefsManager.minimizeData()) {
             Glide.with(context)
                     .load(game.iconUrl)

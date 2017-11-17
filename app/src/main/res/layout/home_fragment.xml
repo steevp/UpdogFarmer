@@ -11,6 +11,7 @@
         android:padding="8dp">
 
         <include layout="@layout/status_card" />
+        <include layout="@layout/now_playing_card" />
         <include layout="@layout/drop_info_card" />
         <include layout="@layout/start_card" />
         <include layout="@layout/stop_card" />

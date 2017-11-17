@@ -12,4 +12,22 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
+    <style name="AppTheme.TextStyle" parent="TextAppearance.AppCompat">
+        <item name="android:textSize">@dimen/text_size_default</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:alpha">1.0</item>
+    </style>
+
+    <style name="AppTheme.TextStyle.Small">
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="AppTheme.TextStyle.Secondary">
+        <item name="android:alpha">0.7</item>
+    </style>
+
+    <style name="AppTheme.TextStyle.Secondary.Small">
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
 </resources>
