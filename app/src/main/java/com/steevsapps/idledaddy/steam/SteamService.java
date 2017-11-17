@@ -770,7 +770,11 @@ public class SteamService extends Service {
      */
     public void redeemKey(final String key) {
         if (key.matches("\\d+")) {
-            freeLicense.requestFreeLicense(Integer.parseInt(key));
+            try {
+                freeLicense.requestFreeLicense(Integer.parseInt(key));
+            } catch (NumberFormatException e) {
+                Toast.makeText(getApplicationContext(), R.string.invalid_key, Toast.LENGTH_LONG).show();
+            }
         } else {
             steamUser.registerProductKey(key);
         }
