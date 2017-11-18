@@ -106,7 +106,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                     updateStatus();
                     break;
                 case SteamService.FARM_EVENT:
-                    showDropInfo();
+                    showDropInfo(intent);
                     break;
                 case SteamService.PERSONA_EVENT:
                     updateDrawerHeader(intent);
@@ -534,7 +534,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             hideSpinnerNav();
             drawerView.getMenu().findItem(R.id.home).setChecked(true);
             ((HomeFragment) fragment).update(loggedIn, farming);
-            showDropInfo();
+            showDropInfo(null);
             showNowPlaying();
         } else if (fragment instanceof GamesFragment) {
             drawerItemId = R.id.games;
@@ -553,13 +553,20 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     /**
      * Show/hide card drop info
      */
-    private void showDropInfo() {
+    private void showDropInfo(@Nullable Intent intent) {
         final Fragment fragment = getCurrentFragment();
         if (fragment instanceof HomeFragment) {
             final HomeFragment homeFragment = (HomeFragment) fragment;
-            if (farming) {
+            if (intent != null) {
+                // Called by FARM_EVENT, always show drop info
+                final int gameCount = intent.getIntExtra(SteamService.GAME_COUNT, 0);
+                final int cardCount = intent.getIntExtra(SteamService.CARD_COUNT, 0);
+                homeFragment.showDropInfo(gameCount, cardCount);
+            } else if (farming) {
+                // Called by updateStatus(), only show drop info if we're farming
                 homeFragment.showDropInfo(steamService.getGameCount(), steamService.getCardCount());
             } else {
+                // Hide drop info
                 homeFragment.hideDropInfo();
             }
         }
