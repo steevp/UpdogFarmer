@@ -61,7 +61,6 @@ import java.util.List;
 import java.util.Locale;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 
 
 public class MainActivity extends BaseActivity implements BillingUpdatesListener, DialogListener,
@@ -98,24 +97,12 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            final String action = intent.getAction();
+            loggedIn = steamService.isLoggedIn();
             farming = steamService.isFarming();
-            if (action == null) {
-                Log.i(TAG, "Received null action!");
-                return;
-            }
-            switch (action) {
+            switch (intent.getAction()) {
                 case SteamService.LOGIN_EVENT:
-                    final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
-                    loggedIn = result == EResult.OK;
-                    updateStatus();
-                    break;
                 case SteamService.DISCONNECT_EVENT:
-                    loggedIn = false;
-                    updateStatus();
-                    break;
                 case SteamService.STOP_EVENT:
-                    loggedIn = steamService.isLoggedIn();
                     updateStatus();
                     break;
                 case SteamService.FARM_EVENT:
@@ -124,7 +111,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                 case SteamService.PERSONA_EVENT:
                     updateDrawerHeader(intent);
                     break;
-                case SteamService.NOW_PLAYING:
+                case SteamService.NOW_PLAYING_EVENT:
                     showNowPlaying();
                     break;
             }
@@ -432,7 +419,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         filter.addAction(SteamService.STOP_EVENT);
         filter.addAction(SteamService.FARM_EVENT);
         filter.addAction(SteamService.PERSONA_EVENT);
-        filter.addAction(SteamService.NOW_PLAYING);
+        filter.addAction(SteamService.NOW_PLAYING_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         // Listen for preference changes
         prefs = PrefsManager.getPrefs();

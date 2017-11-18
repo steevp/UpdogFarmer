@@ -99,7 +99,7 @@ public class SteamService extends Service {
     public final static String PERSONA_EVENT = "PERSONA_EVENT"; // Emitted when we get PersonaStateCallback
     public final static String PERSONA_NAME = "PERSONA_NAME"; // Username
     public final static String AVATAR_HASH = "AVATAR_HASH"; // User avatar hash
-    public final static String NOW_PLAYING = "NOW_PLAYING"; // Emitted when you idle a game
+    public final static String NOW_PLAYING_EVENT = "NOW_PLAYING_EVENT"; // Emitted when the game you're idling changes
 
     // Actions
     public final static String SKIP_INTENT = "SKIP_INTENT";
@@ -357,11 +357,15 @@ public class SteamService extends Service {
         stopPlaying();
         showPausedNotification();
         // Tell the activity to update
-        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING));
+        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING_EVENT));
     }
 
     public void resumeGame() {
-        if (currentGames.size() == 1) {
+        if (farming) {
+            Log.i(TAG, "Resume farming");
+            paused = false;
+            executor.execute(farmTask);
+        } else if (currentGames.size() == 1) {
             Log.i(TAG, "Resume playing");
             idleSingle(currentGames.get(0));
         } else if (currentGames.size() > 1) {
@@ -649,8 +653,6 @@ public class SteamService extends Service {
         currentGames.add(game);
         playGame(game.appId);
         showIdleNotification(game);
-        // Tell the activity
-        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING));
     }
 
     private void idleMultiple(List<Game> games) {
@@ -678,8 +680,6 @@ public class SteamService extends Service {
 
         playGames(appIds);
         showMultipleNotification(msg.toString());
-        // Tell the Activity
-        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING));
     }
 
     public void addGame(Game game) {
@@ -1142,6 +1142,8 @@ public class SteamService extends Service {
      */
     private void playGame(int appId) {
         steamUser.setPlayingGame(appId);
+        // Tell the activity
+        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING_EVENT));
     }
 
     /**
@@ -1165,6 +1167,8 @@ public class SteamService extends Service {
         playGame = new ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed>(SteammessagesClientserver.CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
         playGame.getBody().gamesPlayed = gamesPlayed;
         steamClient.send(playGame);
+        // Tell the activity
+        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING_EVENT));
     }
 
     private void stopPlaying() {
@@ -1172,6 +1176,8 @@ public class SteamService extends Service {
             currentGames.clear();
         }
         steamUser.setPlayingGame(0);
+        // Tell the activity
+        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING_EVENT));
     }
 
     private void writeSentryFile(byte[] data) {
