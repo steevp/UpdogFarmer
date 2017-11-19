@@ -1,5 +1,6 @@
 package com.steevsapps.idledaddy.preferences;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.Preference;
@@ -9,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -57,6 +59,7 @@ public class BlacklistDialog extends PreferenceDialogFragmentCompat implements V
         super.onBindDialogView(view);
         input = view.findViewById(R.id.input);
         input.setOnEditorActionListener(this);
+        showSoftKeyboard();
         addButton = view.findViewById(R.id.add);
         addButton.setOnClickListener(this);
         recyclerView = view.findViewById(R.id.recycler_view);
@@ -69,6 +72,7 @@ public class BlacklistDialog extends PreferenceDialogFragmentCompat implements V
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
+        hideSoftKeyboard();
         if (positiveResult) {
             preference.persistStringValue(adapter.getValue());
         }
@@ -90,6 +94,18 @@ public class BlacklistDialog extends PreferenceDialogFragmentCompat implements V
             input.setText("");
             recyclerView.scrollToPosition(0);
         }
+    }
+
+    private void showSoftKeyboard() {
+        input.requestFocus();
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+    }
+
+    private void hideSoftKeyboard() {
+        input.clearFocus();
+        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, 0);
     }
 
     @Override
