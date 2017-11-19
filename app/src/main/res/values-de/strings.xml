@@ -64,6 +64,10 @@
         <item quantity="one">%d Karte fehlt noch</item>
         <item quantity="other">%d Karten fehlen noch</item>
     </plurals>
+    <plurals name="hours_on_record">
+        <item quantity="one">%.1f Stunde insgesammt gespielt</item>
+        <item quantity="other">%.1f Stunden ingesammt gespielt</item>
+    </plurals>
     <string name="logged_in_elsewhere">Steam wird bereits benutzt. Fortsetzung folgt sobald möglich.</string>
     <string name="web_login_failed">Fehlgeschlagene Anmeldung zu der Steam Website!</string>
     <string name="login_key_expired">Anmelde Schlüssel abgelaufen!</string>
@@ -80,4 +84,5 @@
     <string name="refresh">Aktualisieren</string>
     <string name="last_session">Letzte Sitzung</string>
     <string name="remove_ads">Werbung entfernen</string>
+    <string name="logcat">Logcat</string>
 </resources>
