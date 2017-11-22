@@ -20,6 +20,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> {
+    public static int SORT_ALPHABETICALLY = 1;
+    public static int SORT_HOURS_PLAYED = 2;
 
     private List<Game> dataSet = new ArrayList<>();
     private List<Game> dataSetCopy = new ArrayList<>();
@@ -36,19 +38,30 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         }
     }
 
-    public void setData(List<Game> games) {
-        // Sort games alphabetically
+    public void setData(List<Game> games, int sortId) {
+        if (sortId == SORT_ALPHABETICALLY) {
+            sortAlphabetically(games);
+        } else if (sortId == SORT_HOURS_PLAYED) {
+            sortHoursPlayed(games);
+        }
+        dataSet.clear();
+        dataSetCopy.clear();
+        dataSet.addAll(games);
+        dataSetCopy.addAll(games);
+        notifyDataSetChanged();
+    }
+
+    private void sortAlphabetically(List<Game> games) {
         Collections.sort(games, new Comparator<Game>() {
             @Override
             public int compare(Game game1, Game game2) {
                 return game1.name.toLowerCase().compareTo(game2.name.toLowerCase());
             }
         });
-        dataSet.clear();
-        dataSetCopy.clear();
-        dataSet.addAll(games);
-        dataSetCopy.addAll(games);
-        notifyDataSetChanged();
+    }
+
+    private void sortHoursPlayed(List<Game> games) {
+        Collections.sort(games, Collections.reverseOrder());
     }
 
     public void filter(String text) {

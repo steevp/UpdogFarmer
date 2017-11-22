@@ -85,4 +85,7 @@
     <string name="last_session">Last Session</string>
     <string name="remove_ads">Remove ads</string>
     <string name="logcat" translatable="false">Logcat</string>
+    <string name="sort">Sort</string>
+    <string name="sort_alphabetically">Alphabetically</string>
+    <string name="sort_hours_played">Hours Played</string>
 </resources>

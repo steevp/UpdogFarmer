@@ -31,6 +31,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     private final static String STEAM_ID = "STEAM_ID";
     private final static String CURRENT_GAMES = "CURRENT_GAMES";
     private final static String CURRENT_TAB = "CURRENT_TAB";
+    private final static String SORT_ID = "SORT_ID";
 
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
@@ -50,6 +51,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     public final static int TAB_LAST = 1;
     public final static int TAB_BLACKLIST = 2;
     private int currentTab = TAB_GAMES;
+    private int sortId;
 
 
     public static GamesFragment newInstance(long steamId, ArrayList<Game> currentGames, int position) {
@@ -74,9 +76,11 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         if (savedInstanceState != null) {
             currentGames = savedInstanceState.getParcelableArrayList(CURRENT_GAMES);
             currentTab = savedInstanceState.getInt(CURRENT_TAB);
+            sortId = savedInstanceState.getInt(SORT_ID);
         } else {
             currentGames = getArguments().getParcelableArrayList(CURRENT_GAMES);
             currentTab = getArguments().getInt(CURRENT_TAB);
+            sortId = GamesAdapter.SORT_ALPHABETICALLY;
             if (steamId == 0) {
                 Toast.makeText(getActivity(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
             }
@@ -98,6 +102,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(CURRENT_GAMES, currentGames);
         outState.putInt(CURRENT_TAB, currentTab);
+        outState.putInt(SORT_ID, sortId);
     }
 
     @Nullable
@@ -142,6 +147,19 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         if (item.getItemId() == R.id.refresh) {
             fetchGames();
             return true;
+        }
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                fetchGames();
+                return true;
+            case R.id.sort_alphabetically:
+                sortId = GamesAdapter.SORT_ALPHABETICALLY;
+                loadData();
+                return true;
+            case R.id.sort_hours_played:
+                sortId = GamesAdapter.SORT_HOURS_PLAYED;
+                loadData();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -236,11 +254,11 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
                 }
             }
             dataFragment.setData(blacklistGames);
-            adapter.setData(blacklistGames);
+            adapter.setData(blacklistGames, sortId);
             emptyView.setVisibility(blacklistGames.isEmpty() ? View.VISIBLE : View.GONE);
         } else {
             dataFragment.setData(games);
-            adapter.setData(games);
+            adapter.setData(games, sortId);
             emptyView.setVisibility(games.isEmpty() ? View.VISIBLE : View.GONE);
         }
         refreshLayout.setRefreshing(false);
