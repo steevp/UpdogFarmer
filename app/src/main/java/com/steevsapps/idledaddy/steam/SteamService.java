@@ -128,6 +128,7 @@ public class SteamService extends Service {
     private volatile boolean farming = false; // Currently farming
     private volatile boolean paused = false; // Game paused
     private volatile boolean waiting = false; // Waiting for user to stop playing
+    private volatile boolean loginInProgress = false; // Currently logging in, so don't reconnect on disconnects
 
     private long steamId;
     private boolean loggedIn = false;
@@ -725,13 +726,10 @@ public class SteamService extends Service {
 
     public void login(final LogOnDetails details) {
         Log.i(TAG, "logging in");
+        loginInProgress = true;
         details.loginId = NOTIF_ID;
         logOnDetails = details;
-        if (!connected) {
-            connect();
-        } else {
-            disconnect();
-        }
+        connect();
     }
 
     public void logoff() {
@@ -863,14 +861,22 @@ public class SteamService extends Service {
                 Log.i(TAG, "Disconnected()");
                 connected = false;
                 loggedIn = false;
-                // Try to reconnect after a 5 second delay
-                scheduler.schedule(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "Reconnecting");
-                        steamClient.connect();
-                    }
-                }, 5, TimeUnit.SECONDS);
+
+                if (!loginInProgress) {
+                    // Try to reconnect after a 5 second delay
+                    scheduler.schedule(new Runnable() {
+                        @Override
+                        public void run() {
+                            Log.i(TAG, "Reconnecting");
+                            steamClient.connect();
+                        }
+                    }, 5, TimeUnit.SECONDS);
+                } else {
+                    // SteamKit may disconnect us while logging on (if already connected),
+                    // but since it reconnects immediately after we do not have to reconnect here.
+                    Log.i(TAG, "NOT reconnecting (logon in progress)");
+                }
+
                 // Tell the activity that we've been disconnected from Steam
                 LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(DISCONNECT_EVENT));
             }
@@ -897,6 +903,8 @@ public class SteamService extends Service {
             public void call(final LoggedOnCallback callback) {
                 final EResult result = callback.getResult();
                 Log.i(TAG, result.toString());
+
+                loginInProgress = false;
 
                 final String webApiUserNonce = callback.getWebAPIUserNonce();
 
