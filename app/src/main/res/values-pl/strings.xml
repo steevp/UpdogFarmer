@@ -34,7 +34,7 @@
     <string name="pref_hours_until">Godziny równoczesnej symulacji</string>
     <string name="sum_hours_until">Liczba godzin, po których gry zaczną \'dropić karty\'. Idle Daddy będzie symulował gry równocześnie do czasu osiągnięcia ustawionej liczby godzin. Dla większości użytkowników 3 godziny to wystarczająca ilość czasu.</string>
     <string name="pref_include_free_games">Symulacja darmowych gier</string>
-    <string name="sum_include_free_games">Standardowo gry, takie jak Team Fortress 2 są wykluczone z symulacji (z technicznego punktu widzenia wszyscy je posiadają). Jeśli ta opcja jest włączona darmowe gry będą pokazywane na liście aktywności, jakby były uruchomione w którymś momencie.</string>
+    <string name="sum_include_free_games">Standardowo gry, takie jak Team Fortress 2 są wykluczone z symulacji (z technicznego punktu widzenia wszyscy je posiadają). Jeśli ta opcja jest włączona darmowe gry będą pokazywane na liście aktywności, jeśli wcześniej były uruchomione.</string>
     <string name="blacklist_hint">Wpisz AppID i naciśnij +</string>
     <string name="add_to_blacklist">Dodaj grę do listy wykluczonych</string>
     <string name="added_to_blacklist">Gra dodana do listy wykluczonch</string>
@@ -66,7 +66,7 @@
 	<item quantity="few">%d kart do uzyskania</item>
     	<item quantity="other">%d kart do uzyskania</item>
     </plurals>
-	<plurals name="hours_on_record">
+    <plurals name="hours_on_record">
         <item quantity="one">%.1f godz. łącznie</item>
         <item quantity="other">%.1f godz. łącznie</item>
     </plurals>
@@ -87,4 +87,7 @@
     <string name="last_session">Ostatnia sesja</string>
     <string name="remove_ads">Usunięcie reklam</string>
     <string name="logcat" translatable="false">Logcat</string>
+    <string name="sort">Sortuj</string>
+    <string name="sort_alphabetically">Alfabetycznie</string>
+    <string name="sort_hours_played">Czas gry</string>
 </resources>
