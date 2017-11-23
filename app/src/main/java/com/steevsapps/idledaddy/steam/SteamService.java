@@ -739,6 +739,9 @@ public class SteamService extends Service {
         personaName = "";
         steamId = 0;
         logOnDetails = null;
+        farmIndex = 0;
+        gamesToFarm = null;
+        currentGames.clear();
         stopFarming();
         steamUser.logOff();
         PrefsManager.clearUser();
