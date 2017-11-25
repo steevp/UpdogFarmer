@@ -40,7 +40,7 @@ dependencies {
     compile "com.android.support:preference-v14:$supportLibraryVersion"
     compile "com.android.support:support-media-compat:$supportLibraryVersion"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.github.steevp:SteamKit-Java:b988e684a8'
+    compile 'com.github.steevp:SteamKit-Java:14f5b4a104'
     compile 'org.jsoup:jsoup:1.10.3'
     compile 'com.github.bumptech.glide:glide:3.8.0'
     compile "com.android.support:support-v4:$supportLibraryVersion"
