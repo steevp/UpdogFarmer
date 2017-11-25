@@ -383,7 +383,7 @@ public class SteamService extends Service {
     private void handleConnectivityChange(Intent intent) {
         final boolean connectivityLost = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
         if (connectivityLost) {
-            Log.i(TAG, "Lost Connectivity)");
+            Log.i(TAG, "Lost Connectivity");
             disconnect();
         }
     }
