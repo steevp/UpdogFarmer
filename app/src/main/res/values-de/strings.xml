@@ -34,7 +34,7 @@
     <string name="pref_hours_until">Stunden bis die Karten im Inventar sind</string>
     <string name="sum_hours_until">Die Anzahl der Stunden die ein Spiel benötigt, um Karten im Inventar abzulegen. Während dem Sammeln der Karten wird Idle Daddy mehrere Spiele gleichzeitig, inaktiv im Hintergrund laufen lassen, bis diese Zeit erreicht wird. Für die meisten Benutzer sind hier drei Stunden die beste Wahl.</string>
     <string name="pref_include_free_games">Einschließlich kostenlos gespielte Spiele</string>
-    <string name="sum_include_free_games">Kostenlose Spiele werden in deiner Spieleliste angezeigt, wenn du sie schonmal gespielt oder gestartet hast</string>
+    <string name="sum_include_free_games">Kostenlose Spiele werden in deiner Spieleliste angezeigt, wenn du sie schon einmal gespielt oder gestartet hast</string>
     <string name="blacklist_hint">Gebe die Spiele ID ein und klicke auf das +</string>
     <string name="add_to_blacklist">Füge ein Spiel zu der schwarzen Liste hinzu</string>
     <string name="added_to_blacklist">Spiel wurde zu der schwarzen Liste hinzugefügt</string>
@@ -65,8 +65,8 @@
         <item quantity="other">%d Karten fehlen noch</item>
     </plurals>
     <plurals name="hours_on_record">
-        <item quantity="one">%.1f Stunde insgesammt gespielt</item>
-        <item quantity="other">%.1f Stunden ingesammt gespielt</item>
+        <item quantity="one">%.1f Stunde gespielt</item>
+        <item quantity="other">%.1f Stunden gespielt</item>
     </plurals>
     <string name="logged_in_elsewhere">Steam wird bereits benutzt. Fortsetzung folgt sobald möglich.</string>
     <string name="web_login_failed">Fehlgeschlagene Anmeldung zu der Steam Website!</string>
@@ -85,4 +85,7 @@
     <string name="last_session">Letzte Sitzung</string>
     <string name="remove_ads">Werbung entfernen</string>
     <string name="logcat">Logcat</string>
+    <string name="sort">Sortieren</string>
+    <string name="sort_alphabetically">Alphabetisch</string>
+    <string name="sort_hours_played">Spielzeit</string>
 </resources>
