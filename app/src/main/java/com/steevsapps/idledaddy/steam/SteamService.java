@@ -11,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
@@ -35,8 +34,8 @@ import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.handlers.FreeLicense;
 import com.steevsapps.idledaddy.handlers.FreeLicenseCallback;
 import com.steevsapps.idledaddy.listeners.LogcatDebugListener;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.io.File;
@@ -168,9 +167,6 @@ public class SteamService extends Service {
                     break;
                 case RESUME_INTENT:
                     resumeGame();
-                    break;
-                case ConnectivityManager.CONNECTIVITY_ACTION:
-                    handleConnectivityChange(intent);
                     break;
             }
         }
@@ -380,14 +376,6 @@ public class SteamService extends Service {
         }
     }
 
-    private void handleConnectivityChange(Intent intent) {
-        final boolean connectivityLost = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
-        if (connectivityLost) {
-            Log.i(TAG, "Lost Connectivity");
-            disconnect();
-        }
-    }
-
     private void scheduleFarmTask() {
         if (farmHandle == null || farmHandle.isCancelled()) {
             Log.i(TAG, "Starting farmtask");
@@ -445,7 +433,6 @@ public class SteamService extends Service {
             filter.addAction(STOP_INTENT);
             filter.addAction(PAUSE_INTENT);
             filter.addAction(RESUME_INTENT);
-            filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(receiver, filter);
             start();
         }
