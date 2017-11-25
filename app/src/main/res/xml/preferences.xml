@@ -19,7 +19,7 @@
             android:key="include_free_games"
             android:title="@string/pref_include_free_games"
             android:summary="@string/sum_include_free_games"
-            android:defaultValue="false" />
+            android:defaultValue="true" />
 
         <EditTextPreference
             android:key="parental_pin"
