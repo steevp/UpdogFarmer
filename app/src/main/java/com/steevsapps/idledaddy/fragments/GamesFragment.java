@@ -1,5 +1,7 @@
 package com.steevsapps.idledaddy.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -8,7 +10,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,8 +21,8 @@ import android.widget.Toast;
 
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     private GridLayoutManager layoutManager;
     private SearchView searchView;
     private TextView emptyView;
-    private DataFragment dataFragment;
+    private GamesViewModel viewModel;
     private FloatingActionButton fab;
 
     private long steamId;
@@ -73,6 +74,8 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         steamId = getArguments().getLong(STEAM_ID);
+        viewModel = ViewModelProviders.of(this).get(GamesViewModel.class);
+        viewModel.init(steamId);
         if (savedInstanceState != null) {
             currentGames = savedInstanceState.getParcelableArrayList(CURRENT_GAMES);
             currentTab = savedInstanceState.getInt(CURRENT_TAB);
@@ -127,7 +130,6 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         if (steamId > 0) {
             fab.show();
         }
-        dataFragment = getDataFragment();
         loadData();
 
         return view;
@@ -178,19 +180,12 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     }
 
     private void loadData() {
-        if (dataFragment != null) {
-            // Restore games list
-            Log.i(TAG, "Restoring games list");
-            setGames(dataFragment.getData());
-        } else {
-            // Add data fragment to store games during configuration changes
-            dataFragment = new DataFragment();
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(dataFragment, "data")
-                    .commit();
-            fetchGames();
-        }
+        viewModel.getGames().observe(this, new Observer<List<Game>>() {
+            @Override
+            public void onChanged(@Nullable List<Game> games) {
+                setGames(games);
+            }
+        });
     }
 
     /**
@@ -217,11 +212,6 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         fetchGames();
     }
 
-    @Nullable
-    private DataFragment getDataFragment() {
-        return (DataFragment) getActivity().getSupportFragmentManager().findFragmentByTag("data");
-    }
-
     private void fetchGames() {
         showBlacklist = currentTab == TAB_BLACKLIST;
         if (currentTab == TAB_LAST) {
@@ -231,11 +221,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         } else {
             // Fetch games from Steam
             refreshLayout.setRefreshing(true);
-            final FetchGamesFragment taskFragment = FetchGamesFragment.newInstance(steamId);
-            getActivity().getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(taskFragment, "task_fragment")
-                    .commit();
+            viewModel.fetchGames();
         }
     }
 
@@ -243,7 +229,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
      * Update games list
      * @param games the list of games
      */
-    public void setGames(List<Game> games) {
+    private void setGames(List<Game> games) {
         if (showBlacklist) {
             // Only list blacklisted games
             final List<String> blacklist = PrefsManager.getBlacklist();
@@ -253,11 +239,9 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
                     blacklistGames.add(game);
                 }
             }
-            dataFragment.setData(blacklistGames);
             adapter.setData(blacklistGames, sortId);
             emptyView.setVisibility(blacklistGames.isEmpty() ? View.VISIBLE : View.GONE);
         } else {
-            dataFragment.setData(games);
             adapter.setData(games, sortId);
             emptyView.setVisibility(games.isEmpty() ? View.VISIBLE : View.GONE);
         }

@@ -42,12 +42,10 @@ import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.GameOptionsDialog;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
-import com.steevsapps.idledaddy.fragments.DataFragment;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
 import com.steevsapps.idledaddy.fragments.HomeFragment;
 import com.steevsapps.idledaddy.fragments.SettingsFragment;
 import com.steevsapps.idledaddy.listeners.DialogListener;
-import com.steevsapps.idledaddy.listeners.FetchGamesListener;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.listeners.SpinnerInteractionListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
@@ -64,7 +62,7 @@ import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
 
 
 public class MainActivity extends BaseActivity implements BillingUpdatesListener, DialogListener,
-        GamePickedListener, FetchGamesListener, SharedPreferences.OnSharedPreferenceChangeListener {
+        GamePickedListener, SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String DRAWER_ITEM = "DRAWER_ITEM";
     private final static String TITLE = "TITLE";
@@ -332,14 +330,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             return;
         }
 
-        // Cleanup retained data fragment when switching screens
-        final DataFragment dataFragment = (DataFragment) getSupportFragmentManager().findFragmentByTag("data");
-        if (dataFragment != null) {
-            getSupportFragmentManager().beginTransaction()
-                    .remove(dataFragment)
-                    .commit();
-        }
-
         Fragment fragment;
         switch (id) {
             case R.id.home:
@@ -582,16 +572,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         }
     }
 
-    /**
-     * Set games list for the games fragment
-     */
-    private void setGames(List<Game> games) {
-        final Fragment fragment = getCurrentFragment();
-        if (fragment instanceof  GamesFragment) {
-            ((GamesFragment) fragment).setGames(games);
-        }
-    }
-
     @Override
     public void onYesPicked(String text) {
         final String key = text.toUpperCase().trim();
@@ -614,20 +594,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     public void onGameLongPressed(Game game) {
         // Show game options
         GameOptionsDialog.newInstance(game).show(getSupportFragmentManager(), GameOptionsDialog.TAG);
-    }
-
-    @Override
-    public void onGamesListReceived(List<Game> games) {
-        // Remove task fragment
-        final Fragment taskFragment = getSupportFragmentManager().findFragmentByTag("task_fragment");
-        if (taskFragment != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .remove(taskFragment)
-                    .commitAllowingStateLoss();
-        }
-        // Update GamesFragment
-        setGames(games);
     }
 
     @Override
