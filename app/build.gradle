@@ -13,9 +13,14 @@ android {
 
     buildTypes {
         release {
+            multiDexEnabled false
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        debug {
+            multiDexEnabled true
         }
     }
 
@@ -29,23 +34,24 @@ ext {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
-    compile "com.android.support:cardview-v7:$supportLibraryVersion"
-    compile "com.android.support:design:$supportLibraryVersion"
-    compile "com.android.support:preference-v7:$supportLibraryVersion"
-    compile "com.android.support:preference-v14:$supportLibraryVersion"
-    compile "com.android.support:support-media-compat:$supportLibraryVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.github.steevp:SteamKit-Java:14f5b4a104'
-    compile 'org.jsoup:jsoup:1.10.3'
-    compile 'com.github.bumptech.glide:glide:3.8.0'
-    compile "com.android.support:support-v4:$supportLibraryVersion"
-    compile 'com.google.android.gms:play-services-ads:11.6.0'
-    compile 'com.android.billingclient:billing:1.0'
-    compile 'com.google.code.gson:gson:2.8.2'
-    testCompile 'junit:junit:4.12'
+    implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+    implementation "com.android.support:cardview-v7:$supportLibraryVersion"
+    implementation "com.android.support:design:$supportLibraryVersion"
+    implementation "com.android.support:preference-v7:$supportLibraryVersion"
+    implementation "com.android.support:preference-v14:$supportLibraryVersion"
+    implementation "com.android.support:support-media-compat:$supportLibraryVersion"
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.github.steevp:SteamKit-Java:14f5b4a104'
+    implementation 'org.jsoup:jsoup:1.10.3'
+    implementation 'com.github.bumptech.glide:glide:3.8.0'
+    implementation "com.android.support:support-v4:$supportLibraryVersion"
+    implementation 'com.google.android.gms:play-services-ads:11.6.0'
+    implementation 'com.android.billingclient:billing:1.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation "android.arch.lifecycle:extensions:1.0.0"
+    testImplementation 'junit:junit:4.12'
 }
