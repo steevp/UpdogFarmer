@@ -19,8 +19,8 @@
     <string name="redeem">Aktywuj produkt</string>
     <string name="redeem_msg">Wpisz kod produktu lub ID darmowej gry</string>
     <string name="ok">OK</string>
-    <string name="cat_idle">Ustawienia symulacji</string>
-    <string name="cat_general">Ustawienia ogólne</string>
+    <string name="cat_idle">Symulacja</string>
+    <string name="cat_general">Ogólne</string>
     <string name="pref_offline">Symulacja ukryta</string>
     <string name="sum_offline">Symulacja gier pozostaje niewidoczna dla znajomych.</string>
     <string name="pref_stay_awake">Utrzymuj urządzenie w aktywności</string>
@@ -63,7 +63,7 @@
     </plurals>
     <plurals name="card_drops_remaining">
 	<item quantity="one">%d karta do uzyskania</item>
-	<item quantity="few">%d kart do uzyskania</item>
+	<item quantity="few">%d karty do uzyskania</item>
     	<item quantity="other">%d kart do uzyskania</item>
     </plurals>
     <plurals name="hours_on_record">
@@ -89,5 +89,5 @@
     <string name="logcat" translatable="false">Logcat</string>
     <string name="sort">Sortuj</string>
     <string name="sort_alphabetically">Alfabetycznie</string>
-    <string name="sort_hours_played">Czas gry</string>
+    <string name="sort_hours_played">Wg czasu gry</string>
 </resources>
