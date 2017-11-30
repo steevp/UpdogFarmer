@@ -564,13 +564,13 @@ public class SteamService extends Service {
         // Add the stop and pause actions
         final PendingIntent stopIntent = PendingIntent.getBroadcast(this, 0, new Intent(STOP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
         final PendingIntent pauseIntent = PendingIntent.getBroadcast(this, 0, new Intent(PAUSE_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
-        builder.addAction(R.drawable.ic_stop_white_32dp, getString(R.string.stop), stopIntent);
-        builder.addAction(R.drawable.ic_pause_white_32dp, getString(R.string.pause), pauseIntent);
+        builder.addAction(R.drawable.ic_action_stop, getString(R.string.stop), stopIntent);
+        builder.addAction(R.drawable.ic_action_pause, getString(R.string.pause), pauseIntent);
 
         if (farming) {
             // Add the skip action
             final PendingIntent skipIntent = PendingIntent.getBroadcast(this, 0, new Intent(SKIP_INTENT), PendingIntent.FLAG_CANCEL_CURRENT);
-            builder.addAction(R.drawable.ic_skip_next_white_32dp, getString(R.string.skip), skipIntent);
+            builder.addAction(R.drawable.ic_action_skip, getString(R.string.skip), skipIntent);
         }
 
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -617,8 +617,8 @@ public class SteamService extends Service {
                 .setContentText(getString(R.string.idling_multiple))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent)
-                .addAction(R.drawable.ic_stop_white_32dp, getString(R.string.stop), stopIntent)
-                .addAction(R.drawable.ic_pause_white_32dp, getString(R.string.pause), pauseIntent)
+                .addAction(R.drawable.ic_action_stop, getString(R.string.stop), stopIntent)
+                .addAction(R.drawable.ic_action_pause, getString(R.string.pause), pauseIntent)
                 .build();
 
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -633,7 +633,7 @@ public class SteamService extends Service {
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.paused))
                 .setContentIntent(pi)
-                .addAction(R.drawable.ic_play_arrow_white_32dp, getString(R.string.resume), resumeIntent)
+                .addAction(R.drawable.ic_action_play, getString(R.string.resume), resumeIntent)
                 .build();
         final NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         nm.notify(NOTIF_ID, notification);
