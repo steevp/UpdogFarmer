@@ -11,7 +11,7 @@ import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import java.util.List;
 
-class GamesViewModel extends ViewModel {
+public class GamesViewModel extends ViewModel {
     private long steamId;
     private MutableLiveData<List<Game>> games;
 

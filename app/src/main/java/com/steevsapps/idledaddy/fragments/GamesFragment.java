@@ -115,6 +115,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         refreshLayout = view.findViewById(R.id.refresh_layout);
         refreshLayout.setColorSchemeResources(R.color.colorPrimary, R.color.colorPrimaryDark);
         refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setRefreshing(true);
 
         recyclerView = view.findViewById(R.id.games_list);
         layoutManager = new GridLayoutManager(recyclerView.getContext(), getResources().getInteger(R.integer.game_columns));
@@ -130,6 +131,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         if (steamId > 0) {
             fab.show();
         }
+
         loadData();
 
         return view;
