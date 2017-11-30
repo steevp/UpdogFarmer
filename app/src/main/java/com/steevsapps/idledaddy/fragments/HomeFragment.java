@@ -143,7 +143,7 @@ public class HomeFragment extends Fragment {
                     .getQuantityString(R.plurals.hours_on_record, quantity, g.hoursPlayed));
         }
         // Show the pause or resume button depending on if we're paused or not.
-        pauseResumeButton.setImageResource(isPaused ? R.drawable.ic_play_arrow_white_32dp : R.drawable.ic_pause_white_32dp);
+        pauseResumeButton.setImageResource(isPaused ? R.drawable.ic_action_play : R.drawable.ic_action_pause);
         // Hide the "next" when idling multiple
         nextButton.setVisibility((isFarming && games.size() == 1) ? View.VISIBLE : View.GONE);
         // Show the card
