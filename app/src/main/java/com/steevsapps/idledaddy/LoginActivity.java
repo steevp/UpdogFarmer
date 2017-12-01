@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,8 +19,9 @@ import android.widget.ProgressBar;
 import com.steevsapps.idledaddy.base.BaseActivity;
 import com.steevsapps.idledaddy.fragments.TimeoutFragment;
 import com.steevsapps.idledaddy.listeners.TimeoutListener;
-import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.steam.SteamService;
+import com.steevsapps.idledaddy.utils.Utils;
 
 import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
 import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
@@ -38,8 +40,11 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
     // Views
     private CoordinatorLayout coordinatorLayout;
     private TextInputLayout usernameInput;
+    private TextInputEditText usernameEditText;
     private TextInputLayout passwordInput;
+    private TextInputEditText passwordEditText;
     private TextInputLayout twoFactorInput;
+    private TextInputEditText twoFactorEditText;
     private Button loginButton;
     private ProgressBar progress;
 
@@ -47,7 +52,7 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(SteamService.LOGIN_EVENT)) {
+            if (SteamService.LOGIN_EVENT.equals(intent.getAction())) {
                 stopTimeout();
                 progress.setVisibility(View.GONE);
                 final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
@@ -63,13 +68,14 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
                         twoFactorRequired = result == EResult.AccountLoginDeniedNeedTwoFactor;
                         twoFactorInput.setVisibility(View.VISIBLE);
                         twoFactorInput.setError(getString(R.string.steamguard_required));
-                        twoFactorInput.getEditText().requestFocus();
+                        twoFactorEditText.requestFocus();
                     } else if (result == EResult.TwoFactorCodeMismatch || result == EResult.InvalidLoginAuthCode) {
                         twoFactorInput.setError(getString(R.string.invalid_code));
                     }
                 } else {
                     // Save username
-                    PrefsManager.writeUsername(usernameInput.getEditText().getText().toString().trim());
+                    final String username = Utils.removeSpecialChars(usernameEditText.getText().toString()).trim();
+                    PrefsManager.writeUsername(username);
                     finish();
                 }
             }
@@ -113,9 +119,12 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
         setContentView(R.layout.activity_login);
 
         coordinatorLayout = findViewById(R.id.coordinator);
-        usernameInput = findViewById(R.id.username);
-        passwordInput = findViewById(R.id.password);
-        twoFactorInput = findViewById(R.id.two_factor);
+        usernameInput = findViewById(R.id.username_input);
+        usernameEditText = findViewById(R.id.username_edittext);
+        passwordInput = findViewById(R.id.password_input);
+        passwordEditText = findViewById(R.id.password_edittext);
+        twoFactorInput = findViewById(R.id.two_factor_input);
+        twoFactorEditText = findViewById(R.id.two_factor_edittext);
         loginButton = findViewById(R.id.login);
         progress = findViewById(R.id.progress);
 
@@ -127,7 +136,7 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
             progress.setVisibility(loginInProgress ? View.VISIBLE : View.GONE);
         } else {
             // Restore saved username if any
-            usernameInput.getEditText().setText(PrefsManager.getUsername());
+            usernameEditText.setText(PrefsManager.getUsername());
         }
     }
 
@@ -156,8 +165,9 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
     }
 
     public void doLogin(View v) {
-        final String username = usernameInput.getEditText().getText().toString().trim();
-        final String password = passwordInput.getEditText().getText().toString().trim();
+        // Steam strips all non-ASCII characters from usernames and passwords
+        final String username = Utils.removeSpecialChars(usernameEditText.getText().toString()).trim();
+        final String password = Utils.removeSpecialChars(passwordEditText.getText().toString()).trim();
         if (!username.isEmpty() && !password.isEmpty()) {
             loginButton.setEnabled(false);
             progress.setVisibility(View.VISIBLE);
@@ -165,9 +175,9 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
             details.username(username);
             details.password(password);
             if (twoFactorRequired) {
-                details.twoFactorCode(twoFactorInput.getEditText().getText().toString());
+                details.twoFactorCode(twoFactorEditText.getText().toString().trim());
             } else {
-                details.authCode(twoFactorInput.getEditText().getText().toString().trim());
+                details.authCode(twoFactorEditText.getText().toString().trim());
             }
             details.shouldRememberPassword = true;
             getService().login(details);

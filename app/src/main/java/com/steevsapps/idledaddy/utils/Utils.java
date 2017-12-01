@@ -76,4 +76,11 @@ public class Utils {
         }
     }
 
+    /**
+     * Strips non-ASCII characters from String
+     */
+    public static String removeSpecialChars(String s) {
+        return s.replaceAll("[^\\u0000-\\u007F]", "");
+    }
+
 }

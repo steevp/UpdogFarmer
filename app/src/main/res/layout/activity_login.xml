@@ -25,7 +25,7 @@
                 android:textSize="@dimen/text_size_large" />
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/username"
+                android:id="@+id/username_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp">
@@ -40,7 +40,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/password"
+                android:id="@+id/password_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -54,13 +54,13 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/two_factor"
+                android:id="@+id/two_factor_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone">
 
                 <android.support.design.widget.TextInputEditText
-                    android:id="@+id/steamguard_edittext"
+                    android:id="@+id/two_factor_edittext"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textCapCharacters"
