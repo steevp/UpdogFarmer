@@ -45,7 +45,6 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
 
     private long steamId;
     private ArrayList<Game> currentGames;
-    private boolean showBlacklist = false;
 
     // Spinner nav items
     public final static int TAB_GAMES = 0;
@@ -132,6 +131,12 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
             fab.show();
         }
 
+        viewModel.getGames().observe(this, new Observer<List<Game>>() {
+            @Override
+            public void onChanged(@Nullable List<Game> games) {
+                setGames(games);
+            }
+        });
         loadData();
 
         return view;
@@ -158,11 +163,11 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
                 return true;
             case R.id.sort_alphabetically:
                 sortId = GamesAdapter.SORT_ALPHABETICALLY;
-                loadData();
+                fetchGames();
                 return true;
             case R.id.sort_hours_played:
                 sortId = GamesAdapter.SORT_HOURS_PLAYED;
-                loadData();
+                fetchGames();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -182,12 +187,9 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     }
 
     private void loadData() {
-        viewModel.getGames().observe(this, new Observer<List<Game>>() {
-            @Override
-            public void onChanged(@Nullable List<Game> games) {
-                setGames(games);
-            }
-        });
+        if (viewModel.getGames().getValue() == null) {
+            fetchGames();
+        }
     }
 
     /**
@@ -215,11 +217,10 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     }
 
     private void fetchGames() {
-        showBlacklist = currentTab == TAB_BLACKLIST;
         if (currentTab == TAB_LAST) {
             // Load last idling session
             final List<Game> games = !currentGames.isEmpty() ? currentGames : PrefsManager.getLastSession();
-            setGames(games);
+            viewModel.setGames(games);
         } else {
             // Fetch games from Steam
             refreshLayout.setRefreshing(true);
@@ -232,7 +233,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
      * @param games the list of games
      */
     private void setGames(List<Game> games) {
-        if (showBlacklist) {
+        if (currentTab == TAB_BLACKLIST) {
             // Only list blacklisted games
             final List<String> blacklist = PrefsManager.getBlacklist();
             final List<Game> blacklistGames = new ArrayList<>();

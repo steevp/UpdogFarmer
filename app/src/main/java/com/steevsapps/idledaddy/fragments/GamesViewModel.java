@@ -22,9 +22,12 @@ public class GamesViewModel extends ViewModel {
     LiveData<List<Game>> getGames() {
         if (games == null) {
             games = new MutableLiveData<>();
-            fetchGames();
         }
         return games;
+    }
+
+    void setGames(List<Game> games) {
+        this.games.setValue(games);
     }
 
     @SuppressLint("StaticFieldLeak")
