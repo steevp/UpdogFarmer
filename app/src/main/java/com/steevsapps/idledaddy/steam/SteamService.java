@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -132,6 +133,7 @@ public class SteamService extends Service {
 
     private long steamId;
     private boolean loggedIn = false;
+    private boolean isHuawei = false;
 
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
@@ -410,6 +412,10 @@ public class SteamService extends Service {
         steamFriends = steamClient.getHandler(SteamFriends.class);
         steamClient.addHandler(new FreeLicense());
         freeLicense = steamClient.getHandler(FreeLicense.class);
+        // Detect Huawei devices running Lollipop which have a bug with MediaStyle notifications
+        isHuawei = (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1 ||
+                android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) &&
+                Build.MANUFACTURER.toLowerCase(Locale.getDefault()).contains("huawei");
         // Acquire WakeLock to keep the CPU from sleeping
         final PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "IdleDaddyWakeLock");
@@ -549,12 +555,17 @@ public class SteamService extends Service {
                 notificationIntent, 0);
 
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                .setStyle(new MediaStyle())
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.app_name))
                 .setContentText(getString(R.string.now_playing2, game.name))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent);
+
+        // MediaStyle causes a crash on certain Huawei devices running Lollipop
+        // https://stackoverflow.com/questions/34851943/couldnt-expand-remoteviews-mediasessioncompat-and-notificationcompat-mediastyl
+        if (!isHuawei) {
+            builder.setStyle(new MediaStyle());
+        }
 
         if (game.dropsRemaining > 0) {
             // Show drops remaining
