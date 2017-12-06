@@ -32,6 +32,9 @@ public class PrefsManager {
     private final static String LAST_SESSION = "last_session";
     private final static String HOURS_UNTIL_DROPS = "hours_until_drops";
     private final static String INCLUDE_FREE_GAMES = "include_free_games";
+    private final static String PERSONA_NAME = "persona_name";
+    private final static String AVATAR_HASH = "avatar_hash";
+
 
     private static SharedPreferences prefs;
 
@@ -60,6 +63,8 @@ public class PrefsManager {
                 .putString(BLACKLIST, "")
                 .putString(LAST_SESSION, "")
                 .putString(PARENTAL_PIN, "")
+                .putString(PERSONA_NAME, "")
+                .putString(AVATAR_HASH, "")
                 .apply();
     }
 
@@ -90,6 +95,14 @@ public class PrefsManager {
     public static void writeLastSession(List<Game> games) {
         final String json = new Gson().toJson(games);
         writePref(LAST_SESSION, json);
+    }
+
+    public static void writePersonaName(String personaName) {
+        writePref(PERSONA_NAME, personaName);
+    }
+
+    public static void writeAvatarHash(String avatarHash) {
+        writePref(AVATAR_HASH, avatarHash);
     }
 
     public static String getUsername() {
@@ -139,6 +152,14 @@ public class PrefsManager {
             return new ArrayList<>();
         }
         return games;
+    }
+
+    public static String getPersonaName() {
+        return prefs.getString(PERSONA_NAME, "");
+    }
+
+    public static String getAvatarHash() {
+        return prefs.getString(AVATAR_HASH, "");
     }
 
     public static int getHoursUntilDrops() {
