@@ -136,13 +136,14 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         final String personaName;
         final String avatarHash;
 
-        if (intent == null) {
-            // Restore from service
-            personaName = steamService.getPersonaName();
-            avatarHash = steamService.getAvatarHash();
-        } else {
+        if (intent != null) {
             personaName = intent.getStringExtra(SteamService.PERSONA_NAME);
             avatarHash = intent.getStringExtra(SteamService.AVATAR_HASH);
+            PrefsManager.writePersonaName(personaName);
+            PrefsManager.writeAvatarHash(avatarHash);
+        } else {
+            personaName = PrefsManager.getPersonaName();
+            avatarHash = PrefsManager.getAvatarHash();
         }
 
         if (!personaName.isEmpty()) {

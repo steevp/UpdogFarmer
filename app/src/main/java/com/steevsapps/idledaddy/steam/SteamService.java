@@ -120,8 +120,6 @@ public class SteamService extends Service {
     private List<Game> currentGames = new ArrayList<>();
     private int gameCount = 0;
     private int cardCount = 0;
-    private String personaName = "";
-    private String avatarHash = "";
     private LogOnDetails logOnDetails = null;
 
     private volatile boolean running = false; // Service running
@@ -514,14 +512,6 @@ public class SteamService extends Service {
         return cardCount;
     }
 
-    public String getPersonaName() {
-        return personaName;
-    }
-
-    public String getAvatarHash() {
-        return avatarHash;
-    }
-
     public long getSteamId() {
         return steamId;
     }
@@ -747,8 +737,6 @@ public class SteamService extends Service {
     public void logoff() {
         Log.i(TAG, "logging off");
         loggedIn = false;
-        avatarHash = "";
-        personaName = "";
         steamId = 0;
         logOnDetails = null;
         currentGames.clear();
@@ -1064,8 +1052,8 @@ public class SteamService extends Service {
             @Override
             public void call(PersonaStateCallback callback) {
                 if (steamClient.getSteamId().equals(callback.getFriendID())) {
-                    personaName = callback.getName();
-                    avatarHash = Utils.bytesToHex(callback.getAvatarHash()).toLowerCase();
+                    final String personaName = callback.getName();
+                    final String avatarHash = Utils.bytesToHex(callback.getAvatarHash()).toLowerCase();
                     Log.i(TAG, "Avatar hash" + avatarHash);
                     final Intent event = new Intent(PERSONA_EVENT);
                     event.putExtra(PERSONA_NAME, personaName);
