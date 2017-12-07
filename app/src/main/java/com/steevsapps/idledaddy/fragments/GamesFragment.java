@@ -117,11 +117,25 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         refreshLayout.setRefreshing(true);
 
         recyclerView = view.findViewById(R.id.games_list);
-        layoutManager = new GridLayoutManager(recyclerView.getContext(), getResources().getInteger(R.integer.game_columns));
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setHasFixedSize(true);
         adapter = new GamesAdapter(recyclerView.getContext());
         adapter.setCurrentGames(currentGames);
+        adapter.setHeaderEnabled(currentTab == TAB_LAST);
+        layoutManager = new GridLayoutManager(recyclerView.getContext(), getResources().getInteger(R.integer.game_columns));
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                switch (adapter.getItemViewType(position)) {
+                    case GamesAdapter.ITEM_HEADER:
+                        return layoutManager.getSpanCount();
+                    case GamesAdapter.ITEM_NORMAL:
+                        return 1;
+                    default:
+                        return -1;
+                }
+            }
+        });
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
         emptyView = view.findViewById(R.id.empty_view);
@@ -243,9 +257,11 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
                 }
             }
             adapter.setData(blacklistGames, sortId);
+            adapter.setHeaderEnabled(false);
             emptyView.setVisibility(blacklistGames.isEmpty() ? View.VISIBLE : View.GONE);
         } else {
             adapter.setData(games, sortId);
+            adapter.setHeaderEnabled(!games.isEmpty() && currentTab == TAB_LAST);
             emptyView.setVisibility(games.isEmpty() ? View.VISIBLE : View.GONE);
         }
         refreshLayout.setRefreshing(false);

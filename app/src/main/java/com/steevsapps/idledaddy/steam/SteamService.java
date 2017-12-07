@@ -695,6 +695,17 @@ public class SteamService extends Service {
         }
     }
 
+    public void addGames(List<Game> games) {
+        stopFarming();
+        if (games.size() == 1) {
+            idleSingle(games.get(0));
+        } else if (games.size() > 1){
+            idleMultiple(games);
+        } else {
+            stopGame();
+        }
+    }
+
     public void removeGame(Game game) {
         stopFarming();
         currentGames.remove(game);

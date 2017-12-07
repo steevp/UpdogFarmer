@@ -4,6 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/empty_view"
+        style="@style/AppTheme.TextStyle"
+        android:text="@string/no_games_found"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_margin="8dp" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
@@ -17,16 +27,6 @@
             android:clipToPadding="false" />
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-    <TextView
-        android:id="@+id/empty_view"
-        style="@style/AppTheme.TextStyle"
-        android:text="@string/no_games_found"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:visibility="gone"
-        android:layout_margin="8dp" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/redeem"

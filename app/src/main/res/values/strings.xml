@@ -83,6 +83,7 @@
     <string name="activated">Activated: %s</string>
     <string name="refresh">Refresh</string>
     <string name="last_session">Last Session</string>
+    <string name="play_all">Play all</string>
     <string name="remove_ads">Remove ads</string>
     <string name="logcat" translatable="false">Logcat</string>
     <string name="sort">Sort</string>
