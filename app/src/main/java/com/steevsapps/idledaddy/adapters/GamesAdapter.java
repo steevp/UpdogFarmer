@@ -5,21 +5,22 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> {
+public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static int SORT_ALPHABETICALLY = 1;
     public static int SORT_HOURS_PLAYED = 2;
 
@@ -28,6 +29,10 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
     private Context context;
     private GamePickedListener callback;
     private ArrayList<Game> currentGames;
+    private boolean headerEnabled = false;
+
+    public final static int ITEM_HEADER = 1;
+    public final static int ITEM_NORMAL = 2;
 
     public GamesAdapter(Context c) {
         context = c;
@@ -83,64 +88,111 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
         notifyDataSetChanged();
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.games_item, parent, false);
-        return new ViewHolder(view);
+    public void setHeaderEnabled(boolean b) {
+        if (headerEnabled != b) {
+            headerEnabled = b;
+            notifyDataSetChanged();
+        }
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Game game = dataSet.get(position);
-        holder.name.setText(game.name);
-        final int quantity = game.hoursPlayed < 1 ? 0 : (int) Math.ceil(game.hoursPlayed);
-        holder.hours.setText(context.getResources()
-                .getQuantityString(R.plurals.hours_on_record, quantity, game.hoursPlayed));
-        if (!PrefsManager.minimizeData()) {
-            Glide.with(context)
-                    .load(game.iconUrl)
-                    .into(holder.logo);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        final View view;
+        if (viewType == ITEM_HEADER) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.games_header_item, parent, false);
+            return new VHHeader(view);
         } else {
-            holder.logo.setImageResource(R.drawable.ic_image_white_48dp);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.games_item, parent, false);
+            return new VHItem(view);
         }
+    }
 
-        holder.itemView.setActivated(currentGames.contains(game));
+    @Override
+    public int getItemViewType(int position) {
+        if (headerEnabled && position == 0) {
+            return ITEM_HEADER;
+        }
+        return ITEM_NORMAL;
+    }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!currentGames.contains(game) && currentGames.size() < 32) {
-                    currentGames.add(game);
-                    holder.itemView.setActivated(true);
-                    callback.onGamePicked(game);
-                } else {
-                    currentGames.remove(game);
-                    holder.itemView.setActivated(false);
-                    callback.onGameRemoved(game);
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof VHHeader) {
+            final VHHeader header = (VHHeader) holder;
+            header.button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    callback.onGamesPicked(dataSet);
+                    currentGames.clear();
+                    currentGames.addAll(dataSet);
+                    notifyDataSetChanged();
                 }
+            });
+        } else if (holder instanceof VHItem){
+            final VHItem item = (VHItem) holder;
+            final Game game = dataSet.get(headerEnabled ? position - 1 : position);
+            item.name.setText(game.name);
+            final int quantity = game.hoursPlayed < 1 ? 0 : (int) Math.ceil(game.hoursPlayed);
+            item.hours.setText(context.getResources()
+                    .getQuantityString(R.plurals.hours_on_record, quantity, game.hoursPlayed));
+            if (!PrefsManager.minimizeData()) {
+                Glide.with(context)
+                        .load(game.iconUrl)
+                        .into(item.logo);
+            } else {
+                item.logo.setImageResource(R.drawable.ic_image_white_48dp);
             }
-        });
 
-        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                callback.onGameLongPressed(game);
-                return true;
-            }
-        });
+            item.itemView.setActivated(currentGames.contains(game));
+
+            item.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!currentGames.contains(game) && currentGames.size() < 32) {
+                        currentGames.add(game);
+                        item.itemView.setActivated(true);
+                        callback.onGamePicked(game);
+                    } else {
+                        currentGames.remove(game);
+                        item.itemView.setActivated(false);
+                        callback.onGameRemoved(game);
+                    }
+                }
+            });
+
+            item.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    callback.onGameLongPressed(game);
+                    return true;
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
+        if (headerEnabled) {
+            return dataSet.size() + 1;
+        }
         return dataSet.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    private static class VHHeader extends RecyclerView.ViewHolder {
+        private Button button;
+
+        private VHHeader(View itemView) {
+            super(itemView);
+            button = (Button) itemView;
+        }
+    }
+
+    private static class VHItem extends RecyclerView.ViewHolder {
         private TextView name;
         private ImageView logo;
         private TextView hours;
 
-        private ViewHolder(View itemView) {
+        private VHItem(View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
             logo = itemView.findViewById(R.id.logo);

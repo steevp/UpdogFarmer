@@ -587,6 +587,11 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     }
 
     @Override
+    public void onGamesPicked(List<Game> games) {
+        steamService.addGames(games);
+    }
+
+    @Override
     public void onGameRemoved(Game game) {
         steamService.removeGame(game);
     }
