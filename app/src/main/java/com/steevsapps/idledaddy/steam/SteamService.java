@@ -88,6 +88,9 @@ public class SteamService extends Service {
     private final static String TAG = SteamService.class.getSimpleName();
     private final static int NOTIF_ID = 6896; // Ongoing notification ID
     private final static String CHANNEL_ID = "idle_channel"; // Notification channel
+    // Some Huawei phones reportedly kill apps when they hold a WakeLock for a long time.
+    // This can be prevented by using a WakeLock tag from the PowerGenie whitelist.
+    private final static String WAKELOCK_TAG = "LocationManagerService";
 
     // Events
     public final static String LOGIN_EVENT = "LOGIN_EVENT"; // Emitted on login
@@ -416,7 +419,7 @@ public class SteamService extends Service {
                 Build.MANUFACTURER.toLowerCase(Locale.getDefault()).contains("huawei");
         // Acquire WakeLock to keep the CPU from sleeping
         final PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "IdleDaddyWakeLock");
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
         wakeLock.acquire();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create notification channel
