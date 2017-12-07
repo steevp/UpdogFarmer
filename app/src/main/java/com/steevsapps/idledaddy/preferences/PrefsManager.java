@@ -35,7 +35,6 @@ public class PrefsManager {
     private final static String PERSONA_NAME = "persona_name";
     private final static String AVATAR_HASH = "avatar_hash";
 
-
     private static SharedPreferences prefs;
 
     private PrefsManager() {
