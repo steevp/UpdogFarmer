@@ -606,10 +606,13 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals("stay_awake")) {
             if (PrefsManager.stayAwake()) {
-                // Don't let the screen turn off
+                // Keep device awake
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                steamService.acquireWakeLock();
             } else {
+                // Allow device to sleep
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                steamService.releaseWakeLock();
             }
         } else if (key.equals("offline")) {
             // Change status

@@ -24,7 +24,7 @@
     <string name="pref_offline">Offline Farming</string>
     <string name="sum_offline">Sets your status as \'Offline\' so your friends won\'t see you idling.</string>
     <string name="pref_stay_awake">Keep Device Awake</string>
-    <string name="sum_stay_awake">Enable this if your device doesn\'t keep WiFi on during sleep.</string>
+    <string name="sum_stay_awake">Enable this if Idle Daddy stops working when the screen is off. WARNING: Some devices may automatically kill the app after a short period if this option is enabled.</string>
     <string name="pref_minimize_data">Minimize Data Usage</string>
     <string name="sum_minimize_data">Disable downloading images.</string>
     <string name="pref_parental_pin">Parental PIN</string>
