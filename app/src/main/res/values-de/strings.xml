@@ -84,7 +84,7 @@
     <string name="refresh">Aktualisieren</string>
     <string name="last_session">Letzte Sitzung</string>
     <string name="remove_ads">Werbung entfernen</string>
-    <string name="logcat">Logcat</string>
+    <string name="logcat">Send log</string>
     <string name="sort">Sortieren</string>
     <string name="sort_alphabetically">Alphabetisch</string>
     <string name="sort_hours_played">Spielzeit</string>
