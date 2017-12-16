@@ -417,10 +417,9 @@ public class SteamService extends Service {
         isHuawei = (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1 ||
                 android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) &&
                 Build.MANUFACTURER.toLowerCase(Locale.getDefault()).contains("huawei");
-        // Acquire WakeLock to keep the CPU from sleeping
-        final PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
-        wakeLock.acquire();
+        if (PrefsManager.stayAwake()) {
+            acquireWakeLock();
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create notification channel
             createChannel();
@@ -460,7 +459,7 @@ public class SteamService extends Service {
         stopFarming();
         executor.shutdownNow();
         scheduler.shutdownNow();
-        wakeLock.release();
+        releaseWakeLock();
         // Somebody was getting IllegalArgumentException from this, possibly because I was calling
         // super.onDestroy() at the beginning, but I'll still catch it just to be safe.
         try {
@@ -522,6 +521,29 @@ public class SteamService extends Service {
     public void changeStatus(EPersonaState status) {
         if (isLoggedIn()) {
             steamFriends.setPersonaState(status);
+        }
+    }
+
+    /**
+     * Acquire WakeLock to keep the CPU from sleeping
+     */
+    public void acquireWakeLock() {
+        if (wakeLock == null) {
+            Log.i(TAG, "Acquiring WakeLock");
+            final PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
+            wakeLock.acquire();
+        }
+    }
+
+    /**
+     * Release the WakeLock
+     */
+    public void releaseWakeLock() {
+        if (wakeLock != null) {
+            Log.i(TAG, "Releasing WakeLock");
+            wakeLock.release();
+            wakeLock = null;
         }
     }
 
