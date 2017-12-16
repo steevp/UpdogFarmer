@@ -331,9 +331,6 @@ public class SteamService extends Service {
             idleMultiple(gamesToFarm);
             scheduleFarmTask();
         }
-
-        // Reset inventory notifications
-        webHandler.viewInventory();
     }
 
     public void skipGame() {
