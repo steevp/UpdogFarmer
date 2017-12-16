@@ -23,11 +23,15 @@
     <string name="pref_offline">Оффлайн фарм</string>
     <string name="sum_offline">Меняет ваш статус на Не в сети, поэтому ваши друзья не будут видеть, что у вас запускается.</string>
     <string name="pref_stay_awake">Держать экран включенным </string>
-    <string name="sum_stay_awake">Включите это, если ваше устройство не поддерживает WiFi во время спящего режима.</string>
+    <string name="sum_stay_awake">Включите это, если Idle Daddy перестанет работать, когда экран выключен. ПРЕДУПРЕЖДЕНИЕ. Некоторые устройства могут автоматически убить приложение через короткий период, если этот параметр включен</string>
     <string name="pref_minimize_data">Минимизировать использование данных</string>
     <string name="sum_minimize_data">Не скачивать обложки игр.</string>
     <string name="pref_parental_pin">Родительский PIN-код</string>
     <string name="sum_parental_pin">Введите ваш родительский PIN-код, чтобы разблокировать семейный просмотр.</string>
+    <string name="pref_hours_until">Сколько времени будет идти фарм</string>
+    <string name="sum_hours_until">Количество часов, которое будут запускать все игры одновременно до X часов, затем каждую. Рекомендуется ставить 3 часа</string>
+    <string name="pref_include_free_games">Включить игры в бесплатные игры</string>
+    <string name="sum_include_free_games">По умолчанию бесплатные игры, такие как Team Fortress 2, исключаются (как технически каждый владеет ими). Если этот параметр включен, они будут перечислены, если игрок сыграл их в какой-то момент.</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
     <string name="home">Домой</string>
@@ -56,6 +60,12 @@
         <item quantity="many">%d карточек выпадет</item>
         <item quantity="other">%d карточек выпадет</item>
     </plurals>
+    <plurals name="hours_on_record">
+        <item quantity="one">%.1f ч. всего</item>
+        <item quantity="few">%.1f ч. всего</item>
+        <item quantity="many">%.1f ч. всего</item>
+        <item quantity="other">%.1f ч. всего</item>
+    </plurals>
     <string name="logged_in_elsewhere">Steam используется. Фарм будет продолжен, когда станет возможно.</string>
     <string name="web_login_failed">Не удалось войти на сайт Steam!</string>
     <string name="login_key_expired">Истек ключ входа в систему!</string>
@@ -79,4 +89,10 @@
     <string name="activated">Активировано: %s</string>
     <string name="refresh">Обновить</string>
     <string name="last_session">Последняя сессия</string>
+    <string name="logcat">Отправить лог</string>
+    <string name="play_all">Запустить все игры</string>
+    <string name="remove_ads">Отключить рекламу</string>
+    <string name="sort">Сортировать</string>
+    <string name="sort_alphabetically">Сортировка по названию</string>
+    <string name="sort_hours_played">Сортировка по времени в игре</string>
 </resources>
