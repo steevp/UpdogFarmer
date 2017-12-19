@@ -24,7 +24,7 @@
     <string name="pref_offline">Symulacja ukryta</string>
     <string name="sum_offline">Symulacja gier pozostaje niewidoczna dla znajomych.</string>
     <string name="pref_stay_awake">Utrzymuj urządzenie w aktywności</string>
-    <string name="sum_stay_awake">Włącz jeśli twoje urządzenie nie utrzymuje połączenia WiFi podczas uśpienia.</string>
+    <string name="sum_stay_awake">Włącz tę opcję jeśli Idle Daddy przestaje działać, kiedy ekran urządzenia jest wyłączony. UWAGA: Jeśli ta opcja jest włączona niektóre urządzenia automatycznie zamykają aplikacje po krótkim czasie działania.</string>
     <string name="pref_minimize_data">Zminimalizuj użycie danych</string>
     <string name="sum_minimize_data">Nie pobiera grafik gier.</string>
     <string name="pref_parental_pin">PIN kontroli rodzicielskiej</string>
@@ -70,7 +70,7 @@
         <item quantity="one">%.1f godz. łącznie</item>
         <item quantity="other">%.1f godz. łącznie</item>
     </plurals>
-    <string name="logged_in_elsewhere">Konto Steam w użyciu. Ponowię działanie, kiedy to będzie możliwe.</string>
+    <string name="logged_in_elsewhere">Konto Steam jest aktualnie używane. Ponowię działanie, kiedy to będzie możliwe.</string>
     <string name="web_login_failed">Nie można zalogować się na stronie Steam!</string>
     <string name="login_key_expired">Klucz logowania wygasł!</string>
     <string name="stopped">Zatrzymano</string>
@@ -85,6 +85,7 @@
     <string name="activated">Aktywowano: %s</string>
     <string name="refresh">Odśwież</string>
     <string name="last_session">Ostatnia sesja</string>
+    <string name="play_all">Uruchom wszystkie</string>	
     <string name="remove_ads">Usunięcie reklam</string>
     <string name="logcat">Send log</string>
     <string name="sort">Sortuj</string>
