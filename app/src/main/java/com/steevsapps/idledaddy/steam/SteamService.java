@@ -140,6 +140,7 @@ public class SteamService extends Service {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
     private ScheduledFuture<?> farmHandle;
     private ScheduledFuture<?> waitHandle;
+    private ScheduledFuture<?> timeoutHandle;
 
     /**
      * Class for clients to access.  Because we know this service always
@@ -175,7 +176,7 @@ public class SteamService extends Service {
         }
     };
 
-    private final class FarmTask implements Runnable {
+    private final Runnable farmTask = new Runnable() {
         @Override
         public void run() {
             try {
@@ -184,14 +185,12 @@ public class SteamService extends Service {
                 Log.i(TAG, "FarmTask failed", e);
             }
         }
-    }
-
-    private final FarmTask farmTask = new FarmTask();
+    };
 
     /**
      * Wait for user to NOT be in-game so we can resume idling
      */
-    private final class WaitTask implements Runnable {
+    private final Runnable waitTask = new Runnable() {
         @Override
         public void run() {
             try {
@@ -210,9 +209,19 @@ public class SteamService extends Service {
                 Log.i(TAG, "WaitTask failed", e);
             }
         }
-    }
+    };
 
-    private final WaitTask waitTask = new WaitTask();
+    /**
+     * This task is executed if the connection takes longer than 15 seconds.
+     * Workaround for reconnect hangs..
+     */
+    private final Runnable timeoutTask = new Runnable() {
+        @Override
+        public void run() {
+            Log.i(TAG, "Connection timed out!");
+            steamClient.disconnect();
+        }
+    };
 
     public void startFarming() {
         if (!farming) {
@@ -387,6 +396,26 @@ public class SteamService extends Service {
         if (farmHandle != null) {
             Log.i(TAG, "Stopping farmtask");
             farmHandle.cancel(true);
+        }
+    }
+
+    /**
+     * Start the connection timeout
+     */
+    private void startTimeout() {
+        stopTimeout();
+        Log.i(TAG, "Starting connection timeout (15 seconds)");
+        timeoutHandle = scheduler.schedule(timeoutTask, 15, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Stop connection timeout
+     */
+    private void stopTimeout() {
+        if (timeoutHandle != null) {
+            Log.i(TAG, "Stopping connection timeout");
+            timeoutHandle.cancel(true);
+            timeoutHandle = null;
         }
     }
 
@@ -880,6 +909,7 @@ public class SteamService extends Service {
         msg.handle(ConnectedCallback.class, new ActionT<ConnectedCallback>() {
             @Override
             public void call(ConnectedCallback callback) {
+                stopTimeout();
                 Log.i(TAG, "Connected()");
                 connected = true;
                 if (logOnDetails != null) {
@@ -892,6 +922,7 @@ public class SteamService extends Service {
         msg.handle(DisconnectedCallback.class, new ActionT<DisconnectedCallback>() {
             @Override
             public void call(DisconnectedCallback callback) {
+                stopTimeout();
                 Log.i(TAG, "Disconnected()");
                 connected = false;
                 loggedIn = false;
@@ -901,6 +932,7 @@ public class SteamService extends Service {
                     scheduler.schedule(new Runnable() {
                         @Override
                         public void run() {
+                            startTimeout();
                             Log.i(TAG, "Reconnecting");
                             steamClient.connect();
                         }
@@ -918,6 +950,7 @@ public class SteamService extends Service {
         msg.handle(LoggedOffCallback.class, new ActionT<LoggedOffCallback>() {
             @Override
             public void call(LoggedOffCallback callback) {
+                stopTimeout();
                 Log.i(TAG, "Logoff result " + callback.getResult().toString());
                 if (callback.getResult() == EResult.LoggedInElsewhere) {
                     updateNotification(getString(R.string.logged_in_elsewhere));
