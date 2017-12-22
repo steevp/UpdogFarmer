@@ -89,4 +89,13 @@
     <string name="sort">Sort</string>
     <string name="sort_alphabetically">Alphabetically</string>
     <string name="sort_hours_played">Hours Played</string>
+    <string name="auto_discovery_title">Auto Discovery Queue</string>
+    <string name="auto_discovery">This will automatically view the games in your Discovery Queue. During the Summer and Winter sales, you can get up to 3 trading cards per day by viewing your queue.</string>
+    <string name="generating_discovery">Generating new Discovery Queue…</string>
+    <string name="discovering">Discovering %s (%d/%d)</string>
+    <string name="discovery_finished">Discovery Queue Finished</string>
+    <string name="discovery_error">Could not complete the Discovery Queue at this time. Try again later</string>
+    <string name="auto_vote">Auto Vote (Steam Awards)</string>
+    <string name="vote_successful">Vote successful!</string>
+    <string name="vote_failed">Vote failed!</string>
 </resources>
