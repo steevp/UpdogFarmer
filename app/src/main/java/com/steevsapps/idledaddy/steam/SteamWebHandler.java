@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,7 +66,7 @@ public class SteamWebHandler {
 
     }
 
-    static SteamWebHandler getInstance() {
+    public static SteamWebHandler getInstance() {
         return ourInstance;
     }
 
@@ -353,6 +354,63 @@ public class SteamWebHandler {
                     .data("action", "add_to_cart")
                     .post();
             return doc.select("div.add_free_content_success_area").first() != null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public JSONArray generateNewDiscoveryQueue() throws Exception {
+        final String json = Jsoup.connect("http://store.steampowered.com/explore/generatenewdiscoveryqueue")
+                .ignoreContentType(true)
+                .referrer("http://store.steampowered.com/")
+                .followRedirects(true)
+                .cookies(generateWebCookies())
+                .method(Connection.Method.POST)
+                .data("sessionid", sessionId)
+                .data("queuetype", "0")
+                .execute()
+                .body();
+        return new JSONObject(json).getJSONArray("queue");
+    }
+
+    public void clearFromQueue(String appId) throws Exception {
+        final Document doc = Jsoup.connect("http://store.steampowered.com/app/10")
+                .ignoreContentType(true)
+                .referrer("http://store.steampowered.com/")
+                .followRedirects(true)
+                .cookies(generateWebCookies())
+                .data("sessionid", sessionId)
+                .data("appid_to_clear_from_queue", appId)
+                .post();
+    }
+
+    public boolean autoVote() {
+        try {
+            final Document doc = Jsoup.connect("http://store.steampowered.com/SteamAwards/?l=english")
+                    .referrer("http://store.steampowered.com/SteamAwards/?l=english")
+                    .followRedirects(true)
+                    .cookies(generateWebCookies())
+                    .get();
+            final Element container = doc.select("div.vote_nominations").first();
+            if (container == null) {
+                return false;
+            }
+            final String voteId = container.attr("data-voteid");
+            final Elements voteNominations = container.select("div.vote_nomination");
+            if (voteNominations == null) {
+                return false;
+            }
+            final Element choice = voteNominations.get(new Random().nextInt(voteNominations.size()));
+            final String appId = choice.attr("data-vote-appid");
+            final Document doc2 = Jsoup.connect("http://store.steampowered.com/salevote")
+                    .referrer("http://store.steampowered.com/")
+                    .cookies(generateWebCookies())
+                    .data("sessionid", sessionId)
+                    .data("voteid", voteId)
+                    .data("appid", appId)
+                    .post();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }

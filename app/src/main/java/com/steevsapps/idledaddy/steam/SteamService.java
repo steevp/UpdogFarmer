@@ -841,6 +841,21 @@ public class SteamService extends Service {
         }
     }
 
+    public void autoVote() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                final int msgId = webHandler.autoVote() ? R.string.vote_successful : R.string.vote_failed;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(), msgId, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+    }
+
     /**
      * Perform log in. Needs to happen as soon as we connect or else we'll get an error
      */
