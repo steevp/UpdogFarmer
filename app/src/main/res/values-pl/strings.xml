@@ -91,4 +91,13 @@
     <string name="sort">Sortuj</string>
     <string name="sort_alphabetically">Alfabetycznie</string>
     <string name="sort_hours_played">Wg czasu gry</string>
+    <string name="auto_discovery_title">Automatyczna \`Kolejka Odkryć\`</string>
+    <string name="auto_discovery">Funkcja automatycznego przewijania twojej kolejki odkryć. Podczas letnich i zimowych wyprzedaży możesz zdobyć 3 karty kolekcjonerskie dziennie przez przeglądanie kolejki.</string>
+    <string name="generating_discovery">Generowanie kolejki odkryć…</string>
+    <string name="discovering">Przeglądanie %s (%d/%d)</string>
+    <string name="discovery_finished">Zakończono przeglądanie kolejki</string>
+    <string name="discovery_error">Wystąpił błąd podczas przeglądania twojej kolejki odkryć. Spróbuj ponownie później.</string>
+    <string name="auto_vote">Zagłosuj automatycznie (Nagrody Steam)</string>
+    <string name="vote_successful">Zagłosowano pomyślnie!</string>
+    <string name="vote_failed">Głosowanie nieudane!</string>
 </resources>
