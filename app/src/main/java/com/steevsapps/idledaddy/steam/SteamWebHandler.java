@@ -39,12 +39,20 @@ import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
  * Scrapes card drop info from Steam website
  */
 public class SteamWebHandler {
-    private final static String BADGES = "http://steamcommunity.com/my/badges?l=english";
-    private final static String INVENTORY = "http://steamcommunity.com/my/inventory";
-    private final static String GAMES_OWNED = "http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=%d&format=json";
-    private final static String PARENTAL_UNLOCK = "http://store.steampowered.com/parental/ajaxunlock";
-    private final static String FREE_LICENSE = "http://store.steampowered.com/checkout/addfreelicense";
-    private final static String PROFILE = "http://steamcommunity.com/my/profile?l=english";
+    private final static String STEAM_STORE = "http://store.steampowered.com/";
+    private final static String STEAM_COMMUNITY = "https://steamcommunity.com/";
+    private final static String STEAM_API = "https://api.steampowered.com/";
+
+    private final static String BADGES = STEAM_COMMUNITY + "my/badges?l=english";
+    private final static String INVENTORY = STEAM_COMMUNITY + "my/inventory";
+    private final static String GAMES_OWNED = STEAM_API + "IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=%d&format=json";
+    private final static String PARENTAL_UNLOCK = STEAM_STORE + "parental/ajaxunlock";
+    private final static String FREE_LICENSE = STEAM_STORE + "checkout/addfreelicense";
+    private final static String PROFILE = STEAM_COMMUNITY + "my/profile?l=english";
+    private final static String DISCOVERY_QUEUE = STEAM_STORE + "explore/generatenewdiscoveryqueue";
+    private final static String CLEAR_QUEUE = STEAM_STORE + "app/10";
+    private final static String STEAM_AWARDS = STEAM_STORE + "SteamAwards/?l=english";
+    private final static String SALE_VOTE = STEAM_STORE + "salevote";
 
     // Pattern to match app ID
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
@@ -269,7 +277,7 @@ public class SteamWebHandler {
     private String unlockParental(String pin) {
         try {
             final Map<String,String> responseCookies = Jsoup.connect(PARENTAL_UNLOCK)
-                    .referrer("http://store.steampowered.com/")
+                    .referrer(STEAM_STORE)
                     .followRedirects(true)
                     .ignoreContentType(true)
                     .cookies(generateWebCookies())
@@ -346,7 +354,7 @@ public class SteamWebHandler {
     boolean addFreeLicense(int subId) {
         try {
             final Document doc = Jsoup.connect(FREE_LICENSE)
-                    .referrer("http://store.steampowered.com/")
+                    .referrer(STEAM_STORE)
                     .followRedirects(true)
                     .cookies(generateWebCookies())
                     .data("sessionid", sessionId)
@@ -361,9 +369,9 @@ public class SteamWebHandler {
     }
 
     public JSONArray generateNewDiscoveryQueue() throws Exception {
-        final String json = Jsoup.connect("http://store.steampowered.com/explore/generatenewdiscoveryqueue")
+        final String json = Jsoup.connect(DISCOVERY_QUEUE)
                 .ignoreContentType(true)
-                .referrer("http://store.steampowered.com/")
+                .referrer(STEAM_STORE)
                 .followRedirects(true)
                 .cookies(generateWebCookies())
                 .method(Connection.Method.POST)
@@ -375,9 +383,9 @@ public class SteamWebHandler {
     }
 
     public void clearFromQueue(String appId) throws Exception {
-        final Document doc = Jsoup.connect("http://store.steampowered.com/app/10")
+        final Document doc = Jsoup.connect(CLEAR_QUEUE)
                 .ignoreContentType(true)
-                .referrer("http://store.steampowered.com/")
+                .referrer(STEAM_STORE)
                 .followRedirects(true)
                 .cookies(generateWebCookies())
                 .data("sessionid", sessionId)
@@ -387,8 +395,8 @@ public class SteamWebHandler {
 
     public boolean autoVote() {
         try {
-            final Document doc = Jsoup.connect("http://store.steampowered.com/SteamAwards/?l=english")
-                    .referrer("http://store.steampowered.com/SteamAwards/?l=english")
+            final Document doc = Jsoup.connect(STEAM_AWARDS)
+                    .referrer(STEAM_AWARDS)
                     .followRedirects(true)
                     .cookies(generateWebCookies())
                     .get();
@@ -403,8 +411,8 @@ public class SteamWebHandler {
             }
             final Element choice = voteNominations.get(new Random().nextInt(voteNominations.size()));
             final String appId = choice.attr("data-vote-appid");
-            final Document doc2 = Jsoup.connect("http://store.steampowered.com/salevote")
-                    .referrer("http://store.steampowered.com/")
+            final Document doc2 = Jsoup.connect(SALE_VOTE)
+                    .referrer(STEAM_STORE)
                     .cookies(generateWebCookies())
                     .data("sessionid", sessionId)
                     .data("voteid", voteId)
