@@ -92,7 +92,7 @@
     <string name="auto_discovery_title">Авто Черга Знахідок</string>
     <string name="auto_discovery">Ця функція дозволяє автоматично переглянути продукти в Черзі Знахідок. Під час Літніх і Зимових розпродаж ви можете отримати до 3 торгових карток у день, переглядаючи вашу чергу.</string>
     <string name="generating_discovery">Утворення нової Черги Знахідок…</string>
-    <string name="discovering">Проглядання %s (%d/%d)</string>
+    <string name="discovering">Перегляд %s (%d/%d)</string>
     <string name="discovery_finished">Черга Знахідок проглянута</string>
     <string name="discovery_error">Не вдалося проглянути Чергу Знахідок в цей час. Спробуйте ще раз пізніше</string>
     <string name="auto_vote">Авто Голос (Steam Awards)</string>
