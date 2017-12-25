@@ -11,7 +11,7 @@
     <string name="start_idling">Запустити сервіс</string>
     <string name="desc_start">Почати фармінг, поки не випадуть всі картки.</string>
     <string name="stop_idling">Зупинити сервіс</string>
-    <string name="desc_stop">Припинти фармінг та закрити прогаму.</string>
+    <string name="desc_stop">Припинити фармінг та закрити прогаму.</string>
     <string name="idling_finished">Немає ігор для фарму.</string>
     <string name="search">Пошук</string>
     <string name="settings">Налаштування</string>
@@ -19,12 +19,12 @@
     <string name="redeem">Активувати продукт</string>
     <string name="redeem_msg">Введіть ключ продукту або ID безкоштовної гри</string>
     <string name="ok">OK</string>
-    <string name="cat_idle">Налаштування фарму</string>
+    <string name="cat_idle">Фарм Карток</string>
     <string name="cat_general">Загальні</string>
     <string name="pref_offline">Офлайн фармінг</string>
     <string name="sum_offline">Виберіть статус \'Не в мережі\', щоб ваші друзі не бачили фарм.</string>
     <string name="pref_stay_awake">Тримати пристрій включеним</string>
-    <string name="sum_stay_awake">Увімкніть це, якщо Idle Daddy перестане працювати, коли екран вимкнений. ПОПЕРЕДЖЕННЯ. Деякі пристрої можуть автоматично припинити роботу програми через нетривалий період, якщо цей параметр увімкнено.</string>
+    <string name="sum_stay_awake">Увімкніть це, якщо Idle Daddy перестане працювати, коли екран вимкнений. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період, якщо цей параметр увімкнено.</string>
     <string name="pref_minimize_data">Мінімізувати використання даних</string>
     <string name="sum_minimize_data">Вимкнути завантаження зображень ігор.</string>
     <string name="pref_parental_pin">Батьківський PIN</string>
@@ -52,7 +52,7 @@
     <string name="invalid_code">Невірний код</string>
     <string name="timeout_error">Минув час очікування з'єднання. Будь ласка, спробуйте знову</string>
     <string name="channel_name">Повідомлення Idle Daddy</string>
-    <string name="now_playing2">Зараз в грі %s</string>
+    <string name="now_playing2">Зараз у грі %s</string>
     <string name="product_already_owned">Продукт в наявності</string>
     <string name="invalid_key">Недійсний ключ</string>
     <string name="activation_failed">Активація не вдалася</string>
@@ -71,8 +71,8 @@
     <string name="logged_in_elsewhere">Steam у використанні. Фарм відновиться, коли це стане можливо.</string>
     <string name="web_login_failed">Не вдалося увійти на сайт Steam!</string>
     <string name="login_key_expired">Прострочений ключ авторизації!</string>
-    <string name="stopped">Припинено</string>
-    <string name="paused">Зупинено</string>
+    <string name="stopped">Зупинено</string>
+    <string name="paused">Припинено</string>
     <string name="idling_multiple">Одночасний фарм</string>
     <string name="logged_out">Вихід</string>
     <string name="about">Довідка</string>
