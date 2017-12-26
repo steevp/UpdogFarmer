@@ -95,12 +95,13 @@
     <string name="sort">Сортировать</string>
     <string name="sort_alphabetically">Сортировка по названию</string>
     <string name="sort_hours_played">Сортировка по времени в игре</string>
-    <string name="auto_discovery">Это автоматически просмотрит игры в вашей очереди обнаружения. Во время летних и зимних продаж вы можете получить до 3 торговых карт в день, просмотрев свою очередь.</string>
-    <string name="auto_discovery_title">Очередь автоматического обнаружения</string>
-    <string name="auto_vote">Авто Голосование в (Премия Steam)</string>
-    <string name="discovering">Обнаружение %s (%d/%d)</string>
-    <string name="discovery_error">Не удалось завершить очередь обнаружения в это время. Попробуйте позже</string>
-    <string name="discovery_finished">Очередь обнаружения завершена</string>
+    <string name="auto_discovery">Это автоматически просмотрит ваши игры в списке рекомендаций. Во время летней и зимней распродажи вы можете получить до 3 торговых карт в день, просмотрев свою список рекомендаций.</string>
+    <string name="auto_discovery_title">Ваш список рекомендаций</string>
+    <string name="auto_vote">Авто-Голосование в (Премия Steam)</string>
+    <string name="discovering">Просмотр %s (%d/%d)</string>
+    <string name="discovery_error">Не удалось завершить список рекомендаций в это время. Попробуйте позже</string>
+    <string name="discovery_finished">Список рекомендаций завершен</string>
     <string name="vote_failed">Проголосовать не удалось!</string>
     <string name="vote_successful">Голосование выполнено!</string>
+    <string name="generating_discovery">Создание нового списка рекомендаций…</string>
 </resources>
