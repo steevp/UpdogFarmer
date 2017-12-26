@@ -9,7 +9,7 @@
     <string name="steamguard">Код Steam Guard</string>
     <string name="login">Логін</string>
     <string name="start_idling">Запустити сервіс</string>
-    <string name="desc_start">Почати фармінг, поки не випадуть всі картки.</string>
+    <string name="desc_start">Почати здобування, поки не випадуть всі картки.</string>
     <string name="stop_idling">Зупинити сервіс</string>
     <string name="desc_stop">Припинити фармінг та закрити прогаму.</string>
     <string name="idling_finished">Немає ігор для фарму.</string>
@@ -88,7 +88,7 @@
     <string name="logcat">Вислати log</string>
     <string name="sort">Сортування</string>
     <string name="sort_alphabetically">за назвою</string>
-    <string name="sort_hours_played">по часу у грі</string>
+    <string name="sort_hours_played">по часу в грі</string>
     <string name="auto_discovery_title">Авто Черга Знахідок</string>
     <string name="auto_discovery">Ця функція дозволяє автоматично переглянути продукти в Черзі Знахідок. Під час Літніх та Зимових розпродаж ви можете отримати до 3 торгових карток у день, переглядаючи вашу чергу.</string>
     <string name="generating_discovery">Утворення нової Черги Знахідок…</string>
