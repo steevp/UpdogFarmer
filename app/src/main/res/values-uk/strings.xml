@@ -44,7 +44,7 @@
     <string name="close_drawer">Закрити ящик</string>
     <string name="home">Головна сторінка</string>
     <string name="games">Ігри</string>
-    <string name="no_games_found">Неможливо отримати список ігр. Переконайтесь, що ваш профіль публічний</string>
+    <string name="no_games_found">Неможливо отримати список ігор. Переконайтесь, що ваш профіль публічний</string>
     <string name="now_playing">Зараз у грі</string>
     <string name="error_not_logged_in">Ви повинні увійти в Steam</string>
     <string name="invalid_password">Невірний пароль</string>
@@ -73,7 +73,7 @@
     <string name="login_key_expired">Прострочений ключ авторизації!</string>
     <string name="stopped">Зупинено</string>
     <string name="paused">Припинено</string>
-    <string name="idling_multiple">Одночасний фарм</string>
+    <string name="idling_multiple">Мульти-фарм</string>
     <string name="logged_out">Вихід</string>
     <string name="about">Довідка</string>
     <string name="stop">Стоп</string>
@@ -90,7 +90,7 @@
     <string name="sort_alphabetically">за назвою</string>
     <string name="sort_hours_played">по часу у грі</string>
     <string name="auto_discovery_title">Авто Черга Знахідок</string>
-    <string name="auto_discovery">Ця функція дозволяє автоматично переглянути продукти в Черзі Знахідок. Під час Літніх і Зимових розпродаж ви можете отримати до 3 торгових карток у день, переглядаючи вашу чергу.</string>
+    <string name="auto_discovery">Ця функція дозволяє автоматично переглянути продукти в Черзі Знахідок. Під час Літніх та Зимових розпродаж ви можете отримати до 3 торгових карток у день, переглядаючи вашу чергу.</string>
     <string name="generating_discovery">Утворення нової Черги Знахідок…</string>
     <string name="discovering">Перегляд %s (%d/%d)</string>
     <string name="discovery_finished">Черга Знахідок проглянута</string>
