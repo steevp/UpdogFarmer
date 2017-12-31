@@ -73,8 +73,8 @@
     <string name="logged_in_elsewhere">Konto Steam jest aktualnie używane. Ponowię działanie, kiedy to będzie możliwe.</string>
     <string name="web_login_failed">Nie można zalogować się na stronie Steam!</string>
     <string name="login_key_expired">Klucz logowania wygasł!</string>
-    <string name="stopped">Zatrzymano</string>
-    <string name="paused">Spauzowano</string>
+    <string name="stopped">Przerwano</string>
+    <string name="paused">Zatrzymano</string>
     <string name="idling_multiple">Symulacja równoczesna</string>
     <string name="logged_out">Wylogowano</string>
     <string name="about">O programie</string>
@@ -87,12 +87,12 @@
     <string name="last_session">Ostatnia sesja</string>
     <string name="play_all">Uruchom wszystkie</string>	
     <string name="remove_ads">Usunięcie reklam</string>
-    <string name="logcat">Send log</string>
+    <string name="logcat">Wyślij logi</string>
     <string name="sort">Sortuj</string>
     <string name="sort_alphabetically">Alfabetycznie</string>
     <string name="sort_hours_played">Wg czasu gry</string>
     <string name="auto_discovery_title">Automatyczna \`Kolejka Odkryć\`</string>
-    <string name="auto_discovery">Funkcja automatycznego przewijania twojej kolejki odkryć. Podczas letnich i zimowych wyprzedaży możesz zdobyć 3 karty kolekcjonerskie dziennie przez przeglądanie kolejki.</string>
+    <string name="auto_discovery">Funkcja automatycznego przewijania twojej kolejki odkryć. Podczas letnich i zimowych wyprzedaży możesz otrzymać 3 karty kolekcjonerskie dziennie przez przeglądanie kolejki.</string>
     <string name="generating_discovery">Generowanie kolejki odkryć…</string>
     <string name="discovering">Przeglądanie %s (%d/%d)</string>
     <string name="discovery_finished">Zakończono przeglądanie kolejki</string>
