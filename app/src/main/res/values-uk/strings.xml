@@ -87,8 +87,8 @@
     <string name="remove_ads">Відключити рекламу</string>
     <string name="logcat">Вислати log</string>
     <string name="sort">Сортування</string>
-    <string name="sort_alphabetically">за назвою</string>
-    <string name="sort_hours_played">по часу в грі</string>
+    <string name="sort_alphabetically">За назвою</string>
+    <string name="sort_hours_played">По часу у грі</string>
     <string name="auto_discovery_title">Авто Черга Знахідок</string>
     <string name="auto_discovery">Ця функція дозволяє автоматично переглянути продукти в Черзі Знахідок. Під час Літніх та Зимових розпродаж ви можете отримати до 3 торгових карток у день, переглядаючи вашу чергу.</string>
     <string name="generating_discovery">Утворення нової Черги Знахідок…</string>
