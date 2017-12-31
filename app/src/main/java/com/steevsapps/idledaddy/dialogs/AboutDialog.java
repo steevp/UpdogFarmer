@@ -32,6 +32,8 @@ public class AboutDialog extends DialogFragment {
             case "de":
                 webView.loadUrl("file://android_asset/about-de.html");
                 break;
+            case "uk":
+                webView.loadUrl("file://android_asset/about-uk.html");
             default:
                 webView.loadUrl("file:///android_asset/about.html");
                 break;
