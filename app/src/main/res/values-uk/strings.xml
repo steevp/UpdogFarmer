@@ -74,7 +74,7 @@
     <string name="stopped">Зупинено</string>
     <string name="paused">Припинено</string>
     <string name="idling_multiple">Мульти-фарм</string>
-    <string name="logged_out">Вихід</string>
+    <string name="logged_out">Ви вийшли</string>
     <string name="about">Довідка</string>
     <string name="stop">Стоп</string>
     <string name="skip">Пропустити</string>
