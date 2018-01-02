@@ -23,7 +23,7 @@
     <string name="cat_general">Загальні</string>
     <string name="pref_offline">Офлайн видобуток</string>
     <string name="sum_offline">Виберіть статус \'Не в мережі\', щоб ваші друзі не бачили здобування.</string>
-    <string name="pref_stay_awake">Тримати пристрій включеним</string>
+    <string name="pref_stay_awake">Екран завжди включений</string>
     <string name="sum_stay_awake">Увімкніть це, якщо Idle Daddy перестане працювати, коли екран вимкнений. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період, якщо цей параметр увімкнено.</string>
     <string name="pref_minimize_data">Мінімізувати використання даних</string>
     <string name="sum_minimize_data">Вимкнути завантаження зображень ігор.</string>
@@ -33,8 +33,8 @@
     <string name="sum_blacklist">Ігри, які ви не хочете запускати.</string>
     <string name="pref_hours_until">Час до випадання карток</string>
     <string name="sum_hours_until">Кількість часу, необхідних для запуску усіх ігор одночасно до визначеної години, потім кожну окремо. Рекомендовано виставити 3 години.</string>
-    <string name="pref_include_free_games">Задіяти здобування безкоштовних ігор</string>
-    <string name="sum_include_free_games">За замовчуванням безкоштовні ігри, такі як Team Fortress 2, відокремлюються (як формально кожен володіє ними). Якщо цей параметр увімкнено, вони будуть відображені, якщо гравець зіграв їх в якийсь момент.</string>
+    <string name="pref_include_free_games">Показувати безкоштовні ігри</string>
+    <string name="sum_include_free_games">За замовчуванням безкоштовні ігри, такі як Team Fortress 2, відокремлюються (як формально кожен володіє ними). Якщо цей параметр увімкнено, вони будуть відображені, якщо гравець зіграв в них в якийсь момент.</string>
     <string name="blacklist_hint">Введіть appid гри та натисніть +</string>
     <string name="add_to_blacklist">Додати гру до чорного списку</string>
     <string name="added_to_blacklist">Гра додана до чорного списку</string>
@@ -42,7 +42,7 @@
     <string name="removed_from_blacklist">Гра видалена з чорного списку</string>
     <string name="open_drawer">Відкрити ящик</string>
     <string name="close_drawer">Закрити ящик</string>
-    <string name="home">Головна сторінка</string>
+    <string name="home">Домашня</string>
     <string name="games">Ігри</string>
     <string name="no_games_found">Неможливо отримати список ігор. Переконайтесь, що ваш профіль публічний</string>
     <string name="now_playing">Зараз у грі</string>
@@ -51,7 +51,7 @@
     <string name="steamguard_required">Введіть код Steam Guard</string>
     <string name="invalid_code">Невірний код</string>
     <string name="timeout_error">Минув час очікування з'єднання. Будь ласка, спробуйте знову</string>
-    <string name="channel_name">Повідомлення Idle Daddy</string>
+    <string name="channel_name">Сповіщення Idle Daddy</string>
     <string name="now_playing2">Зараз у грі %s</string>
     <string name="product_already_owned">Продукт в наявності</string>
     <string name="invalid_key">Недійсний ключ</string>
@@ -83,7 +83,7 @@
     <string name="activated">Активовано: %s</string>
     <string name="refresh">Оновити</string>
     <string name="last_session">Остання сесія</string>
-    <string name="play_all">Грати все разом</string>
+    <string name="play_all">Грати усі разом</string>
     <string name="remove_ads">Відключити рекламу</string>
     <string name="logcat">Вислати log</string>
     <string name="sort">Сортування</string>
