@@ -11,7 +11,7 @@
     <string name="start_idling">Пуск сервісу</string>
     <string name="desc_start">Почати здобування, поки не випадуть усі картки.</string>
     <string name="stop_idling">Зупинити сервіс</string>
-    <string name="desc_stop">Припинити здобування та закрити прогаму.</string>
+    <string name="desc_stop">Припинити здобування та закрити програму.</string>
     <string name="idling_finished">Немає ігор для видобутку.</string>
     <string name="search">Пошук</string>
     <string name="settings">Налаштування</string>
@@ -68,7 +68,7 @@
         <item quantity="one">%.1f година усього</item>
         <item quantity="other">%.1f годин усього</item>
     </plurals>
-    <string name="logged_in_elsewhere">Steam у використанні. Фарм відновиться, коли це стане можливо.</string>
+    <string name="logged_in_elsewhere">Steam у використанні. Здобування відновиться, коли це стане можливо.</string>
     <string name="web_login_failed">Не вдалося увійти на сайт Steam!</string>
     <string name="login_key_expired">Прострочений ключ авторизації!</string>
     <string name="stopped">Зупинено</string>
