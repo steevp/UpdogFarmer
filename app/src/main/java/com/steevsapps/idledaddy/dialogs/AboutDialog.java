@@ -27,7 +27,7 @@ public class AboutDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final WebView webView = (WebView) LayoutInflater.from(getActivity()).inflate(R.layout.about_dialog, null);
-        final String lang = Locale.getDefault().getDisplayLanguage();
+        final String lang = Locale.getDefault().getLanguage();
         String uri = "file:///android_asset/about.html";
         try {
             // Load language-specific version of the about page if available.
