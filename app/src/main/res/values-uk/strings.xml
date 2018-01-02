@@ -8,8 +8,8 @@
     <string name="password">Пароль</string>
     <string name="steamguard">Код Steam Guard</string>
     <string name="login">Логін</string>
-    <string name="start_idling">Запустити сервіс</string>
-    <string name="desc_start">Почати здобування, поки не випадуть всі картки.</string>
+    <string name="start_idling">Пуск сервісу</string>
+    <string name="desc_start">Почати здобування, поки не випадуть усі картки.</string>
     <string name="stop_idling">Зупинити сервіс</string>
     <string name="desc_stop">Припинити здобування та закрити прогаму.</string>
     <string name="idling_finished">Немає ігор для видобутку.</string>
@@ -24,7 +24,7 @@
     <string name="pref_offline">Офлайн видобуток</string>
     <string name="sum_offline">Виберіть статус \'Не в мережі\', щоб ваші друзі не бачили здобування.</string>
     <string name="pref_stay_awake">Екран завжди включений</string>
-    <string name="sum_stay_awake">Увімкніть це, якщо Idle Daddy перестане працювати, коли екран вимкнений. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період, якщо цей параметр увімкнено.</string>
+    <string name="sum_stay_awake">Увімкніть це, якщо Idle Daddy перестане працювати, коли екран вимкнений. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період, якщо цей параметр включений.</string>
     <string name="pref_minimize_data">Мінімізувати використання даних</string>
     <string name="sum_minimize_data">Вимкнути завантаження зображень ігор.</string>
     <string name="pref_parental_pin">Батьківський PIN</string>
@@ -32,7 +32,7 @@
     <string name="pref_blacklist">Чорний список</string>
     <string name="sum_blacklist">Ігри, які ви не хочете запускати.</string>
     <string name="pref_hours_until">Час до випадання карток</string>
-    <string name="sum_hours_until">Кількість часу, необхідних для запуску усіх ігор одночасно до визначеної години, потім кожну окремо. Рекомендовано виставити 3 години.</string>
+    <string name="sum_hours_until">Кількість часу, необхідного для запуску усіх ігор одночасно до визначеної години, потім кожну окремо. Рекомендовано виставити 3 години.</string>
     <string name="pref_include_free_games">Показувати безкоштовні ігри</string>
     <string name="sum_include_free_games">За замовчуванням безкоштовні ігри, такі як Team Fortress 2, відокремлюються (як формально кожен володіє ними). Якщо цей параметр увімкнено, вони будуть відображені, якщо гравець зіграв в них в якийсь момент.</string>
     <string name="blacklist_hint">Введіть appid гри та натисніть +</string>
