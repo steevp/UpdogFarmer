@@ -24,7 +24,7 @@
     <string name="pref_offline">Офлайн видобуток</string>
     <string name="sum_offline">Виберіть статус \'Не в мережі\', щоб ваші друзі не бачили здобування.</string>
     <string name="pref_stay_awake">Екран завжди включений</string>
-    <string name="sum_stay_awake">Увімкніть це, якщо Idle Daddy перестане працювати, коли екран гасне. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період, якщо ця опція увімкнена.</string>
+    <string name="sum_stay_awake">Увімкніть цю опцію, якщо Idle Daddy перестане працювати, коли екран гасне. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період.</string>
     <string name="pref_minimize_data">Мінімізувати використання даних</string>
     <string name="sum_minimize_data">Не завантажувати зображення ігор.</string>
     <string name="pref_parental_pin">Батьківський PIN</string>
@@ -34,7 +34,7 @@
     <string name="pref_hours_until">Час до випадання карток</string>
     <string name="sum_hours_until">Кількість часу, необхідного для запуску усіх ігор одночасно до визначеної години, потім кожну окремо. Рекомендовано виставити 3 години.</string>
     <string name="pref_include_free_games">Показувати безкоштовні ігри</string>
-    <string name="sum_include_free_games">За замовчуванням безкоштовні ігри, такі як Team Fortress 2, відокремлюються (як формально кожен володіє ними). Якщо ця опція увімкнена, то зіграні раніш безкоштовні ігри будуть відображені.</string>
+    <string name="sum_include_free_games">За замовчуванням безкоштовні ігри, такі як Team Fortress 2, відокремлюються (як формально кожен володіє ними). Якщо ця опція увімкнена, то зіграні раніше безкоштовні ігри будуть відображені.</string>
     <string name="blacklist_hint">Введіть appid гри та натисніть +</string>
     <string name="add_to_blacklist">Додати гру до чорного списку</string>
     <string name="added_to_blacklist">Гра додана до чорного списку</string>
