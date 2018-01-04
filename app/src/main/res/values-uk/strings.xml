@@ -26,7 +26,7 @@
     <string name="pref_stay_awake">Екран завжди включений</string>
     <string name="sum_stay_awake">Увімкніть це, якщо Idle Daddy перестане працювати, коли екран гасне. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період, якщо ця опція увімкнена.</string>
     <string name="pref_minimize_data">Мінімізувати використання даних</string>
-    <string name="sum_minimize_data">Вимкнути завантаження зображень ігор.</string>
+    <string name="sum_minimize_data">Не завантажувати зображення ігор.</string>
     <string name="pref_parental_pin">Батьківський PIN</string>
     <string name="sum_parental_pin">Введіть батьківский PIN, щоб відкрити сімейний доступ.</string>
     <string name="pref_blacklist">Чорний список</string>
