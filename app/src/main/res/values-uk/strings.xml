@@ -17,7 +17,7 @@
     <string name="settings">Налаштування</string>
     <string name="logout">Вийти</string>
     <string name="redeem">Активувати продукт</string>
-    <string name="redeem_msg">Введіть ключ продукту або ID безкоштовної гри</string>
+    <string name="redeem_msg">Введіть ключ або ID безкоштовного продукту</string>
     <string name="ok">OK</string>
     <string name="cat_idle">Здобування Карток</string>
     <string name="cat_general">Загальні</string>
