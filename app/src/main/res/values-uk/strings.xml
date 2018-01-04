@@ -24,7 +24,7 @@
     <string name="pref_offline">Офлайн видобуток</string>
     <string name="sum_offline">Виберіть статус \'Не в мережі\', щоб ваші друзі не бачили здобування.</string>
     <string name="pref_stay_awake">Екран завжди включений</string>
-    <string name="sum_stay_awake">Увімкніть це, якщо Idle Daddy перестане працювати, коли екран вимкнений. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період, якщо цей параметр включений.</string>
+    <string name="sum_stay_awake">Увімкніть це, якщо Idle Daddy перестане працювати, коли екран гасне. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період, якщо ця опція увімкнена.</string>
     <string name="pref_minimize_data">Мінімізувати використання даних</string>
     <string name="sum_minimize_data">Вимкнути завантаження зображень ігор.</string>
     <string name="pref_parental_pin">Батьківський PIN</string>
@@ -34,7 +34,7 @@
     <string name="pref_hours_until">Час до випадання карток</string>
     <string name="sum_hours_until">Кількість часу, необхідного для запуску усіх ігор одночасно до визначеної години, потім кожну окремо. Рекомендовано виставити 3 години.</string>
     <string name="pref_include_free_games">Показувати безкоштовні ігри</string>
-    <string name="sum_include_free_games">За замовчуванням безкоштовні ігри, такі як Team Fortress 2, відокремлюються (як формально кожен володіє ними). Якщо цей параметр включений, вони будуть відображені, якщо гравець зіграв у них в якийсь момент.</string>
+    <string name="sum_include_free_games">За замовчуванням безкоштовні ігри, такі як Team Fortress 2, відокремлюються (як формально кожен володіє ними). Якщо ця опція увімкнена, то зіграні раніш безкоштовні ігри будуть відображені.</string>
     <string name="blacklist_hint">Введіть appid гри та натисніть +</string>
     <string name="add_to_blacklist">Додати гру до чорного списку</string>
     <string name="added_to_blacklist">Гра додана до чорного списку</string>
@@ -44,7 +44,7 @@
     <string name="close_drawer">Закрити ящик</string>
     <string name="home">Домашня</string>
     <string name="games">Ігри</string>
-    <string name="no_games_found">Неможливо отримати список ігор. Переконайтесь, що ваш профіль публічний</string>
+    <string name="no_games_found">Неможливо отримати перелік ігор. Переконайтесь, що ваш профіль публічний</string>
     <string name="now_playing">Зараз у грі</string>
     <string name="error_not_logged_in">Ви повинні увійти в Steam</string>
     <string name="invalid_password">Невірний пароль</string>
@@ -90,12 +90,12 @@
     <string name="sort_alphabetically">За назвою</string>
     <string name="sort_hours_played">По часу у грі</string>
     <string name="auto_discovery_title">Авто Черга Знахідок</string>
-    <string name="auto_discovery">Ця функція дозволяє автоматично переглянути продукти в Черзі Знахідок. Під час Літніх та Зимових розпродаж ви можете отримати до 3 торгових карток у день, переглядаючи вашу чергу.</string>
+    <string name="auto_discovery">Атоматичний перегляд продуктів в Черзі Знахідок. Під час Літніх та Зимових розпродаж ви можете отримати до 3 торгових карток у день, переглядаючи черги.</string>
     <string name="generating_discovery">Утворення нової Черги Знахідок…</string>
     <string name="discovering">Перегляд %s (%d/%d)</string>
     <string name="discovery_finished">Черга Знахідок проглянута</string>
     <string name="discovery_error">Не вдалося проглянути Чергу Знахідок в цей час. Спробуйте ще раз пізніше</string>
     <string name="auto_vote">Авто Голос (Steam Awards)</string>
     <string name="vote_successful">Успішне голосування!</string>
-    <string name="vote_failed">Проголосувати не вдалося!</string>
+    <string name="vote_failed">Не вдалось проголосувати!</string>
 </resources>
