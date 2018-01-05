@@ -24,7 +24,7 @@
     <string name="pref_offline">Офлайн видобуток</string>
     <string name="sum_offline">Виберіть статус \'Не в мережі\', щоб ваші друзі не бачили здобування.</string>
     <string name="pref_stay_awake">Екран завжди включений</string>
-    <string name="sum_stay_awake">Увімкніть цю опцію, якщо Idle Daddy перестане працювати, коли екран гасне. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період.</string>
+    <string name="sum_stay_awake">Увімкніть цю опцію, якщо Idle Daddy перестає працювати, коли екран гасне. ПОПЕРЕДЖЕННЯ: Деякі пристрої можуть автоматично зупинити роботу програми через нетривалий період.</string>
     <string name="pref_minimize_data">Мінімізувати використання даних</string>
     <string name="sum_minimize_data">Не завантажувати зображення ігор.</string>
     <string name="pref_parental_pin">Батьківський PIN</string>
@@ -94,7 +94,7 @@
     <string name="generating_discovery">Утворення нової Черги Знахідок…</string>
     <string name="discovering">Перегляд %s (%d/%d)</string>
     <string name="discovery_finished">Черга Знахідок проглянута</string>
-    <string name="discovery_error">Не вдалося проглянути Чергу Знахідок в цей час. Спробуйте ще раз пізніше</string>
+    <string name="discovery_error">Не вдалося проглянути Чергу Знахідок у цей час. Спробуйте ще раз пізніше</string>
     <string name="auto_vote">Авто Голос (Steam Awards)</string>
     <string name="vote_successful">Успішне голосування!</string>
     <string name="vote_failed">Не вдалося проголосувати!</string>
