@@ -13,7 +13,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-class GamesViewModel extends ViewModel {
+/**
+ * Reminder: Must be public or else you will get a runtime exception
+ */
+public class GamesViewModel extends ViewModel {
     private final static int SORT_ALPHABETICALLY = 0;
     private final static int SORT_HOURS_PLAYED = 1;
 
