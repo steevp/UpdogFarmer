@@ -62,7 +62,7 @@
     </plurals>
     <plurals name="card_drops_remaining">
         <item quantity="one">%d картка випаде</item>
-        <item quantity="other">%d карток випадуть</item>
+        <item quantity="other">%d карток випаде</item>
     </plurals>
     <plurals name="hours_on_record">
         <item quantity="one">%.1f година усього</item>
@@ -90,7 +90,7 @@
     <string name="sort_alphabetically">За назвою</string>
     <string name="sort_hours_played">По часу у грі</string>
     <string name="auto_discovery_title">Авто Черга Знахідок</string>
-    <string name="auto_discovery">Автоматичний перегляд продуктів у Черзі Знахідок. Під час Літніх та Зимових розпродаж ви можете отримати до 3 торгових карток за добу, переглядаючи черги.</string>
+    <string name="auto_discovery">Автоматичний перегляд продуктів у Черзі Знахідок. Під час Літніх та Зимових розпродаж ви можете отримати до 3 торгових карток за добу, переглядаючи чергу.</string>
     <string name="generating_discovery">Утворення нової Черги Знахідок…</string>
     <string name="discovering">Перегляд %s (%d/%d)</string>
     <string name="discovery_finished">Черга Знахідок проглянута</string>
