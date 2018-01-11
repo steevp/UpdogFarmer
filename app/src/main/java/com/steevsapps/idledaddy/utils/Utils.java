@@ -83,4 +83,11 @@ public class Utils {
         return s.replaceAll("[^\\u0000-\\u007F]", "");
     }
 
+    /**
+     * Check if API key is valid
+     */
+    public static boolean isValidKey(String key) {
+        return !key.isEmpty() && key.matches("^[0-9A-Fa-f]+$");
+    }
+
 }

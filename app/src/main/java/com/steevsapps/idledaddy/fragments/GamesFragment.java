@@ -23,6 +23,7 @@ import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
 import com.steevsapps.idledaddy.listeners.GamesListUpdateListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.steam.SteamWebHandler;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class GamesFragment extends Fragment
         super.onCreate(savedInstanceState);
         steamId = getArguments().getLong(STEAM_ID);
         viewModel = ViewModelProviders.of(this).get(GamesViewModel.class);
-        viewModel.init(steamId);
+        viewModel.init(SteamWebHandler.getInstance(), steamId);
         if (savedInstanceState != null) {
             currentGames = savedInstanceState.getParcelableArrayList(CURRENT_GAMES);
             currentTab = savedInstanceState.getInt(CURRENT_TAB);

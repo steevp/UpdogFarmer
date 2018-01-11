@@ -98,4 +98,6 @@
     <string name="auto_vote">Auto Vote (Steam Awards)</string>
     <string name="vote_successful">Vote successful!</string>
     <string name="vote_failed">Vote failed!</string>
+    <string name="apikey_access_denied">Steam API key access denied, using a built-in key.</string>
+    <string name="apikey_register_failed">Failed to register an API key, using a built-in key.</string>
 </resources>

@@ -34,6 +34,7 @@ public class PrefsManager {
     private final static String INCLUDE_FREE_GAMES = "include_free_games";
     private final static String PERSONA_NAME = "persona_name";
     private final static String AVATAR_HASH = "avatar_hash";
+    private final static String API_KEY = "api_key";
 
     private static SharedPreferences prefs;
 
@@ -104,6 +105,10 @@ public class PrefsManager {
         writePref(AVATAR_HASH, avatarHash);
     }
 
+    public static void writeApiKey(String apiKey) {
+        writePref(API_KEY, apiKey);
+    }
+
     public static String getUsername() {
         return prefs.getString(USERNAME, "");
     }
@@ -167,6 +172,10 @@ public class PrefsManager {
 
     public static boolean includeFreeGames() {
         return prefs.getBoolean(INCLUDE_FREE_GAMES, false);
+    }
+
+    public static String getApiKey() {
+        return prefs.getString(API_KEY, "");
     }
 
     private static void writePref(String key, String value) {
