@@ -20,11 +20,13 @@ public class GamesViewModel extends ViewModel {
     private final static int SORT_ALPHABETICALLY = 0;
     private final static int SORT_HOURS_PLAYED = 1;
 
+    private SteamWebHandler webHandler;
     private long steamId;
     private MutableLiveData<List<Game>> games;
     private int sortId = SORT_ALPHABETICALLY;
 
-    void init(long steamId) {
+    void init(SteamWebHandler webHandler, long steamId) {
+        this.webHandler = webHandler;
         this.steamId = steamId;
     }
 
@@ -78,7 +80,7 @@ public class GamesViewModel extends ViewModel {
         new AsyncTask<Void,Void,List<Game>>() {
             @Override
             protected List<Game> doInBackground(Void... voids) {
-                return SteamWebHandler.getGamesOwned(steamId);
+                return webHandler.getGamesOwned(steamId);
             }
 
             @Override
