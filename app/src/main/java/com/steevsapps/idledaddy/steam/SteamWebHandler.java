@@ -448,6 +448,9 @@ public class SteamWebHandler {
             }
             final String title = titleNode.text().trim();
             if (title.toLowerCase().contains("access denied")) {
+                // Limited account, use the built-in API key
+                apiKey = Secrets.API_KEY;
+                PrefsManager.writeApiKey(apiKey);
                 return ApiKeyState.ACCESS_DENIED;
             }
             final Element bodyContentsEx = doc.select("div#bodyContents_ex").select("p").first();
@@ -455,8 +458,9 @@ public class SteamWebHandler {
                 return ApiKeyState.ERROR;
             }
             final String text = bodyContentsEx.text().trim();
-            if (text.toLowerCase().contains("registering for a steam web api key")) {
-                registerApiKey();
+            if (text.toLowerCase().contains("registering for a steam web api key")
+                    && registerApiKey()) {
+                // Should actually be registered here, but we have to call this method again to get the key
                 return ApiKeyState.UNREGISTERED;
             } else if (text.toLowerCase().startsWith("key: ")) {
                 final String key = text.substring(5);
@@ -472,7 +476,7 @@ public class SteamWebHandler {
         return ApiKeyState.ERROR;
     }
 
-    private void registerApiKey() {
+    private boolean registerApiKey() {
         final String url = STEAM_COMMUNITY + "dev/registerkey";
         try {
             final Document doc = Jsoup.connect(url)
@@ -485,9 +489,11 @@ public class SteamWebHandler {
                     .data("sessionid", sessionId)
                     .data("Submit", "Register")
                     .post();
+            return true;
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     @IntDef({
@@ -498,9 +504,13 @@ public class SteamWebHandler {
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ApiKeyState {
+        // Account has registered an API key
         int REGISTERED = 1;
+        // Account has not registered an API key yet
         int UNREGISTERED = 2;
+        // Account is limited and can't register an API key
         int ACCESS_DENIED = -1;
+        // Some other error occurred
         int ERROR = -2;
     }
 }
