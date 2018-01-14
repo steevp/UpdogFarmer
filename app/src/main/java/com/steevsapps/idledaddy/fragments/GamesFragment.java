@@ -21,18 +21,20 @@ import android.widget.Toast;
 
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
+import com.steevsapps.idledaddy.listeners.GamesListUpdateListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.steam.SteamWebHandler;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GamesFragment extends Fragment implements SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener {
+public class GamesFragment extends Fragment
+        implements SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener, GamesListUpdateListener {
     private final static String TAG = GamesFragment.class.getSimpleName();
     private final static String STEAM_ID = "STEAM_ID";
     private final static String CURRENT_GAMES = "CURRENT_GAMES";
     private final static String CURRENT_TAB = "CURRENT_TAB";
-    private final static String SORT_ID = "SORT_ID";
 
     private SwipeRefreshLayout refreshLayout;
     private RecyclerView recyclerView;
@@ -51,8 +53,6 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
     public final static int TAB_LAST = 1;
     public final static int TAB_BLACKLIST = 2;
     private int currentTab = TAB_GAMES;
-    private int sortId;
-
 
     public static GamesFragment newInstance(long steamId, ArrayList<Game> currentGames, int position) {
         final GamesFragment fragment = new GamesFragment();
@@ -74,15 +74,13 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         super.onCreate(savedInstanceState);
         steamId = getArguments().getLong(STEAM_ID);
         viewModel = ViewModelProviders.of(this).get(GamesViewModel.class);
-        viewModel.init(steamId);
+        viewModel.init(SteamWebHandler.getInstance(), steamId);
         if (savedInstanceState != null) {
             currentGames = savedInstanceState.getParcelableArrayList(CURRENT_GAMES);
             currentTab = savedInstanceState.getInt(CURRENT_TAB);
-            sortId = savedInstanceState.getInt(SORT_ID);
         } else {
             currentGames = getArguments().getParcelableArrayList(CURRENT_GAMES);
             currentTab = getArguments().getInt(CURRENT_TAB);
-            sortId = GamesAdapter.SORT_ALPHABETICALLY;
             if (steamId == 0) {
                 Toast.makeText(getActivity(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
             }
@@ -104,7 +102,6 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(CURRENT_GAMES, currentGames);
         outState.putInt(CURRENT_TAB, currentTab);
-        outState.putInt(SORT_ID, sortId);
     }
 
     @Nullable
@@ -118,6 +115,7 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
 
         recyclerView = view.findViewById(R.id.games_list);
         adapter = new GamesAdapter(recyclerView.getContext());
+        adapter.setListener(this);
         adapter.setCurrentGames(currentGames);
         adapter.setHeaderEnabled(currentTab == TAB_LAST);
         layoutManager = new GridLayoutManager(recyclerView.getContext(), getResources().getInteger(R.integer.game_columns));
@@ -167,21 +165,15 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.refresh) {
-            fetchGames();
-            return true;
-        }
         switch (item.getItemId()) {
             case R.id.refresh:
                 fetchGames();
                 return true;
             case R.id.sort_alphabetically:
-                sortId = GamesAdapter.SORT_ALPHABETICALLY;
-                fetchGames();
+                viewModel.sortAlphabetically();
                 return true;
             case R.id.sort_hours_played:
-                sortId = GamesAdapter.SORT_HOURS_PLAYED;
-                fetchGames();
+                viewModel.sortHoursPlayed();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -256,19 +248,25 @@ public class GamesFragment extends Fragment implements SearchView.OnQueryTextLis
                     blacklistGames.add(game);
                 }
             }
-            adapter.setData(blacklistGames, sortId);
             adapter.setHeaderEnabled(false);
+            adapter.setData(blacklistGames);
             emptyView.setVisibility(blacklistGames.isEmpty() ? View.VISIBLE : View.GONE);
         } else {
-            adapter.setData(games, sortId);
             adapter.setHeaderEnabled(!games.isEmpty() && currentTab == TAB_LAST);
+            adapter.setData(games);
             emptyView.setVisibility(games.isEmpty() ? View.VISIBLE : View.GONE);
         }
-        refreshLayout.setRefreshing(false);
     }
 
     @Override
     public void onRefresh() {
         fetchGames();
+    }
+
+    @Override
+    public void onGamesListUpdated() {
+        // Scroll to top
+        recyclerView.scrollToPosition(0);
+        refreshLayout.setRefreshing(false);
     }
 }

@@ -1,5 +1,7 @@
 package com.steevsapps.idledaddy.steam;
 
+import android.support.annotation.IntDef;
+
 import com.steevsapps.idledaddy.Secrets;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
@@ -16,6 +18,8 @@ import org.jsoup.select.Elements;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,6 +34,7 @@ import java.util.regex.Pattern;
 import uk.co.thomasc.steamkit.steam3.steamclient.SteamClient;
 import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
 import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import uk.co.thomasc.steamkit.util.KeyDictionary;
 import uk.co.thomasc.steamkit.util.WebHelpers;
 import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
@@ -42,17 +47,6 @@ public class SteamWebHandler {
     private final static String STEAM_STORE = "http://store.steampowered.com/";
     private final static String STEAM_COMMUNITY = "https://steamcommunity.com/";
     private final static String STEAM_API = "https://api.steampowered.com/";
-
-    private final static String BADGES = STEAM_COMMUNITY + "my/badges?l=english";
-    private final static String INVENTORY = STEAM_COMMUNITY + "my/inventory";
-    private final static String GAMES_OWNED = STEAM_API + "IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=%d&format=json";
-    private final static String PARENTAL_UNLOCK = STEAM_STORE + "parental/ajaxunlock";
-    private final static String FREE_LICENSE = STEAM_STORE + "checkout/addfreelicense";
-    private final static String PROFILE = STEAM_COMMUNITY + "my/profile?l=english";
-    private final static String DISCOVERY_QUEUE = STEAM_STORE + "explore/generatenewdiscoveryqueue";
-    private final static String CLEAR_QUEUE = STEAM_STORE + "app/10";
-    private final static String STEAM_AWARDS = STEAM_STORE + "SteamAwards/?l=english";
-    private final static String SALE_VOTE = STEAM_STORE + "salevote";
 
     // Pattern to match app ID
     private final static Pattern playPattern = Pattern.compile("^steam://run/(\\d+)$");
@@ -69,6 +63,7 @@ public class SteamWebHandler {
     private String token;
     private String tokenSecure;
     private String steamParental;
+    private String apiKey = Secrets.API_KEY;
 
     private SteamWebHandler() {
 
@@ -87,7 +82,11 @@ public class SteamWebHandler {
      */
     boolean authenticate(SteamClient client, String webApiUserNonce) {
         authenticated = false;
-        steamId = client.getSteamId().convertToLong();
+        final SteamID clientSteamId = client.getSteamId();
+        if (clientSteamId == null) {
+            return false;
+        }
+        steamId = clientSteamId.convertToLong();
         sessionId = Utils.bytesToHex(CryptoHelper.GenerateRandomBlock(4));
 
         final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);
@@ -162,10 +161,11 @@ public class SteamWebHandler {
      * @return list of games with remaining drops
      */
     List<Game> getRemainingGames() {
+        final String url = STEAM_COMMUNITY + "my/badges?l=english";
         final List<Game> badgeList = new ArrayList<>();
         Document doc;
         try {
-            doc = Jsoup.connect(BADGES)
+            doc = Jsoup.connect(url)
                     .followRedirects(true)
                     .cookies(generateWebCookies())
                     .get();
@@ -189,7 +189,7 @@ public class SteamWebHandler {
             // Try to combine all the pages
             for (int i=2;i<=p;i++) {
                 try {
-                    final  Document doc2 = Jsoup.connect(BADGES + "&p=" + i)
+                    final  Document doc2 = Jsoup.connect(url + "&p=" + i)
                             .followRedirects(true)
                             .cookies(generateWebCookies())
                             .get();
@@ -261,8 +261,9 @@ public class SteamWebHandler {
      * View inventory to clear notifications
      */
     void viewInventory() {
+        final String url = STEAM_COMMUNITY + "my/inventory";
         try {
-            Jsoup.connect(INVENTORY)
+            Jsoup.connect(url)
                     .followRedirects(true)
                     .cookies(generateWebCookies())
                     .get();
@@ -275,8 +276,9 @@ public class SteamWebHandler {
      * Unlock Steam parental controls with a pin
      */
     private String unlockParental(String pin) {
+        final String url = STEAM_STORE + "parental/ajaxunlock";
         try {
-            final Map<String,String> responseCookies = Jsoup.connect(PARENTAL_UNLOCK)
+            final Map<String,String> responseCookies = Jsoup.connect(url)
                     .referrer(STEAM_STORE)
                     .followRedirects(true)
                     .ignoreContentType(true)
@@ -292,10 +294,11 @@ public class SteamWebHandler {
         return null;
     }
 
-    public static List<Game> getGamesOwned(long steamId) {
+    public List<Game> getGamesOwned(long steamId) {
+        final String gamesOwned = STEAM_API + "IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=%d&format=json";
         HttpURLConnection conn = null;
         try {
-            final URL url = new URL(String.format(Locale.US, GAMES_OWNED, Secrets.API_KEY, steamId, PrefsManager.includeFreeGames() ? 1 : 0));
+            final URL url = new URL(String.format(Locale.US, gamesOwned, apiKey, steamId, PrefsManager.includeFreeGames() ? 1 : 0));
             conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -325,9 +328,10 @@ public class SteamWebHandler {
      * Check if user is currently NOT in-game, so we can resume farming.
      */
     Boolean checkIfNotInGame() {
+        final String url = STEAM_COMMUNITY + "my/profile?l=english";
         Document doc;
         try {
-            doc = Jsoup.connect(PROFILE)
+            doc = Jsoup.connect(url)
                     .followRedirects(true)
                     .cookies(generateWebCookies())
                     .get();
@@ -352,8 +356,9 @@ public class SteamWebHandler {
      * @return true if successful
      */
     boolean addFreeLicense(int subId) {
+        final String url = STEAM_STORE + "checkout/addfreelicense";
         try {
-            final Document doc = Jsoup.connect(FREE_LICENSE)
+            final Document doc = Jsoup.connect(url)
                     .referrer(STEAM_STORE)
                     .followRedirects(true)
                     .cookies(generateWebCookies())
@@ -369,7 +374,8 @@ public class SteamWebHandler {
     }
 
     public JSONArray generateNewDiscoveryQueue() throws Exception {
-        final String json = Jsoup.connect(DISCOVERY_QUEUE)
+        final String url = STEAM_STORE + "explore/generatenewdiscoveryqueue";
+        final String json = Jsoup.connect(url)
                 .ignoreContentType(true)
                 .referrer(STEAM_STORE)
                 .followRedirects(true)
@@ -383,7 +389,8 @@ public class SteamWebHandler {
     }
 
     public void clearFromQueue(String appId) throws Exception {
-        final Document doc = Jsoup.connect(CLEAR_QUEUE)
+        final String url = STEAM_STORE + "app/10";
+        final Document doc = Jsoup.connect(url)
                 .ignoreContentType(true)
                 .referrer(STEAM_STORE)
                 .followRedirects(true)
@@ -394,9 +401,10 @@ public class SteamWebHandler {
     }
 
     public boolean autoVote() {
+        final String url = STEAM_STORE + "SteamAwards/?l=english";
         try {
-            final Document doc = Jsoup.connect(STEAM_AWARDS)
-                    .referrer(STEAM_AWARDS)
+            final Document doc = Jsoup.connect(url)
+                    .referrer(url)
                     .followRedirects(true)
                     .cookies(generateWebCookies())
                     .get();
@@ -411,7 +419,7 @@ public class SteamWebHandler {
             }
             final Element choice = voteNominations.get(new Random().nextInt(voteNominations.size()));
             final String appId = choice.attr("data-vote-appid");
-            final Document doc2 = Jsoup.connect(SALE_VOTE)
+            final Document doc2 = Jsoup.connect(STEAM_STORE + "salevote")
                     .referrer(STEAM_STORE)
                     .cookies(generateWebCookies())
                     .data("sessionid", sessionId)
@@ -423,5 +431,91 @@ public class SteamWebHandler {
             e.printStackTrace();
         }
         return false;
+    }
+
+    @ApiKeyState int updateApiKey() {
+        if (Utils.isValidKey(PrefsManager.getApiKey())) {
+            // Use saved API key
+            apiKey = PrefsManager.getApiKey();
+            return ApiKeyState.REGISTERED;
+        }
+        // Try to fetch key from web
+        final String url = STEAM_COMMUNITY + "dev/apikey?l=english";
+        try {
+            final Document doc = Jsoup.connect(url)
+                    .referrer(STEAM_COMMUNITY)
+                    .followRedirects(true)
+                    .cookies(generateWebCookies())
+                    .get();
+            final Element titleNode = doc.select("div#mainContents").select("h2").first();
+            if (titleNode == null) {
+                return ApiKeyState.ERROR;
+            }
+            final String title = titleNode.text().trim();
+            if (title.toLowerCase().contains("access denied")) {
+                // Limited account, use the built-in API key
+                apiKey = Secrets.API_KEY;
+                PrefsManager.writeApiKey(apiKey);
+                return ApiKeyState.ACCESS_DENIED;
+            }
+            final Element bodyContentsEx = doc.select("div#bodyContents_ex").select("p").first();
+            if (bodyContentsEx == null) {
+                return ApiKeyState.ERROR;
+            }
+            final String text = bodyContentsEx.text().trim();
+            if (text.toLowerCase().contains("registering for a steam web api key")
+                    && registerApiKey()) {
+                // Should actually be registered here, but we have to call this method again to get the key
+                return ApiKeyState.UNREGISTERED;
+            } else if (text.toLowerCase().startsWith("key: ")) {
+                final String key = text.substring(5);
+                if (Utils.isValidKey(key)) {
+                    apiKey = key;
+                    PrefsManager.writeApiKey(apiKey);
+                    return ApiKeyState.REGISTERED;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return ApiKeyState.ERROR;
+    }
+
+    private boolean registerApiKey() {
+        final String url = STEAM_COMMUNITY + "dev/registerkey";
+        try {
+            final Document doc = Jsoup.connect(url)
+                    .ignoreContentType(true)
+                    .followRedirects(true)
+                    .referrer(STEAM_COMMUNITY)
+                    .cookies(generateWebCookies())
+                    .data("domain", "localhost")
+                    .data("agreeToTerms", "agreed")
+                    .data("sessionid", sessionId)
+                    .data("Submit", "Register")
+                    .post();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @IntDef({
+            ApiKeyState.REGISTERED,
+            ApiKeyState.UNREGISTERED,
+            ApiKeyState.ACCESS_DENIED,
+            ApiKeyState.ERROR
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ApiKeyState {
+        // Account has registered an API key
+        int REGISTERED = 1;
+        // Account has not registered an API key yet
+        int UNREGISTERED = 2;
+        // Account is limited and can't register an API key
+        int ACCESS_DENIED = -1;
+        // Some other error occurred
+        int ERROR = -2;
     }
 }

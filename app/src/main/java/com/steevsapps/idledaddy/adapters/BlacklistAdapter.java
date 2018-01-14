@@ -43,19 +43,20 @@ public class BlacklistAdapter extends RecyclerView.Adapter<BlacklistAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.blacklist_dialog_item, parent, false);
-        return new ViewHolder(view);
+        final ViewHolder vh = new ViewHolder(view);
+        vh.removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeItem(vh.getAdapterPosition());
+            }
+        });
+        return vh;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final String appId = dataSet.get(position);
         holder.appId.setText(appId);
-        holder.removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                removeItem(holder.getAdapterPosition());
-            }
-        });
     }
 
     @Override

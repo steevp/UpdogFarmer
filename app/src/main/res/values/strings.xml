@@ -44,7 +44,7 @@
     <string name="close_drawer">Close drawer</string>
     <string name="home">Home</string>
     <string name="games">Games</string>
-    <string name="no_games_found">Couldn\'t retrieve the list of games. Make sure your profile is set to public</string>
+    <string name="no_games_found">Couldn\'t retrieve the list of games.</string>
     <string name="now_playing">Now playing</string>
     <string name="error_not_logged_in">You must be logged in to Steam</string>
     <string name="invalid_password">Invalid password</string>
@@ -98,4 +98,6 @@
     <string name="auto_vote">Auto Vote (Steam Awards)</string>
     <string name="vote_successful">Vote successful!</string>
     <string name="vote_failed">Vote failed!</string>
+    <string name="apikey_access_denied">Steam API key access denied, using a built-in key.</string>
+    <string name="apikey_register_failed">Failed to register an API key, using a built-in key.</string>
 </resources>

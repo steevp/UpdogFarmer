@@ -83,9 +83,19 @@
     <string name="activated">Aktiviert: %s</string>
     <string name="refresh">Aktualisieren</string>
     <string name="last_session">Letzte Sitzung</string>
+    <string name="play_all">Spiele alle</string>
     <string name="remove_ads">Werbung entfernen</string>
-    <string name="logcat">Send log</string>
+    <string name="logcat">Sende den Log</string>
     <string name="sort">Sortieren</string>
     <string name="sort_alphabetically">Alphabetisch</string>
     <string name="sort_hours_played">Spielzeit</string>
+    <string name="auto_discovery_title">Automatische Entdeckungsliste</string>
+    <string name="auto_discovery">Dadurch wird die Entdeckungsliste automatisch abgearbeitet. Während der Sommer- und Winterverkäufe kannst du bis zu 3 Sammelkarten pro Tag abrufen, indem du deine Entdeckungsliste abarbeitest.</string>
+    <string name="generating_discovery">Generiere neue Entdeckungslisten</string>
+    <string name="discovering">Entdecke %s (%d/%d)</string>
+    <string name="discovery_finished">Entdeckungslisten fertig</string>
+    <string name="discovery_error">Die Entdeckungslisten konnten zu diesem Zeitpunkt nicht abgeschlossen werden. Versuche es später noch einmal</string>
+    <string name="auto_vote">Automatische Abstimmung (Steam Awards)</string>
+    <string name="vote_successful">Abstimmung erfolgreich!</string>
+    <string name="vote_failed">Abstimmung fehlgeschlagen!</string>
 </resources>
