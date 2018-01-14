@@ -17,6 +17,7 @@ import android.support.v4.content.FileProvider;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -82,6 +83,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     private ActionBarDrawerToggle drawerToggle;
     private ImageView logoutToggle;
     private Spinner spinnerNav;
+    private SearchView searchView;
     private ViewStub adInflater;
     private AdView adView;
 
@@ -438,13 +440,26 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         drawerView.getHeaderView(0).setClickable(loggedIn);
         menu.findItem(R.id.auto_discovery).setVisible(loggedIn);
         menu.findItem(R.id.auto_vote).setVisible(loggedIn);
+        menu.findItem(R.id.search).setVisible(drawerItemId == R.id.games);
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!searchView.isIconified()) {
+            // Dismiss the SearchView
+            searchView.setQuery("", false);
+            searchView.setIconified(true);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override

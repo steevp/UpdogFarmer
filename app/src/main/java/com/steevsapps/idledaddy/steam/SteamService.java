@@ -834,7 +834,7 @@ public class SteamService extends Service {
             try {
                 freeLicense.requestFreeLicense(Integer.parseInt(key));
             } catch (NumberFormatException e) {
-                Toast.makeText(getApplicationContext(), R.string.invalid_key, Toast.LENGTH_LONG).show();
+                showToast(getString(R.string.invalid_key));
             }
         } else {
             steamUser.registerProductKey(key);
@@ -846,12 +846,7 @@ public class SteamService extends Service {
             @Override
             public void run() {
                 final int msgId = webHandler.autoVote() ? R.string.vote_successful : R.string.vote_failed;
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(), msgId, Toast.LENGTH_LONG).show();
-                    }
-                });
+                showToast(getString(msgId));
             }
         });
     }
@@ -905,6 +900,35 @@ public class SteamService extends Service {
             }
         }
         return false;
+    }
+
+    private void registerApiKey() {
+        Log.i(TAG, "Registering API key");
+        final int result = webHandler.updateApiKey();
+        Log.i(TAG, "API key result: " + result);
+        switch (result) {
+            case SteamWebHandler.ApiKeyState.REGISTERED:
+                break;
+            case SteamWebHandler.ApiKeyState.ACCESS_DENIED:
+                showToast(getString(R.string.apikey_access_denied));
+                break;
+            case SteamWebHandler.ApiKeyState.UNREGISTERED:
+                // Call updateApiKey once more to actually update it
+                webHandler.updateApiKey();
+                break;
+            case SteamWebHandler.ApiKeyState.ERROR:
+                showToast(getString(R.string.apikey_register_failed));
+                break;
+        }
+    }
+
+    private void showToast(final String message) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     private void update() {
@@ -1006,6 +1030,7 @@ public class SteamService extends Service {
 
                             if (gotAuth) {
                                 resumeFarming();
+                                registerApiKey();
                             } else {
                                 // Request a new WebAPI user authentication nonce
                                 steamUser.requestWebAPIUserNonce();
@@ -1102,30 +1127,19 @@ public class SteamService extends Service {
                                 products.append(", ");
                             }
                         }
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(getApplicationContext(), getString(R.string.activated, products.toString()), Toast.LENGTH_LONG).show();
-                            }
-                        });
+                        showToast(getString(R.string.activated, products.toString()));
                     }
                 } else {
                     final int purchaseResult = callback.getPurchaseResultDetails();
-
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            String error;
-                            if (purchaseResult == 9) {
-                                error = getString(R.string.product_already_owned);
-                            } else if (purchaseResult == 14) {
-                                error = getString(R.string.invalid_key);
-                            } else {
-                                error = getString(R.string.activation_failed);
-                            }
-                            Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    final int errorId;
+                    if (purchaseResult == 9) {
+                        errorId = R.string.product_already_owned;
+                    } else if (purchaseResult == 14) {
+                        errorId = R.string.invalid_key;
+                    } else {
+                        errorId = R.string.activation_failed;
+                    }
+                    showToast(getString(errorId));
                 }
             }
         });
@@ -1152,12 +1166,7 @@ public class SteamService extends Service {
 
                 if (grantedApps.length > 0 || grantedPackages.length > 0) {
                     // Granted
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(SteamService.this, getString(R.string.activated, String.valueOf(gameId)), Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    showToast(getString(R.string.activated, String.valueOf(gameId)));
                 } else {
                     // Try activating it with the web handler
                     executor.execute(new Runnable() {
@@ -1169,12 +1178,7 @@ public class SteamService extends Service {
                             } else {
                                 msg = getString(R.string.activation_failed);
                             }
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(SteamService.this, msg, Toast.LENGTH_LONG).show();
-                                }
-                            });
+                            showToast(msg);
                         }
                     });
                 }
