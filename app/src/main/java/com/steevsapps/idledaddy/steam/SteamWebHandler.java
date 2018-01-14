@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import uk.co.thomasc.steamkit.steam3.steamclient.SteamClient;
 import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
 import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
+import uk.co.thomasc.steamkit.types.steamid.SteamID;
 import uk.co.thomasc.steamkit.util.KeyDictionary;
 import uk.co.thomasc.steamkit.util.WebHelpers;
 import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
@@ -81,7 +82,11 @@ public class SteamWebHandler {
      */
     boolean authenticate(SteamClient client, String webApiUserNonce) {
         authenticated = false;
-        steamId = client.getSteamId().convertToLong();
+        final SteamID clientSteamId = client.getSteamId();
+        if (clientSteamId == null) {
+            return false;
+        }
+        steamId = clientSteamId.convertToLong();
         sessionId = Utils.bytesToHex(CryptoHelper.GenerateRandomBlock(4));
 
         final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);
