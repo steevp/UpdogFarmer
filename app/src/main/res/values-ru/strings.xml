@@ -30,8 +30,8 @@
     <string name="sum_parental_pin">Введите ваш родительский PIN-код, чтобы разблокировать семейный просмотр.</string>
     <string name="pref_hours_until">Сколько времени будет идти фарм</string>
     <string name="sum_hours_until">Количество часов, которое будут запускать все игры одновременно до X часов, затем каждую. Рекомендуется ставить 3 часа</string>
-    <string name="pref_include_free_games">Включить игры в бесплатные игры</string>
-    <string name="sum_include_free_games">По умолчанию бесплатные игры, такие как Team Fortress 2, исключаются (как технически каждый владеет ими). Если этот параметр включен, они будут перечислены, если игрок сыграл их в какой-то момент.</string>
+    <string name="pref_include_free_games">Включить бесплатные игры</string>
+    <string name="sum_include_free_games">По умолчанию бесплатные игры, такие как Team Fortress 2, исключаются (технически каждый владеет ими). Если этот параметр включен, они будут перечислены, если игрок сыграл их в какой-то момент.</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
     <string name="home">Домой</string>
@@ -95,9 +95,9 @@
     <string name="sort">Сортировать</string>
     <string name="sort_alphabetically">Сортировка по названию</string>
     <string name="sort_hours_played">Сортировка по времени в игре</string>
-    <string name="auto_discovery">Это автоматически просмотрит ваши игры в списке рекомендаций. Во время летней и зимней распродажи вы можете получить до 3 торговых карт в день, просмотрев свою список рекомендаций.</string>
+    <string name="auto_discovery">Это автоматически просмотрит ваши игры в списке рекомендаций. Во время летней и зимней распродажи вы можете получить до 3 торговых карточек в день, просмотрев свой список рекомендаций.</string>
     <string name="auto_discovery_title">Ваш список рекомендаций</string>
-    <string name="auto_vote">Авто-Голосование в (Премия Steam)</string>
+    <string name="auto_vote">Авто-голосование (премия Steam)</string>
     <string name="discovering">Просмотр %s (%d/%d)</string>
     <string name="discovery_error">Не удалось завершить список рекомендаций в это время. Попробуйте позже</string>
     <string name="discovery_finished">Список рекомендаций завершен</string>
