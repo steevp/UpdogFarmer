@@ -44,7 +44,7 @@
     <string name="close_drawer">Zamknij menu</string>
     <string name="home">Strona główna</string>
     <string name="games">Biblioteka gier</string>
-    <string name="no_games_found">Nie można uzyskać listy gier. Sprawdź czy twój profil Steam jest ustawiony na \"Publiczny\".</string>
+    <string name="no_games_found">Nie można uzyskać listy gier.</string>
     <string name="now_playing">Aktualnie w grze</string>
     <string name="error_not_logged_in">Musisz być zalogowany do usługi Steam</string>
     <string name="invalid_password">Nieprawidłowe hasło</string>
