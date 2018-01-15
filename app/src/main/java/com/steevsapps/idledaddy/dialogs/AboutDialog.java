@@ -3,10 +3,12 @@ package com.steevsapps.idledaddy.dialogs;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.webkit.WebView;
 
 import com.steevsapps.idledaddy.R;
@@ -37,6 +39,10 @@ public class AboutDialog extends DialogFragment {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            // Getting Chromium crashes on certain KitKat devices. Might be caused by hardware acceleration
+            webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
         }
         webView.loadUrl(uri);
         webView.setBackgroundColor(Color.TRANSPARENT);
