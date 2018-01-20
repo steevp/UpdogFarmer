@@ -414,7 +414,7 @@ public class SteamWebHandler {
             }
             final String voteId = container.attr("data-voteid");
             final Elements voteNominations = container.select("div.vote_nomination");
-            if (voteNominations == null) {
+            if (voteNominations.isEmpty()) {
                 return false;
             }
             final Element choice = voteNominations.get(new Random().nextInt(voteNominations.size()));
@@ -447,7 +447,7 @@ public class SteamWebHandler {
                     .followRedirects(true)
                     .cookies(generateWebCookies())
                     .get();
-            final Element titleNode = doc.select("div#mainContents").select("h2").first();
+            final Element titleNode = doc.select("div#mainContents h2").first();
             if (titleNode == null) {
                 return ApiKeyState.ERROR;
             }
@@ -458,7 +458,7 @@ public class SteamWebHandler {
                 PrefsManager.writeApiKey(apiKey);
                 return ApiKeyState.ACCESS_DENIED;
             }
-            final Element bodyContentsEx = doc.select("div#bodyContents_ex").select("p").first();
+            final Element bodyContentsEx = doc.select("div#bodyContents_ex p").first();
             if (bodyContentsEx == null) {
                 return ApiKeyState.ERROR;
             }
