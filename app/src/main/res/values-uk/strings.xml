@@ -33,7 +33,7 @@
     <string name="sum_blacklist">Ігри, які ви не хочете запускати.</string>
     <string name="pref_hours_until">Час до випадання карток</string>
     <string name="sum_hours_until">Кількість часу, необхідного для запуску усіх ігор одночасно до визначеної години, потім кожну окремо. Рекомендовано виставити 3 години.</string>
-    <string name="pref_include_free_games">Імітація безкоштовних ігор</string>
+    <string name="pref_include_free_games">Імітація запуску безкоштовних ігор</string>
     <string name="sum_include_free_games">За замовчуванням безкоштовні ігри, такі як Team Fortress 2, відокремлюються (як формально кожен володіє ними). Якщо ця опція увімкнена, то зіграні раніше безкоштовні ігри будуть відображені.</string>
     <string name="blacklist_hint">Введіть appid гри та натисніть +</string>
     <string name="add_to_blacklist">Додати гру до чорного списку</string>
