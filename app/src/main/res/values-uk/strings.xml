@@ -62,7 +62,7 @@
     </plurals>
     <plurals name="card_drops_remaining">
         <item quantity="one">%d картка випаде</item>
-        <item quantity="other">%d карток випаде</item>
+        <item quantity="other">%d карток випадуть</item>
     </plurals>
     <plurals name="hours_on_record">
         <item quantity="one">%.1f година усього</item>
@@ -98,4 +98,6 @@
     <string name="auto_vote">Авто Голос (Steam Awards)</string>
     <string name="vote_successful">Успішне голосування!</string>
     <string name="vote_failed">Не вдалося проголосувати!</string>
+    <string name="apikey_access_denied">Заборонено доступ ключу Steam API, використання вбудованого ключа.</string>
+    <string name="apikey_register_failed">Не вдалося зареєструвати API ключ, використання вбудованого ключа.</string>
 </resources>
