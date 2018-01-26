@@ -10,4 +10,40 @@
         <item>@string/pref_blacklist</item>
     </string-array>
 
+    <string-array name="language_options">
+        <item>@string/english</item>
+        <item>@string/german</item>
+        <item>@string/russian</item>
+        <item>@string/portuguese_eu</item>
+        <item>@string/portuguese_br</item>
+        <item>@string/ukrainian</item>
+        <item>@string/czech</item>
+        <item>@string/polish</item>
+        <item>@string/turkish</item>
+        <item>@string/thai</item>
+        <item>@string/chinese_traditional</item>
+        <item>@string/chinese_simple</item>
+        <item>@string/bulgarian</item>
+        <item>@string/slovenian</item>
+        <item>@string/french</item>
+    </string-array>
+
+    <string-array name="language_option_values">
+        <item>en</item>
+        <item>de</item>
+        <item>ru</item>
+        <item>pt-PT</item>
+        <item>pt-BR</item>
+        <item>uk</item>
+        <item>cs</item>
+        <item>pl</item>
+        <item>tr</item>
+        <item>th</item>
+        <item>zh</item>
+        <item>zh-CN</item>
+        <item>bg</item>
+        <item>sl</item>
+        <item>fr</item>
+    </string-array>
+
 </resources>

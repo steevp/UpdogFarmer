@@ -37,7 +37,6 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.steevsapps.idledaddy.base.BaseActivity;
 import com.steevsapps.idledaddy.billing.BillingManager;
 import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
@@ -641,6 +640,8 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         } else if (key.equals("offline")) {
             // Change status
             steamService.changeStatus(PrefsManager.getOffline() ? EPersonaState.Offline : EPersonaState.Online);
+        } else if (key.equals("language")) {
+            Toast.makeText(this, R.string.language_changed, Toast.LENGTH_LONG).show();
         }
     }
 

@@ -36,6 +36,7 @@ import com.steevsapps.idledaddy.handlers.FreeLicenseCallback;
 import com.steevsapps.idledaddy.listeners.LogcatDebugListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.utils.LocaleManager;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.io.File;
@@ -454,6 +455,11 @@ public class SteamService extends Service {
             DebugLog.addListener(new LogcatDebugListener());
         }
         startForeground(NOTIF_ID, buildNotification("Steam service started"));
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleManager.setLocale(base));
     }
 
     @Override

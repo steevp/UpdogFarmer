@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.steevsapps.idledaddy.base.BaseActivity;
 import com.steevsapps.idledaddy.fragments.TimeoutFragment;
 import com.steevsapps.idledaddy.listeners.TimeoutListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
