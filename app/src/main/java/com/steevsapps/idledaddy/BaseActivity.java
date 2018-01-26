@@ -1,4 +1,4 @@
-package com.steevsapps.idledaddy.base;
+package com.steevsapps.idledaddy;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.steevsapps.idledaddy.steam.SteamService;
+import com.steevsapps.idledaddy.utils.LocaleManager;
 
 /**
  * Base activity that's bound to the Steam Service
@@ -32,6 +33,11 @@ public abstract class BaseActivity extends AppCompatActivity {
             serviceBound = false;
         }
     };
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(LocaleManager.setLocale(newBase));
+    }
 
     /**
      * Get the Steam Service
