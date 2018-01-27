@@ -35,6 +35,8 @@
     <string name="sum_hours_until">Liczba godzin, po których gry zaczną \"dropić karty\". Idle Daddy będzie symulował gry równocześnie do czasu osiągnięcia ustawionej liczby godzin. Dla większości użytkowników 3 godziny to wystarczająca ilość czasu.</string>
     <string name="pref_include_free_games">Symulacja darmowych gier</string>
     <string name="sum_include_free_games">Standardowo gry, takie jak Team Fortress 2 są wykluczone z symulacji (z technicznego punktu widzenia wszyscy je posiadają). Jeśli ta opcja jest włączona darmowe gry będą pokazywane na liście aktywności, jeśli wcześniej były uruchomione.</string>
+    <string name="pref_language">Język aplikacji</string>
+    <string name="sum_language">Zmiana języka interfejsu aplikacji (wymaga ponownego uruchomienia).</string>
     <string name="blacklist_hint">Wpisz AppID i naciśnij +</string>
     <string name="add_to_blacklist">Dodaj grę do listy wykluczonych</string>
     <string name="added_to_blacklist">Gra dodana do listy wykluczonch</string>
@@ -102,4 +104,20 @@
     <string name="vote_failed">Głosowanie nieudane!</string>
     <string name="apikey_access_denied">Odmowa dostępu do klucza Steam API, zastosuję klucz wbudowany.</string>
     <string name="apikey_register_failed">Nie udało się zarejestrować klucza API, zastosuję klucz wbudowany.</string>
+    <string name="english">Angielski</string>
+    <string name="german">Niemiecki</string>
+    <string name="russian">Rosyjski</string>
+    <string name="portuguese_eu">Portugalski (europejski)</string>
+    <string name="portuguese_br">Portugalski (brazylijski)</string>
+    <string name="ukrainian">Ukraiński</string>
+    <string name="czech">Czeski</string>
+    <string name="polish">Polski</string>
+    <string name="turkish">Turecki</string>
+    <string name="thai">Tajlandzki</string>
+    <string name="chinese_simple">Chiński (uproszczony)</string>
+    <string name="chinese_traditional">Chiński (tradycyjny)</string>
+    <string name="bulgarian">Bułgarski</string>
+    <string name="slovenian">Słoweński</string>
+    <string name="french">Francuski</string>
+    <string name="language_changed">Uruchom ponownie aplikację, aby zmienić ustawienia języka.</string>
 </resources>
