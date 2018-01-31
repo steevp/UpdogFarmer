@@ -35,6 +35,8 @@
     <string name="sum_hours_until">Le nombre d\'heure que prend les jeux pour commencer le drop de cartes. Durant le farming, Idle Daddy va farmer plusieurs jeux simultanément jusqu\'au temps entré. Pour la plupart des utilisateurs, 3 heures est le meilleur choix ici.</string>
     <string name="pref_include_free_games">Inclure les jeux gratuits joués.</string>
     <string name="sum_include_free_games">Par défaut, les jeux gratuits comme Team Fortress 2 sont exclues (techniquement, tout le monde l\'a déjà). Si cette option est activée, ils seront listés si le joueur y a déjà joué.</string>
+    <string name="pref_language">Langue</string>
+    <string name="sum_language">Changer la langue de l\'application (cela requiert un redémarrage de l\'application).</string>
     <string name="blacklist_hint">Entrer l\'ID d\'une application et cliquer sur +</string>
     <string name="add_to_blacklist">Ajouter un jeu à la liste noire</string>
     <string name="added_to_blacklist">Jeu ajouté à la liste noire</string>
@@ -98,4 +100,20 @@
     <string name="auto_vote">Vote automatique (Steam Awards)</string>
     <string name="vote_successful">Vote réussi !</string>
     <string name="vote_failed">Vote échoué!</string>
+    <string name="english">Anglais</string>
+    <string name="german">Allemand</string>
+    <string name="russian">Russe</string>
+    <string name="portuguese_eu">Portugais (Européen)</string>
+    <string name="portuguese_br">Portugais (Brésilien)</string>
+    <string name="ukrainian">Ukrainien</string>
+    <string name="czech">Tchèque</string>
+    <string name="polish">Polonais</string>
+    <string name="turkish">Turque</string>
+    <string name="thai">Thaïlandais</string>
+    <string name="chinese_simple">Chinois (Simplifié)</string>
+    <string name="chinese_traditional">Chinois (Traditionnel)</string>
+    <string name="bulgarian">Bulgare</string>
+    <string name="slovenian">Slovaque</string>
+    <string name="french">Français</string>
+    <string name="language_changed">Vous devez redémarrez l\'application pour que la langue se mette à jour.</string>
 </resources>
