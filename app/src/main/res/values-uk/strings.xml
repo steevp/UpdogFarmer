@@ -35,6 +35,8 @@
     <string name="sum_hours_until">Кількість часу, необхідного для запуску усіх ігор одночасно до визначеної години, потім кожну окремо. Рекомендовано виставити 3 години.</string>
     <string name="pref_include_free_games">Імітація запуску безкоштовних ігор</string>
     <string name="sum_include_free_games">За замовчуванням безкоштовні ігри, такі як Team Fortress 2, відокремлюються (як формально кожен володіє ними). Якщо ця опція увімкнена, то зіграні раніше безкоштовні ігри будуть відображені.</string>
+    <string name="pref_language">Мова</string>
+    <string name="sum_language">Зміна мови інтерфейсу (Потрібен перезапуск).</string>
     <string name="blacklist_hint">Введіть appid гри та натисніть +</string>
     <string name="add_to_blacklist">Додати гру до чорного списку</string>
     <string name="added_to_blacklist">Гра додана до чорного списку</string>
@@ -100,4 +102,20 @@
     <string name="vote_failed">Не вдалося проголосувати!</string>
     <string name="apikey_access_denied">Заборонено доступ ключу Steam API, використання вбудованого ключа.</string>
     <string name="apikey_register_failed">Не вдалося зареєструвати API ключ, використання вбудованого ключа.</string>
+    <string name="english">Англійська</string>
+    <string name="german">Німецька</string>
+    <string name="russian">Російська</string>
+    <string name="portuguese_eu">Португальська (Європейська)</string>
+    <string name="portuguese_br">Португальська (Бразильська)</string>
+    <string name="ukrainian">Українська</string>
+    <string name="czech">Чеська</string>
+    <string name="polish">Польська</string>
+    <string name="turkish">Турецька</string>
+    <string name="thai">Тайська</string>
+    <string name="chinese_simple">Китайська (Спрощена)</string>
+    <string name="chinese_traditional">Китайська (Традиційна)</string>
+    <string name="bulgarian">Болгарська</string>
+    <string name="slovenian">Словенська</string>
+    <string name="french">Французька</string>
+    <string name="language_changed">Перезапустiть програму, щоб оновити мову.</string>
 </resources>
