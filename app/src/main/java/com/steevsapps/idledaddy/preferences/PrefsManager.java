@@ -4,21 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
-import com.steevsapps.idledaddy.utils.Utils;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 /**
  * SharedPreferences manager
  */
 public class PrefsManager {
+    private final static String CURRENT_USER = "current_user";
     private final static String USERNAME = "username";
     private final static String LOGIN_KEY = "login_key";
     private final static String MACHINE_ID = "machine_id";
@@ -74,61 +66,24 @@ public class PrefsManager {
         return prefs;
     }
 
-    public static void writeUsername(String username) {
-        writePref(USERNAME, username);
-    }
-
-    public static void writeLoginKey(String loginKey) {
-        writePref(LOGIN_KEY, loginKey);
-    }
-
-    public static void writeSentryHash(String sentryHash) {
-        writePref(SENTRY_HASH, sentryHash);
+    public static void writeCurrentUser(String username) {
+        writePref(CURRENT_USER, username);
     }
 
     public static void writeCmServers(String servers) {
         writePref(CM_SERVERS, servers);
     }
 
-    public static void writeBlacklist(List<String> blacklist) {
-        writePref(BLACKLIST, Utils.arrayToString(blacklist));
-    }
-
-    public static void writeLastSession(List<Game> games) {
-        final String json = new Gson().toJson(games);
-        writePref(LAST_SESSION, json);
-    }
-
-    public static void writePersonaName(String personaName) {
-        writePref(PERSONA_NAME, personaName);
-    }
-
-    public static void writeAvatarHash(String avatarHash) {
-        writePref(AVATAR_HASH, avatarHash);
-    }
-
-    public static void writeApiKey(String apiKey) {
-        writePref(API_KEY, apiKey);
-    }
-
     public static void writeLanguage(String language) {
         writePref(LANGUAGE, language);
     }
 
-    public static String getUsername() {
-        return prefs.getString(USERNAME, "");
-    }
-
-    public static String getLoginKey() {
-        return prefs.getString(LOGIN_KEY, "");
+    public static String getCurrentUser() {
+        return prefs.getString(CURRENT_USER, "");
     }
 
     public static String getMachineId() {
         return prefs.getString(MACHINE_ID, "");
-    }
-
-    public static String getSentryHash() {
-        return prefs.getString(SENTRY_HASH, "");
     }
 
     public static String getCmServers() {
@@ -145,43 +100,12 @@ public class PrefsManager {
 
     public static boolean minimizeData() { return prefs.getBoolean(MINIMIZE_DATA, false); }
 
-    public static String getParentalPin() {
-        return prefs.getString(PARENTAL_PIN, "");
-    }
-
-    public static List<String> getBlacklist() {
-        final String[] blacklist = prefs.getString(BLACKLIST, "").split(",");
-        return new ArrayList<>(Arrays.asList(blacklist));
-    }
-
-    public static List<Game> getLastSession() {
-        final String json = prefs.getString(LAST_SESSION, "");
-        final Type type = new TypeToken<List<Game>>(){}.getType();
-        final List<Game> games = new Gson().fromJson(json, type);
-        if (games == null) {
-            return new ArrayList<>();
-        }
-        return games;
-    }
-
-    public static String getPersonaName() {
-        return prefs.getString(PERSONA_NAME, "");
-    }
-
-    public static String getAvatarHash() {
-        return prefs.getString(AVATAR_HASH, "");
-    }
-
     public static int getHoursUntilDrops() {
         return prefs.getInt(HOURS_UNTIL_DROPS, 3);
     }
 
     public static boolean includeFreeGames() {
         return prefs.getBoolean(INCLUDE_FREE_GAMES, false);
-    }
-
-    public static String getApiKey() {
-        return prefs.getString(API_KEY, "");
     }
 
     public static String getLanguage() {

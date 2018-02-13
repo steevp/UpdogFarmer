@@ -10,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.steevsapps.idledaddy.steam.SteamService;
-import com.steevsapps.idledaddy.utils.LocaleManager;
 
 /**
  * Base activity that's bound to the Steam Service

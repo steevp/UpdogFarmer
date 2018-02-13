@@ -1,11 +1,10 @@
-package com.steevsapps.idledaddy.utils;
+package com.steevsapps.idledaddy;
 
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 
-import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 
 import java.util.Arrays;

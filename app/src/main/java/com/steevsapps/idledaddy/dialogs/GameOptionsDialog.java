@@ -7,13 +7,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.widget.Toast;
 
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
-import com.steevsapps.idledaddy.preferences.PrefsManager;
-
-import java.util.List;
 
 /**
  * Options dialog shown when you long press a game
@@ -42,7 +38,7 @@ public class GameOptionsDialog extends DialogFragment {
         final Bundle args = getArguments();
         title = args.getString(TITLE);
         appId = args.getString(APPID);
-        blacklisted = PrefsManager.getBlacklist().contains(appId);
+        //blacklisted = PrefsManager.getBlacklist().contains(appId);
     }
 
     @NonNull
@@ -68,13 +64,13 @@ public class GameOptionsDialog extends DialogFragment {
 
     private void addRemoveBlacklist() {
         final String msg;
-        final List<String> blacklist = PrefsManager.getBlacklist();
-        if (blacklisted) {
-            blacklist.remove(appId);
-        } else {
-            blacklist.add(0, appId);
-        }
-        PrefsManager.writeBlacklist(blacklist);
-        Toast.makeText(getActivity(), blacklisted ? R.string.removed_from_blacklist : R.string.added_to_blacklist, Toast.LENGTH_LONG).show();
+        //final List<String> blacklist = PrefsManager.getBlacklist();
+        //if (blacklisted) {
+        //    blacklist.remove(appId);
+        //} else {
+        //    blacklist.add(0, appId);
+        //}
+        //PrefsManager.writeBlacklist(blacklist);
+        //Toast.makeText(getActivity(), blacklisted ? R.string.removed_from_blacklist : R.string.added_to_blacklist, Toast.LENGTH_LONG).show();
     }
 }

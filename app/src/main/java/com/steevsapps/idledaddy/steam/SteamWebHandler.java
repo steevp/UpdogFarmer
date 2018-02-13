@@ -1,8 +1,8 @@
 package com.steevsapps.idledaddy.steam;
 
-import android.support.annotation.IntDef;
-
 import com.steevsapps.idledaddy.Secrets;
+import com.steevsapps.idledaddy.UserRepository;
+import com.steevsapps.idledaddy.db.entity.User;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Utils;
@@ -18,8 +18,6 @@ import org.jsoup.select.Elements;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,7 +53,9 @@ public class SteamWebHandler {
     // Pattern to match play time
     private final static Pattern timePattern = Pattern.compile("([0-9\\.]+) hrs on record");
 
-    private final static SteamWebHandler ourInstance = new SteamWebHandler();
+    private static SteamWebHandler ourInstance;
+    private final UserRepository userRepo;
+    private User currentUser;
 
     private boolean authenticated;
     private long steamId;
@@ -65,11 +65,18 @@ public class SteamWebHandler {
     private String steamParental;
     private String apiKey = Secrets.API_KEY;
 
-    private SteamWebHandler() {
-
+    private SteamWebHandler(UserRepository userRepo) {
+        this.userRepo = userRepo;
     }
 
-    public static SteamWebHandler getInstance() {
+    public static SteamWebHandler getInstance(UserRepository userRepo) {
+        if (ourInstance == null) {
+            synchronized (SteamWebHandler.class) {
+                if (ourInstance == null) {
+                    ourInstance = new SteamWebHandler(userRepo);
+                }
+            }
+        }
         return ourInstance;
     }
 
@@ -81,6 +88,7 @@ public class SteamWebHandler {
      * @return true if authenticated
      */
     boolean authenticate(SteamClient client, String webApiUserNonce) {
+        currentUser = userRepo.getUserSync();
         authenticated = false;
         final SteamID clientSteamId = client.getSteamId();
         if (clientSteamId == null) {
@@ -123,7 +131,7 @@ public class SteamWebHandler {
 
         authenticated = true;
 
-        final String pin = PrefsManager.getParentalPin().trim();
+        final String pin = currentUser.getParentalPin().trim();
         if (!pin.isEmpty()) {
             // Unlock family view
             steamParental = unlockParental(pin);
@@ -145,7 +153,7 @@ public class SteamWebHandler {
         cookies.put("sessionid", sessionId);
         cookies.put("steamLogin", token);
         cookies.put("steamLoginSecure", tokenSecure);
-        final String sentryHash = PrefsManager.getSentryHash().trim();
+        final String sentryHash = currentUser.getSentryHash().trim();
         if (!sentryHash.isEmpty()) {
             cookies.put("steamMachineAuth" + steamId, sentryHash);
         }
@@ -201,7 +209,7 @@ public class SteamWebHandler {
             }
         }
 
-        final List<String> blacklist = PrefsManager.getBlacklist();
+        final List<String> blacklist = currentUser.getBlacklist();
         Matcher m;
         for (Element b: badges) {
             // Get app id
@@ -255,21 +263,6 @@ public class SteamWebHandler {
         }
 
         return badgeList;
-    }
-
-    /**
-     * View inventory to clear notifications
-     */
-    void viewInventory() {
-        final String url = STEAM_COMMUNITY + "my/inventory";
-        try {
-            Jsoup.connect(url)
-                    .followRedirects(true)
-                    .cookies(generateWebCookies())
-                    .get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -433,10 +426,11 @@ public class SteamWebHandler {
         return false;
     }
 
-    @ApiKeyState int updateApiKey() {
-        if (Utils.isValidKey(PrefsManager.getApiKey())) {
+    ApiKeyState updateApiKey() {
+        final ApiKeyState state;
+        if (Utils.isValidKey(currentUser.getApiKey())) {
             // Use saved API key
-            apiKey = PrefsManager.getApiKey();
+            apiKey = currentUser.getApiKey();
             return ApiKeyState.REGISTERED;
         }
         // Try to fetch key from web
@@ -455,8 +449,9 @@ public class SteamWebHandler {
             if (title.toLowerCase().contains("access denied")) {
                 // Limited account, use the built-in API key
                 apiKey = Secrets.API_KEY;
-                PrefsManager.writeApiKey(apiKey);
-                return ApiKeyState.ACCESS_DENIED;
+                state = ApiKeyState.ACCESS_DENIED;
+                state.setApiKey(apiKey);
+                return state;
             }
             final Element bodyContentsEx = doc.select("div#bodyContents_ex p").first();
             if (bodyContentsEx == null) {
@@ -471,8 +466,9 @@ public class SteamWebHandler {
                 final String key = text.substring(5);
                 if (Utils.isValidKey(key)) {
                     apiKey = key;
-                    PrefsManager.writeApiKey(apiKey);
-                    return ApiKeyState.REGISTERED;
+                    state = ApiKeyState.REGISTERED;
+                    state.setApiKey(apiKey);
+                    return state;
                 }
             }
         } catch (IOException e) {
@@ -499,23 +495,5 @@ public class SteamWebHandler {
             e.printStackTrace();
         }
         return false;
-    }
-
-    @IntDef({
-            ApiKeyState.REGISTERED,
-            ApiKeyState.UNREGISTERED,
-            ApiKeyState.ACCESS_DENIED,
-            ApiKeyState.ERROR
-    })
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ApiKeyState {
-        // Account has registered an API key
-        int REGISTERED = 1;
-        // Account has not registered an API key yet
-        int UNREGISTERED = 2;
-        // Account is limited and can't register an API key
-        int ACCESS_DENIED = -1;
-        // Some other error occurred
-        int ERROR = -2;
     }
 }

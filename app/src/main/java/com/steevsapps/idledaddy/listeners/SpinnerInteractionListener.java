@@ -43,20 +43,7 @@ public class SpinnerInteractionListener implements AdapterView.OnItemSelectedLis
         final Fragment fragment = fm.findFragmentById(R.id.content_frame);
         if (fragment instanceof GamesFragment) {
             final GamesFragment gamesFragment = (GamesFragment) fragment;
-            switch (position) {
-                case GamesFragment.TAB_GAMES:
-                    // Library
-                    gamesFragment.switchToGames();
-                    break;
-                case GamesFragment.TAB_LAST:
-                    // Last idling session
-                    gamesFragment.switchToLastSession();
-                    break;
-                case GamesFragment.TAB_BLACKLIST:
-                    // Blacklisted games
-                    gamesFragment.switchToBlacklist();
-                    break;
-            }
+            gamesFragment.switchToTab(position);
         }
     }
 }

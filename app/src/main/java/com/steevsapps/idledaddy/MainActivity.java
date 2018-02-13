@@ -1,5 +1,7 @@
 package com.steevsapps.idledaddy;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +41,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.steevsapps.idledaddy.billing.BillingManager;
 import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
+import com.steevsapps.idledaddy.db.entity.User;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.AutoDiscoverDialog;
 import com.steevsapps.idledaddy.dialogs.CustomAppDialog;
@@ -94,6 +97,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
 
     private SharedPreferences prefs;
     private SteamService steamService;
+    private UserViewModel userViewModel;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -108,9 +112,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                     break;
                 case SteamService.FARM_EVENT:
                     showDropInfo(intent);
-                    break;
-                case SteamService.PERSONA_EVENT:
-                    updateDrawerHeader(intent);
                     break;
                 case SteamService.NOW_PLAYING_EVENT:
                     showNowPlaying();
@@ -132,23 +133,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         updateStatus();
     }
 
-    /**
-     * Update drawer header with avatar and username
-     */
-    private void updateDrawerHeader(@Nullable Intent intent) {
-        final String personaName;
-        final String avatarHash;
-
-        if (intent != null) {
-            personaName = intent.getStringExtra(SteamService.PERSONA_NAME);
-            avatarHash = intent.getStringExtra(SteamService.AVATAR_HASH);
-            PrefsManager.writePersonaName(personaName);
-            PrefsManager.writeAvatarHash(avatarHash);
-        } else {
-            personaName = PrefsManager.getPersonaName();
-            avatarHash = PrefsManager.getAvatarHash();
-        }
-
+    private void loadUserInfo(String personaName, String avatarHash) {
         if (!personaName.isEmpty()) {
             usernameView.setText(personaName);
         }
@@ -169,7 +154,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         loggedIn = steamService.isLoggedIn();
         farming = steamService.isFarming();
         updateStatus();
-        updateDrawerHeader(null);
+        //updateDrawerHeader(null);
 
         // Check if a Steam key was sent to us from another app
         final Intent intent = getIntent();
@@ -286,6 +271,16 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             logoutExpanded = false;
             selectItem(R.id.home, false);
         }
+
+        userViewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+        userViewModel.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                if (user != null) {
+                    loadUserInfo(user.getPersonaName(), user.getAvatarHash());
+                }
+            }
+        });
 
         applySettings();
     }
@@ -412,7 +407,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         filter.addAction(SteamService.DISCONNECT_EVENT);
         filter.addAction(SteamService.STOP_EVENT);
         filter.addAction(SteamService.FARM_EVENT);
-        filter.addAction(SteamService.PERSONA_EVENT);
         filter.addAction(SteamService.NOW_PLAYING_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         // Listen for preference changes
@@ -507,7 +501,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         intent.putExtra(Intent.EXTRA_STREAM, FileProvider.getUriForFile(this,
                 getApplicationContext().getPackageName() + ".provider", file));
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivity(intent);
+        startActivity(Intent.createChooser(intent, getString(R.string.logcat)));
     }
 
     public void clickHandler(View v) {

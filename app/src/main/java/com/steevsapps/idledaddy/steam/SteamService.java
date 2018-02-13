@@ -29,14 +29,17 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.steevsapps.idledaddy.BuildConfig;
+import com.steevsapps.idledaddy.IdleDaddy;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.UserRepository;
+import com.steevsapps.idledaddy.db.entity.User;
 import com.steevsapps.idledaddy.handlers.FreeLicense;
 import com.steevsapps.idledaddy.handlers.FreeLicenseCallback;
 import com.steevsapps.idledaddy.listeners.LogcatDebugListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
-import com.steevsapps.idledaddy.utils.LocaleManager;
+import com.steevsapps.idledaddy.LocaleManager;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.io.File;
@@ -104,9 +107,6 @@ public class SteamService extends Service {
     public final static String FARM_EVENT = "FARM_EVENT"; // Emitted when farm() is called
     public final static String GAME_COUNT = "GAME_COUNT"; // Number of games left to farm
     public final static String CARD_COUNT = "CARD_COUNT"; // Number of card drops remaining
-    public final static String PERSONA_EVENT = "PERSONA_EVENT"; // Emitted when we get PersonaStateCallback
-    public final static String PERSONA_NAME = "PERSONA_NAME"; // Username
-    public final static String AVATAR_HASH = "AVATAR_HASH"; // User avatar hash
     public final static String NOW_PLAYING_EVENT = "NOW_PLAYING_EVENT"; // Emitted when the game you're idling changes
 
     // Actions
@@ -119,8 +119,11 @@ public class SteamService extends Service {
     private SteamUser steamUser;
     private SteamFriends steamFriends;
     private FreeLicense freeLicense;
-    private SteamWebHandler webHandler = SteamWebHandler.getInstance();
+    private SteamWebHandler webHandler;
     private PowerManager.WakeLock wakeLock;
+
+    private UserRepository userRepo;
+    private User currentUser;
 
     private int farmIndex = 0;
     private List<Game> gamesToFarm;
@@ -441,8 +444,10 @@ public class SteamService extends Service {
         steamClient = new SteamClient();
         steamUser = steamClient.getHandler(SteamUser.class);
         steamFriends = steamClient.getHandler(SteamFriends.class);
-        steamClient.addHandler(new FreeLicense());
-        freeLicense = steamClient.getHandler(FreeLicense.class);
+        freeLicense = new FreeLicense();
+        steamClient.addHandler(freeLicense);
+        userRepo = ((IdleDaddy) getApplication()).getRepository();
+        webHandler = SteamWebHandler.getInstance(userRepo);
         // Detect Huawei devices running Lollipop which have a bug with MediaStyle notifications
         isHuawei = (android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP_MR1 ||
                 android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.LOLLIPOP) &&
@@ -784,10 +789,18 @@ public class SteamService extends Service {
 
     public void start() {
         running = true;
-        if (!PrefsManager.getLoginKey().isEmpty()) {
-            // We can log in using saved credentials
-            connect();
-        }
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!PrefsManager.getCurrentUser().isEmpty()) {
+                    userRepo.init(PrefsManager.getCurrentUser());
+                    currentUser = userRepo.getUserSync();
+                    if (currentUser != null && !currentUser.getLoginKey().isEmpty()) {
+                        connect();
+                    }
+                }
+            }
+        });
         // Schedule the the event handler
         scheduler.scheduleWithFixedDelay(new Runnable() {
             @Override
@@ -804,6 +817,8 @@ public class SteamService extends Service {
     public void login(final LogOnDetails details) {
         Log.i(TAG, "logging in");
         loginInProgress = true;
+        currentUser = new User();
+        currentUser.setUsername(details.username);
         details.loginId = NOTIF_ID;
         logOnDetails = details;
         connect();
@@ -876,8 +891,8 @@ public class SteamService extends Service {
      * Log in using saved credentials
      */
     private void attemptRestoreLogin() {
-        final String username = PrefsManager.getUsername();
-        final String loginKey = PrefsManager.getLoginKey();
+        final String username = currentUser.getUsername();
+        final String loginKey = currentUser.getLoginKey();
         final byte[] sentryData = readSentryFile();
         if (username.isEmpty() || loginKey.isEmpty()) {
             return;
@@ -917,21 +932,26 @@ public class SteamService extends Service {
 
     private void registerApiKey() {
         Log.i(TAG, "Registering API key");
-        final int result = webHandler.updateApiKey();
-        Log.i(TAG, "API key result: " + result);
+        final ApiKeyState result = webHandler.updateApiKey();
+        Log.i(TAG, "API key result: " + result.getLevelCode());
         switch (result) {
-            case SteamWebHandler.ApiKeyState.REGISTERED:
+            case REGISTERED:
                 break;
-            case SteamWebHandler.ApiKeyState.ACCESS_DENIED:
+            case ACCESS_DENIED:
                 showToast(getString(R.string.apikey_access_denied));
                 break;
-            case SteamWebHandler.ApiKeyState.UNREGISTERED:
+            case UNREGISTERED:
                 // Call updateApiKey once more to actually update it
                 webHandler.updateApiKey();
                 break;
-            case SteamWebHandler.ApiKeyState.ERROR:
+            case ERROR:
                 showToast(getString(R.string.apikey_register_failed));
                 break;
+        }
+        final String apiKey = result.getApiKey();
+        if (apiKey != null) {
+            Log.i(TAG, "Saving API key");
+            userRepo.updateApiKey(apiKey);
         }
     }
 
@@ -1028,8 +1048,13 @@ public class SteamService extends Service {
                 final String webApiUserNonce = callback.getWebAPIUserNonce();
 
                 if (result == EResult.OK) {
+                    userRepo.init(currentUser.getUsername());
                     loggedIn = true;
                     steamId = steamClient.getSteamId().convertToLong();
+                    currentUser.setSteamId(steamId);
+                    if (!userRepo.hasUser(currentUser.getUsername())) {
+                        userRepo.addUser(currentUser);
+                    }
                     // Don't hide the paused notification
                     if (!paused) {
                         updateNotification(getString(R.string.logged_in));
@@ -1050,10 +1075,11 @@ public class SteamService extends Service {
                             }
                         }
                     });
-                } else if (result == EResult.InvalidPassword && !PrefsManager.getLoginKey().isEmpty()) {
+                } else if (result == EResult.InvalidPassword && !currentUser.getLoginKey().isEmpty()) {
                     // Probably no longer valid
                     Log.i(TAG, "Login key expired");
-                    PrefsManager.writeLoginKey("");
+                    currentUser.setLoginKey("");
+                    userRepo.updateLoginKey("");
                     updateNotification(getString(R.string.login_key_expired));
                 }
 
@@ -1067,7 +1093,8 @@ public class SteamService extends Service {
             @Override
             public void call(LoginKeyCallback callback) {
                 Log.i(TAG, "Saving loginkey");
-                PrefsManager.writeLoginKey(callback.getLoginKey());
+                currentUser.setLoginKey(callback.getLoginKey());
+                userRepo.updateLoginKey(callback.getLoginKey());
             }
         });
         msg.handle(JobCallback.class, new ActionT<JobCallback>() {
@@ -1095,7 +1122,8 @@ public class SteamService extends Service {
                     steamUser.sendMachineAuthResponse(auth);
 
                     final String sentryHash = Utils.bytesToHex(sha1);
-                    PrefsManager.writeSentryHash(sentryHash);
+                    currentUser.setSentryHash(sentryHash);
+                    userRepo.updateSentryHash(sentryHash);
                 }
             }
         });
@@ -1163,10 +1191,7 @@ public class SteamService extends Service {
                     final String personaName = callback.getName();
                     final String avatarHash = Utils.bytesToHex(callback.getAvatarHash()).toLowerCase();
                     Log.i(TAG, "Avatar hash" + avatarHash);
-                    final Intent event = new Intent(PERSONA_EVENT);
-                    event.putExtra(PERSONA_NAME, personaName);
-                    event.putExtra(AVATAR_HASH, avatarHash);
-                    LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(event);
+                    userRepo.updatePersonaNameAndAvatarHash(personaName, avatarHash);
                 }
             }
         });
@@ -1295,7 +1320,7 @@ public class SteamService extends Service {
     private void writeSentryFile(byte[] data) {
         final File sentryFolder = new File(getFilesDir(), "sentry");
         if (sentryFolder.exists() || sentryFolder.mkdir()) {
-            final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
+            final File sentryFile = new File(sentryFolder, currentUser.getUsername() + ".sentry");
             FileOutputStream fos = null;
             try {
                 Log.i(TAG, "Writing sentry file to " + sentryFile.getAbsolutePath());
@@ -1317,7 +1342,7 @@ public class SteamService extends Service {
 
     private byte[] readSentryFile() {
         final File sentryFolder = new File(getFilesDir(), "sentry");
-        final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
+        final File sentryFile = new File(sentryFolder, currentUser.getUsername() + ".sentry");
         if (sentryFile.exists()) {
             Log.i(TAG, "Reading sentry file " + sentryFile.getAbsolutePath());
             FileInputStream fis = null;

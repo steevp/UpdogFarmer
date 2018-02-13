@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.widget.TextView;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.steam.SteamWebHandler;
 
 public class AutoDiscoverDialog extends DialogFragment {
     public final static String TAG = AutoDiscoverDialog.class.getSimpleName();
@@ -39,7 +38,6 @@ public class AutoDiscoverDialog extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         viewModel = ViewModelProviders.of(this).get(AutoDiscoverViewModel.class);
-        viewModel.init(SteamWebHandler.getInstance());
         viewModel.getQueueItem().observe(this, new Observer<AutoDiscoverViewModel.QueueItem>() {
             @Override
             public void onChanged(@Nullable AutoDiscoverViewModel.QueueItem queueItem) {

@@ -1,14 +1,21 @@
 package com.steevsapps.idledaddy.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
+import com.steevsapps.idledaddy.IdleDaddy;
+import com.steevsapps.idledaddy.SpinnerTabIds;
+import com.steevsapps.idledaddy.UserRepository;
+import com.steevsapps.idledaddy.db.entity.User;
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -16,25 +23,41 @@ import java.util.List;
 /**
  * Reminder: Must be public or else you will get a runtime exception
  */
-public class GamesViewModel extends ViewModel {
+public class GamesViewModel extends AndroidViewModel {
     private final static int SORT_ALPHABETICALLY = 0;
     private final static int SORT_HOURS_PLAYED = 1;
 
-    private SteamWebHandler webHandler;
-    private long steamId;
-    private MutableLiveData<List<Game>> games;
+    private final SteamWebHandler webHandler;
+    private User currentUser;
+    private int currentTab;
+    private boolean initialized = false;
+
+    private final MutableLiveData<List<Game>> games = new MutableLiveData<>();
     private int sortId = SORT_ALPHABETICALLY;
 
-    void init(SteamWebHandler webHandler, long steamId) {
-        this.webHandler = webHandler;
-        this.steamId = steamId;
+    public GamesViewModel(@NonNull Application application) {
+        super(application);
+        final UserRepository userRepo = ((IdleDaddy) application).getRepository();
+        webHandler = SteamWebHandler.getInstance(userRepo);
+    }
+
+    void init(User user, @SpinnerTabIds int tabId) {
+        if (currentUser != null) {
+            return;
+        }
+        currentUser = user;
+        currentTab = tabId;
+        initialized = true;
+        fetchGames();
     }
 
     LiveData<List<Game>> getGames() {
-        if (games == null) {
-            games = new MutableLiveData<>();
-        }
         return games;
+    }
+
+    void setCurrentTab(@SpinnerTabIds int tabId) {
+        currentTab = tabId;
+        fetchGames();
     }
 
     void setGames(List<Game> games) {
@@ -48,7 +71,20 @@ public class GamesViewModel extends ViewModel {
         } else if (sortId == SORT_HOURS_PLAYED) {
             Collections.sort(games, Collections.reverseOrder());
         }
-        this.games.setValue(games);
+
+        if (currentTab == SpinnerTabIds.BLACKLIST) {
+            // Only show blacklisted games
+            final List<String> blacklist = currentUser.getBlacklist();
+            final List<Game> blacklistGames = new ArrayList<>();
+            for (Game game : games) {
+                if (blacklist.contains(String.valueOf(game.appId))) {
+                    blacklistGames.add(game);
+                }
+            }
+            this.games.setValue(blacklistGames);
+        } else {
+            this.games.setValue(games);
+        }
     }
 
     void sortAlphabetically() {
@@ -77,16 +113,26 @@ public class GamesViewModel extends ViewModel {
 
     @SuppressLint("StaticFieldLeak")
     void fetchGames() {
-        new AsyncTask<Void,Void,List<Game>>() {
-            @Override
-            protected List<Game> doInBackground(Void... voids) {
-                return webHandler.getGamesOwned(steamId);
-            }
+        if (!initialized) {
+            // Not ready yet
+            return;
+        }
+        if (currentTab == SpinnerTabIds.LAST_SESSION) {
+            // Load last idling session
+            setGames(currentUser.getLastSession());
+        } else {
+            // Fetch games from web
+            new AsyncTask<Void,Void,List<Game>>() {
+                @Override
+                protected List<Game> doInBackground(Void... voids) {
+                    return webHandler.getGamesOwned(currentUser.getSteamId());
+                }
 
-            @Override
-            protected void onPostExecute(List<Game> games) {
-                setGames(games);
-            }
-        }.execute();
+                @Override
+                protected void onPostExecute(List<Game> games) {
+                    setGames(games);
+                }
+            }.execute();
+        }
     }
 }

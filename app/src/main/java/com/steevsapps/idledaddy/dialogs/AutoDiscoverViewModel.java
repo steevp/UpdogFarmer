@@ -1,22 +1,24 @@
 package com.steevsapps.idledaddy.dialogs;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
+import com.steevsapps.idledaddy.IdleDaddy;
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
 
 import org.json.JSONArray;
 
-public class AutoDiscoverViewModel extends ViewModel {
+public class AutoDiscoverViewModel extends AndroidViewModel {
 
     class QueueItem {
         String appId;
         int number;
         int count;
-
         private QueueItem(String appId, int number, int count) {
             this.appId = appId;
             this.number = number;
@@ -25,11 +27,13 @@ public class AutoDiscoverViewModel extends ViewModel {
     }
 
     private MutableLiveData<QueueItem> queueItem;
-    private SteamWebHandler webHandler;
-    private Boolean result = false;
 
-    void init(SteamWebHandler webHandler) {
-        this.webHandler = webHandler;
+    private final SteamWebHandler webHandler;
+    private boolean result = false;
+
+    public AutoDiscoverViewModel(@NonNull Application application) {
+        super(application);
+        webHandler = SteamWebHandler.getInstance(((IdleDaddy) application).getRepository());
     }
 
     LiveData<QueueItem> getQueueItem() {

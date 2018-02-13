@@ -74,7 +74,7 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
                 } else {
                     // Save username
                     final String username = Utils.removeSpecialChars(usernameEditText.getText().toString()).trim();
-                    PrefsManager.writeUsername(username);
+                    PrefsManager.writeCurrentUser(username);
                     finish();
                 }
             }
@@ -135,7 +135,7 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
             progress.setVisibility(loginInProgress ? View.VISIBLE : View.GONE);
         } else {
             // Restore saved username if any
-            usernameEditText.setText(PrefsManager.getUsername());
+            usernameEditText.setText(PrefsManager.getCurrentUser());
         }
     }
 
