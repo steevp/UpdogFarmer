@@ -670,8 +670,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         }
         MobileAds.initialize(this, "ca-app-pub-6413501894389361~6190763130");
         final AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99")
-                .addTestDevice("E8F66CC8599C1F21FDBC86370F926F88")
                 .build();
         adView.loadAd(adRequest);
     }
