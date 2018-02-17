@@ -117,5 +117,6 @@
     <string name="bulgarian">Bulgarian</string>
     <string name="slovenian">Slovenian</string>
     <string name="french">French</string>
+    <string name="romanian">Romanian</string>
     <string name="language_changed">You must restart the application for the language to be updated.</string>
 </resources>
