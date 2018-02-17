@@ -70,9 +70,9 @@ Seteaza starea ta ca "Offline", astfel incat prietenii tai sa nu vada ca esti in
         <item quantity="other">%d carduri ramase</item>
     </plurals>
     <plurals name="hours_on_record">
-        <item quantity="one">%.Ora inregistrate</item>
-        <item quantity="few">%.Ora inregistrate</item>
-        <item quantity="other">%.Ore inregistrate</item>
+        <item quantity="one">%.1f Ora inregistrate</item>
+        <item quantity="few">%.1f Ora inregistrate</item>
+        <item quantity="other">%.1f Ore inregistrate</item>
     </plurals>
     <string name="logged_in_elsewhere">Contul de steam este in folosinta,se va incepe procesare cand contul e disponibil.</string>
     <string name="web_login_failed">Nu se poate conecta la site-ul Steam!</string>
