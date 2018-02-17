@@ -90,12 +90,30 @@
     <string name="sort_alphabetically">Alphabetisch</string>
     <string name="sort_hours_played">Spielzeit</string>
     <string name="auto_discovery_title">Automatische Entdeckungsliste</string>
-    <string name="auto_discovery">Dadurch wird die Entdeckungsliste automatisch abgearbeitet. Während der Sommer- und Winterverkäufe kannst du bis zu 3 Sammelkarten pro Tag abrufen, indem du deine Entdeckungsliste abarbeitest.</string>
-    <string name="generating_discovery">Generiere neue Entdeckungslisten</string>
+    <string name="auto_discovery">Dadurch wird die Entdeckungsliste automatisch abgearbeitet. Während der Sommer- und Winterverkäufe kannst du bis zu 3 Sammelkarten pro Tag bekommen, indem du deine Entdeckungsliste abarbeitest.</string>
+    <string name="generating_discovery">Generiere neue Entdeckungsliste</string>
     <string name="discovering">Entdecke %s (%d/%d)</string>
-    <string name="discovery_finished">Entdeckungslisten fertig</string>
-    <string name="discovery_error">Die Entdeckungslisten konnten zu diesem Zeitpunkt nicht abgeschlossen werden. Versuche es später noch einmal</string>
+    <string name="discovery_finished">Entdeckungsliste fertig</string>
+    <string name="discovery_error">Die Entdeckungsliste konnten zu diesem Zeitpunkt nicht abgeschlossen werden. Versuche es später noch einmal</string>
     <string name="auto_vote">Automatische Abstimmung (Steam Awards)</string>
     <string name="vote_successful">Abstimmung erfolgreich!</string>
     <string name="vote_failed">Abstimmung fehlgeschlagen!</string>
+    <string name="apikey_access_denied">Der Zugriff auf den Steam-API-Schlüssel wurde mithilfe eines integrierten Schlüssels verweigert.</string>
+    <string name="apikey_register_failed">Fehler beim Registrieren eines API-Schlüssels unter Verwendung eines integrierten Schlüssels.</string>
+    <string name="english">Englisch</string>
+    <string name="german">Deutsch</string>
+    <string name="russian">Russisch</string>
+    <string name="portuguese_eu">Portugiesisch (Europa)</string>
+    <string name="portuguese_br">Portugiesisch (Brasilien)</string>
+    <string name="ukrainian">Ukrainisch</string>
+    <string name="czech">Tschechisch</string>
+    <string name="polish">Polnisch</string>
+    <string name="turkish">Türkisch</string>
+    <string name="thai">Thailändisch</string>
+    <string name="chinese_simple">Chinesisch (Vereinfacht)</string>
+    <string name="chinese_traditional">Chinesisch (Traditionell)</string>
+    <string name="bulgarian">Bulgarisch</string>
+    <string name="slovenian">Slovenisch</string>
+    <string name="french">Französisch</string>
+    <string name="language_changed">Du musst die Anwendung für die zu aktualisierende Sprache neu starten.</string>
 </resources>
