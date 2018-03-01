@@ -120,4 +120,5 @@
     <string name="romanian">Romanian</string>
     <string name="spanish">Spanish</string>
     <string name="language_changed">You must restart the application for the language to be updated.</string>
+    <string name="service_started">Steam service Started</string>
 </resources>

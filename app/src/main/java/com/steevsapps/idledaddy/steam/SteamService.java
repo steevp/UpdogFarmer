@@ -454,7 +454,7 @@ public class SteamService extends Service {
         if (BuildConfig.DEBUG) {
             DebugLog.addListener(new LogcatDebugListener());
         }
-        startForeground(NOTIF_ID, buildNotification("Steam service started"));
+        startForeground(NOTIF_ID, buildNotification(getString(R.string.service_started)));
     }
 
     @Override
