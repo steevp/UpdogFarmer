@@ -45,7 +45,7 @@ dependencies {
     implementation "com.android.support:preference-v14:$supportLibraryVersion"
     implementation "com.android.support:support-media-compat:$supportLibraryVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'com.github.steevp:SteamKit-Java:6b91c484c5'
+    implementation 'com.github.steevp:SteamKit-Java:9db70061e1'
     implementation 'org.jsoup:jsoup:1.10.3'
     implementation 'com.github.bumptech.glide:glide:3.8.0'
     implementation "com.android.support:support-v4:$supportLibraryVersion"
