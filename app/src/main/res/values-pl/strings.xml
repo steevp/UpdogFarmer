@@ -119,5 +119,8 @@
     <string name="bulgarian">Bułgarski</string>
     <string name="slovenian">Słoweński</string>
     <string name="french">Francuski</string>
+    <string name="romanian">Rumuński</string>
+    <string name="spanish">Hiszpański</string>
     <string name="language_changed">Uruchom ponownie aplikację, aby zmienić ustawienia języka.</string>
+    <string name="service_started">Usługa Steam uruchomiona</string>
 </resources>
