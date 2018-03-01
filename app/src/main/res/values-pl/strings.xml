@@ -121,6 +121,8 @@
     <string name="french">Francuski</string>
     <string name="romanian">Rumuński</string>
     <string name="spanish">Hiszpański</string>
+    <string name="arabic">Arabski</string>
+    <string name="hebrew">Hebrajski</string>
     <string name="language_changed">Uruchom ponownie aplikację, aby zmienić ustawienia języka.</string>
     <string name="service_started">Usługa Steam uruchomiona</string>
 </resources>
