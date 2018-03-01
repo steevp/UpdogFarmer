@@ -29,6 +29,7 @@
         <item>@string/romanian</item>
         <item>@string/spanish</item>
         <item>@string/arabic</item>
+        <item>@string/hebrew</item>
     </string-array>
 
     <string-array name="language_option_values">
@@ -50,6 +51,7 @@
         <item>ro</item>
         <item>es-ES</item>
         <item>ar</item>
+        <item>iw</item>
     </string-array>
 
 </resources>
