@@ -5,60 +5,44 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.steevsapps.idledaddy.IdleDaddy;
+import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
 
 import org.json.JSONArray;
 
 public class AutoDiscoverViewModel extends AndroidViewModel {
-
-    class QueueItem {
-        String appId;
-        int number;
-        int count;
-        private QueueItem(String appId, int number, int count) {
-            this.appId = appId;
-            this.number = number;
-            this.count = count;
-        }
-    }
-
-    private MutableLiveData<QueueItem> queueItem;
-
+    private MutableLiveData<String> progress;
     private final SteamWebHandler webHandler;
-    private boolean result = false;
 
     public AutoDiscoverViewModel(@NonNull Application application) {
         super(application);
         webHandler = SteamWebHandler.getInstance(((IdleDaddy) application).getRepository());
     }
 
-    LiveData<QueueItem> getQueueItem() {
-        if (queueItem == null) {
-            queueItem = new MutableLiveData<>();
+    LiveData<String> getProgress() {
+        if (progress == null) {
+            progress = new MutableLiveData<>();
             loadData();
         }
-
-        return queueItem;
-    }
-
-    boolean getResult() {
-        return result;
+        return progress;
     }
 
     @SuppressLint("StaticFieldLeak")
     private void loadData() {
-        new AsyncTask<Void,QueueItem,Boolean>() {
+        new AsyncTask<Void,String,Boolean>() {
             @Override
             protected Boolean doInBackground(Void... voids) {
                 try {
+                    final Resources res = getApplication().getResources();
                     final JSONArray discoveryQueue = webHandler.generateNewDiscoveryQueue();
                     for (int i=0, count=discoveryQueue.length();i<count;i++) {
                         final String appId = discoveryQueue.getString(i);
-                        publishProgress(new QueueItem(appId, i + 1, count));
+                        publishProgress(res.getString(R.string.discovering, appId, i + 1, count));
                         webHandler.clearFromQueue(appId);
                     }
                 } catch (Exception e) {
@@ -69,14 +53,14 @@ public class AutoDiscoverViewModel extends AndroidViewModel {
             }
 
             @Override
-            protected void onProgressUpdate(QueueItem... values) {
-                queueItem.setValue(values[0]);
+            protected void onProgressUpdate(String... values) {
+                progress.setValue(values[0]);
             }
 
             @Override
             protected void onPostExecute(Boolean result) {
-                AutoDiscoverViewModel.this.result = result;
-                queueItem.setValue(null);
+                final Resources res = getApplication().getResources();
+                progress.setValue(res.getString(result ? R.string.discovery_finished : R.string.discovery_error));
             }
         }.execute();
     }

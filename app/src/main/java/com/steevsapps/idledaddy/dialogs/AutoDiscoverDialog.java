@@ -38,19 +38,11 @@ public class AutoDiscoverDialog extends DialogFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         viewModel = ViewModelProviders.of(this).get(AutoDiscoverViewModel.class);
-        viewModel.getQueueItem().observe(this, new Observer<AutoDiscoverViewModel.QueueItem>() {
+        viewModel.getProgress().observe(this, new Observer<String>() {
             @Override
-            public void onChanged(@Nullable AutoDiscoverViewModel.QueueItem queueItem) {
-                handleQueueItem(queueItem);
+            public void onChanged(@Nullable String s) {
+                textView.setText(s);
             }
         });
-    }
-
-    private void handleQueueItem(@Nullable AutoDiscoverViewModel.QueueItem queueItem) {
-        if (queueItem != null) {
-            textView.setText(getString(R.string.discovering, queueItem.appId, queueItem.number, queueItem.count));
-        } else {
-            textView.setText(viewModel.getResult() ? R.string.discovery_finished : R.string.discovery_error);
-        }
     }
 }
