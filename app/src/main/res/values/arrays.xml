@@ -27,6 +27,7 @@
         <item>@string/slovenian</item>
         <item>@string/french</item>
         <item>@string/romanian</item>
+        <item>@string/spanish</item>
     </string-array>
 
     <string-array name="language_option_values">
@@ -46,6 +47,7 @@
         <item>sl</item>
         <item>fr</item>
         <item>ro</item>
+        <item>es-ES</item>
     </string-array>
 
 </resources>
