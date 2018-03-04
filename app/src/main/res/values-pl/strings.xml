@@ -125,4 +125,9 @@
     <string name="hebrew">Hebrajski</string>
     <string name="language_changed">Uruchom ponownie aplikację, aby zmienić ustawienia języka.</string>
     <string name="service_started">Usługa Steam uruchomiona</string>
+    <string name="idle_custom_app">Symulacja gry ukrytej/spoza Steam</string>
+    <string name="hidden_appid">Ukryte AppID</string>
+    <string name="non_steam_game">Gra spoza Steam</string>
+    <string name="playing_unknown_app">Nieznana aplikacja: %d</string>
+    <string name="playing_non_steam_game">Gra spoza Steam: %s</string>
 </resources>
