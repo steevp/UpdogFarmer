@@ -118,5 +118,9 @@
     <string name="slovenian">Slovenisch</string>
     <string name="french">Französisch</string>
     <string name="romanian">Romänisch</string>
+    <string name="spanish">Spanisch</string>
+    <string name="arabic">Arabisch</string>
+    <string name="hebrew">Hebräisch</string>
     <string name="language_changed">Du musst die Anwendung für die zu aktualisierende Sprache neu starten.</string>
+    <string name="service_started">Steam Service gestartet</string>
 </resources>
