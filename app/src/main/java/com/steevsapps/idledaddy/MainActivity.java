@@ -41,6 +41,7 @@ import com.steevsapps.idledaddy.billing.BillingManager;
 import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.AutoDiscoverDialog;
+import com.steevsapps.idledaddy.dialogs.CustomAppDialog;
 import com.steevsapps.idledaddy.dialogs.GameOptionsDialog;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
@@ -438,7 +439,8 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         final boolean loggedIn = steamService != null && steamService.isLoggedIn();
         drawerView.getHeaderView(0).setClickable(loggedIn);
         menu.findItem(R.id.auto_discovery).setVisible(loggedIn);
-        menu.findItem(R.id.auto_vote).setVisible(loggedIn);
+        menu.findItem(R.id.custom_app).setVisible(loggedIn);
+        //menu.findItem(R.id.auto_vote).setVisible(loggedIn);
         menu.findItem(R.id.search).setVisible(drawerItemId == R.id.games);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -473,9 +475,12 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             case R.id.auto_discovery:
                 AutoDiscoverDialog.newInstance().show(getSupportFragmentManager(), AutoDiscoverDialog.TAG);
                 return true;
-            case R.id.auto_vote:
-                steamService.autoVote();
+            case R.id.custom_app:
+                CustomAppDialog.newInstance().show(getSupportFragmentManager(), CustomAppDialog.TAG);
                 return true;
+            //case R.id.auto_vote:
+            //    steamService.autoVote();
+            //    return true;
         }
         return false;
     }

@@ -53,6 +53,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.CRC32;
 
 import uk.co.thomasc.steamkit.base.ClientMsgProtobuf;
 import uk.co.thomasc.steamkit.base.generated.SteammessagesClientserver;
@@ -80,6 +81,8 @@ import uk.co.thomasc.steamkit.steam3.steamclient.callbackmgr.JobCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.CMListCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.ConnectedCallback;
 import uk.co.thomasc.steamkit.steam3.steamclient.callbacks.DisconnectedCallback;
+import uk.co.thomasc.steamkit.types.gameid.GameID;
+import uk.co.thomasc.steamkit.types.gameid.GameType;
 import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
 import uk.co.thomasc.steamkit.util.cSharp.events.ActionT;
 import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
@@ -711,7 +714,7 @@ public class SteamService extends Service {
         paused = false;
         currentGames.clear();
         currentGames.add(game);
-        playGame(game.appId);
+        playGames(game);
         showIdleNotification(game);
     }
 
@@ -726,19 +729,17 @@ public class SteamService extends Service {
             size = 32;
         }
 
-        final int[] appIds = new int[size];
         final StringBuilder msg = new StringBuilder();
         for (int i=0;i<size;i++) {
             final Game game = gamesCopy.get(i);
             currentGames.add(game);
-            appIds[i] = game.appId;
             msg.append(game.name);
             if (i + 1 < size) {
                 msg.append("\n");
             }
         }
 
-        playGames(appIds);
+        playGames(currentGames.toArray(new Game[0]));
         showMultipleNotification(msg.toString());
     }
 
@@ -1237,34 +1238,39 @@ public class SteamService extends Service {
     }
 
     /**
-     * Idle a game
-     * @param appId game to idle
+     * Idle one or more games
+     * @param games the games to idle
      */
-    private void playGame(int appId) {
-        steamUser.setPlayingGame(appId);
-        // Tell the activity
-        LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING_EVENT));
-    }
-
-    /**
-     * Idle multiple games at once
-     * @param appIds the games to idle
-     */
-    private void playGames(int...appIds) {
+    private void playGames(Game...games) {
         // Array of games played
         final SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[] gamesPlayed =
-                new SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[appIds.length];
+                new SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed[games.length];
 
         for (int i=0;i<gamesPlayed.length;i++) {
             // A single game played
+            final Game game = games[i];
             final SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed gp =
                     new SteammessagesClientserver.CMsgClientGamesPlayed.GamePlayed();
-            gp.gameId = appIds[i];
+            if (game.appId == 0) {
+                // Non-Steam game
+                final GameID gameId = new GameID(game.appId);
+                gameId.setAppType(GameType.Shortcut);
+                final CRC32 crc = new CRC32();
+                crc.update(game.name.getBytes());
+                // set the high-bit on the mod-id
+                // reduces crc32 to 31bits, but lets us use the modID as a guaranteed unique
+                // replacement for appID
+                gameId.setModID(crc.getValue() | (0x80000000));
+                gp.gameId = gameId.toLong();
+                gp.gameExtraInfo = game.name;
+            } else {
+                gp.gameId = game.appId;
+            }
             gamesPlayed[i] = gp;
         }
 
         final ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed> playGame;
-        playGame = new ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed>(SteammessagesClientserver.CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
+        playGame = new ClientMsgProtobuf<>(SteammessagesClientserver.CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
         playGame.getBody().gamesPlayed = gamesPlayed;
         steamClient.send(playGame);
         // Tell the activity

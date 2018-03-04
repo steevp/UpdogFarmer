@@ -123,4 +123,9 @@
     <string name="hebrew">Hebrew</string>
     <string name="language_changed">You must restart the application for the language to be updated.</string>
     <string name="service_started">Steam Service Started</string>
+    <string name="idle_custom_app">Idle Hidden/Non-Steam Game</string>
+    <string name="hidden_appid">Hidden appid</string>
+    <string name="non_steam_game">Non-Steam game</string>
+    <string name="playing_unknown_app">Unknown app: %d</string>
+    <string name="playing_non_steam_game">Non-Steam game: %s</string>
 </resources>
