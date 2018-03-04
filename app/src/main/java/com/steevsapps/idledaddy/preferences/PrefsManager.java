@@ -66,6 +66,7 @@ public class PrefsManager {
                 .putString(PARENTAL_PIN, "")
                 .putString(PERSONA_NAME, "")
                 .putString(AVATAR_HASH, "")
+                .putString(API_KEY, "")
                 .apply();
     }
 
