@@ -54,4 +54,9 @@
         <item>iw</item>
     </string-array>
 
+    <string-array name="custom_app_type_options">
+        <item>@string/hidden_appid</item>
+        <item>@string/non_steam_game</item>
+    </string-array>
+
 </resources>
