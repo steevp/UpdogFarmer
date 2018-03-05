@@ -607,7 +607,8 @@ public class SteamService extends Service {
         final NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(getString(R.string.app_name))
-                .setContentText(getString(R.string.now_playing2, game.name))
+                .setContentText(getString(R.string.now_playing2,
+                        (game.appId == 0) ? getString(R.string.playing_non_steam_game, game.name) : game.name))
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setContentIntent(pendingIntent);
 
@@ -733,7 +734,12 @@ public class SteamService extends Service {
         for (int i=0;i<size;i++) {
             final Game game = gamesCopy.get(i);
             currentGames.add(game);
-            msg.append(game.name);
+            if (game.appId == 0) {
+                // Non-Steam game
+                msg.append(getString(R.string.playing_non_steam_game, game.name));
+            } else {
+                msg.append(game.name);
+            }
             if (i + 1 < size) {
                 msg.append("\n");
             }

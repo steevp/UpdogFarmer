@@ -103,7 +103,7 @@ public class CustomAppDialog extends DialogFragment {
         if (text.isEmpty()) {
             return;
         }
-        final Game game = new Game(0, getString(R.string.playing_non_steam_game, text), 0, 0);
+        final Game game = new Game(0, text, 0, 0);
         if (callback != null) {
             callback.onGamePicked(game);
         }

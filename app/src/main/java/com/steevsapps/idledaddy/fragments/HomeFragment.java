@@ -131,7 +131,12 @@ public class HomeFragment extends Fragment {
         } else {
             gameIcon.setImageResource(R.drawable.ic_image_white_48dp);
         }
-        game.setText(g.name);
+        if (g.appId == 0) {
+            // Non-Steam game
+            game.setText(getString(R.string.playing_non_steam_game, g.name));
+        } else {
+            game.setText(g.name);
+        }
         if (g.dropsRemaining > 0) {
             // Show card drops remaining
             cardDropsRemaining.setText(getResources()
