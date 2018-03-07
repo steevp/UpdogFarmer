@@ -121,6 +121,12 @@
     <string name="spanish">Spanisch</string>
     <string name="arabic">Arabisch</string>
     <string name="hebrew">Hebräisch</string>
+    <string name="indonesian">Indonesisch</string>
     <string name="language_changed">Du musst die Anwendung für die zu aktualisierende Sprache neu starten.</string>
     <string name="service_started">Steam Service gestartet</string>
+    <string name="idle_custom_app">Spiele inaktiv Versteckte/Steam-fremde Spiele</string>
+    <string name="hidden_appid">Versteckte appid</string>
+    <string name="non_steam_game">Steam-fremdes Spiel</string>
+    <string name="playing_unknown_app">Unbekannte Anwendung: %d</string>
+    <string name="playing_non_steam_game">In Steam-fremdem Spiel: %s</string>
 </resources>
