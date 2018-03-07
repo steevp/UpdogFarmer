@@ -1,0 +1,18 @@
+body {
+    font-family: sans-serif;
+    color: #FFFFFF;
+    opacity: 0.7;
+    background-color: #424242;
+}
+h3 {
+    opacity: 1;
+}
+a {
+    color: #EF5350;
+    text-decoration: none;
+}
+pre {
+    background-color: #303030;
+    padding: 1em;
+    white-space: pre-wrap;
+}
