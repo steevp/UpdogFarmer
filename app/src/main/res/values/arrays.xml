@@ -31,6 +31,7 @@
         <item>@string/arabic</item>
         <item>@string/hebrew</item>
         <item>@string/indonesian</item>
+        <item>@string/vietnamese</item>
     </string-array>
 
     <string-array name="language_option_values">
@@ -54,6 +55,7 @@
         <item>ar</item>
         <item>iw</item>
         <item>in</item>
+        <item>vi</item>
     </string-array>
 
     <string-array name="custom_app_type_options">
