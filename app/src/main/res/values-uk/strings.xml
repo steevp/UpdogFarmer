@@ -117,5 +117,17 @@
     <string name="bulgarian">Болгарська</string>
     <string name="slovenian">Словенська</string>
     <string name="french">Французька</string>
+    <string name="romanian">Румунська</string>
+    <string name="spanish">Іспанська</string>
+    <string name="arabic">Арабська</string>
+    <string name="hebrew">Іврит</string>
+    <string name="indonesian">Індонезійська</string>
+    <string name="vietnamese">В'єтнамська</string>
     <string name="language_changed">Перезапустіть програму, щоб оновити мову.</string>
+    <string name="service_started">Steam Служба Запущена</string>
+    <string name="idle_custom_app">Пуск Таємних/Не Steam Ігор</string>
+    <string name="hidden_appid">Таємний appid</string>
+    <string name="non_steam_game">Гра не в Steam</string>
+    <string name="playing_unknown_app">Невідома гра: %d</string>
+    <string name="playing_non_steam_game">Гра не в Steam: %s</string>
 </resources>
