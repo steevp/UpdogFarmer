@@ -47,14 +47,14 @@
     <string name="home">Домашня</string>
     <string name="games">Ігри</string>
     <string name="no_games_found">Неможливо отримати перелік ігор. Переконайтесь, що ваш профіль публічний</string>
-    <string name="now_playing">Зараз у грі</string>
+    <string name="now_playing">Зараз грає</string>
     <string name="error_not_logged_in">Ви повинні увійти в Steam</string>
     <string name="invalid_password">Невірний пароль</string>
     <string name="steamguard_required">Введіть код Steam Guard</string>
     <string name="invalid_code">Невірний код</string>
     <string name="timeout_error">Минув час очікування з'єднання. Будь ласка, спробуйте знову</string>
     <string name="channel_name">Сповіщення Idle Daddy</string>
-    <string name="now_playing2">Зараз у грі %s</string>
+    <string name="now_playing2">Зараз грає %s</string>
     <string name="product_already_owned">Продукт в наявності</string>
     <string name="invalid_key">Недійсний ключ</string>
     <string name="activation_failed">Активація не вдалася</string>
