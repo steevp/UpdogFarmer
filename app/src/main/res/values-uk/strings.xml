@@ -125,7 +125,7 @@
     <string name="vietnamese">В'єтнамська</string>
     <string name="language_changed">Перезапустіть програму, щоб оновити мову.</string>
     <string name="service_started">Steam Служба Запущена</string>
-    <string name="idle_custom_app">Пуск Таємних/Не-Steam Ігор</string>
+    <string name="idle_custom_app">Пуск Таємної/Не-Steam Гри</string>
     <string name="hidden_appid">Таємний appid</string>
     <string name="non_steam_game">Не-Steam гра</string>
     <string name="playing_unknown_app">Невідома гра: %d</string>
