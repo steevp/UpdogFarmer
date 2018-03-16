@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -88,6 +90,19 @@ public class Utils {
      */
     public static boolean isValidKey(String key) {
         return key.matches("^[0-9A-Fa-f]+$");
+    }
+
+    /**
+     * Calculate the SHA-1 hash of a byte input array
+     */
+    public static byte[] SHAHash(byte[] input) {
+        try {
+            final MessageDigest md = MessageDigest.getInstance("SHA-1");
+            return md.digest(input);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
