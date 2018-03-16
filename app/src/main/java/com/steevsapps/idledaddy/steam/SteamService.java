@@ -955,11 +955,12 @@ public class SteamService extends Service {
             loginInProgress = false;
             loggedIn = true;
             steamId = steamClient.getSteamID().convertToUInt64();
-            // Don't hide the paused notification
-            if (!paused) {
-                updateNotification(getString(R.string.logged_in));
-            } else {
+            if (paused) {
                 showPausedNotification();
+            } else if (waiting) {
+                updateNotification(getString(R.string.logged_in_elsewhere));
+            } else {
+                updateNotification(getString(R.string.logged_in));
             }
             executor.execute(() -> {
                 final boolean gotAuth = attemptAuthentication(callback.getWebAPIUserNonce());
