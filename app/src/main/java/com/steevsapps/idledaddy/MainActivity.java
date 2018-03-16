@@ -60,8 +60,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
-
+import in.dragonbra.javasteam.enums.EPersonaState;
 
 public class MainActivity extends BaseActivity implements BillingUpdatesListener, DialogListener,
         GamePickedListener, SharedPreferences.OnSharedPreferenceChangeListener {

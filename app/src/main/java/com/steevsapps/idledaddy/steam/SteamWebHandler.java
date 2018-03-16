@@ -6,6 +6,8 @@ import com.steevsapps.idledaddy.Secrets;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.wrapper.Game;
 import com.steevsapps.idledaddy.utils.Utils;
+import com.steevsapps.idledaddy.utils.WebAPI;
+import com.steevsapps.idledaddy.utils.WebHelpers;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,14 +33,13 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import uk.co.thomasc.steamkit.steam3.steamclient.SteamClient;
-import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
-import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
-import uk.co.thomasc.steamkit.util.KeyDictionary;
-import uk.co.thomasc.steamkit.util.WebHelpers;
-import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
-import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
+import in.dragonbra.javasteam.steam.steamclient.SteamClient;
+import in.dragonbra.javasteam.types.KeyValue;
+import in.dragonbra.javasteam.types.SteamID;
+import in.dragonbra.javasteam.util.KeyDictionary;
+import in.dragonbra.javasteam.util.crypto.CryptoException;
+import in.dragonbra.javasteam.util.crypto.CryptoHelper;
+import in.dragonbra.javasteam.util.crypto.RSACrypto;
 
 /**
  * Scrapes card drop info from Steam website
@@ -74,7 +75,7 @@ public class SteamWebHandler {
     }
 
     /**
-     * Authenticate with the Steam website
+     * Authenticate on the Steam website
      *
      * @param client the Steam client
      * @param webApiUserNonce the WebAPI User Nonce returned by LoggedOnCallback
@@ -82,22 +83,23 @@ public class SteamWebHandler {
      */
     boolean authenticate(SteamClient client, String webApiUserNonce) {
         authenticated = false;
-        final SteamID clientSteamId = client.getSteamId();
+        final SteamID clientSteamId = client.getSteamID();
         if (clientSteamId == null) {
             return false;
         }
-        steamId = clientSteamId.convertToLong();
-        sessionId = Utils.bytesToHex(CryptoHelper.GenerateRandomBlock(4));
+        steamId = clientSteamId.convertToUInt64();
+        sessionId = Utils.bytesToHex(CryptoHelper.generateRandomBlock(4));
 
         final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);
         // generate an AES session key
-        final byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);
+        final byte[] sessionKey = CryptoHelper.generateRandomBlock(32);
 
         // rsa encrypt it with the public key for the universe we're on
-        final byte[] publicKey = KeyDictionary.getPublicKey(client.getConnectedUniverse());
+        final byte[] publicKey = KeyDictionary.getPublicKey(client.getUniverse());
         if (publicKey == null) {
             return false;
         }
+
         final RSACrypto rsa = new RSACrypto(publicKey);
         final byte[] cryptedSessionKey = rsa.encrypt(sessionKey);
 
@@ -105,11 +107,17 @@ public class SteamWebHandler {
         System.arraycopy(webApiUserNonce.getBytes(), 0, loginKey, 0, webApiUserNonce.length());
 
         // aes encrypt the loginkey with our session key
-        final byte[] cryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
+        final byte[] cryptedLoginKey;
+        try {
+            cryptedLoginKey = CryptoHelper.symmetricEncrypt(loginKey, sessionKey);
+        } catch (CryptoException e) {
+            e.printStackTrace();
+            return false;
+        }
 
         final KeyValue authResult;
         try {
-            authResult = userAuth.authenticateUser(String.valueOf(steamId), WebHelpers.UrlEncode(cryptedSessionKey), WebHelpers.UrlEncode(cryptedLoginKey), "POST", "true");
+            authResult = userAuth.authenticateUser(String.valueOf(steamId), WebHelpers.urlEncode(cryptedSessionKey), WebHelpers.urlEncode(cryptedLoginKey), "POST", "true");
         } catch (final Exception e) {
             return false;
         }
@@ -255,21 +263,6 @@ public class SteamWebHandler {
         }
 
         return badgeList;
-    }
-
-    /**
-     * View inventory to clear notifications
-     */
-    void viewInventory() {
-        final String url = STEAM_COMMUNITY + "my/inventory";
-        try {
-            Jsoup.connect(url)
-                    .followRedirects(true)
-                    .cookies(generateWebCookies())
-                    .get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
