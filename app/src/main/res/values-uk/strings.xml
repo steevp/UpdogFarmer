@@ -55,7 +55,7 @@
     <string name="timeout_error">Минув час очікування з'єднання. Будь ласка, спробуйте знову</string>
     <string name="channel_name">Сповіщення Idle Daddy</string>
     <string name="now_playing2">Зараз грає %s</string>
-    <string name="product_already_owned">Продукт в наявності</string>
+    <string name="product_already_owned">Продукт у наявності</string>
     <string name="invalid_key">Недійсний ключ</string>
     <string name="activation_failed">Активація не вдалася</string>
     <plurals name="games_left">
