@@ -125,6 +125,7 @@
     <string name="hebrew">Hebrajski</string>
     <string name="indonesian">Indonezyjski</string>
     <string name="vietnamese">Wietnamski</string>
+    <string name="persian">Perski</string>
     <string name="language_changed">Uruchom ponownie aplikację, aby zmienić ustawienia języka.</string>
     <string name="service_started">Usługa Steam uruchomiona</string>
     <string name="idle_custom_app">Symulacja gry ukrytej/spoza Steam</string>

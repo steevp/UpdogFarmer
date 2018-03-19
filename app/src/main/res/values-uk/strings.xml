@@ -52,7 +52,7 @@
     <string name="invalid_password">Невірний пароль</string>
     <string name="steamguard_required">Введіть код Steam Guard</string>
     <string name="invalid_code">Невірний код</string>
-    <string name="timeout_error">Минув час очікування з'єднання. Будь ласка, спробуйте знову</string>
+    <string name="timeout_error">Минув час очікування з\'єднання. Будь ласка, спробуйте знову</string>
     <string name="channel_name">Сповіщення Idle Daddy</string>
     <string name="now_playing2">Зараз грає %s</string>
     <string name="product_already_owned">Продукт в наявності</string>
@@ -122,7 +122,8 @@
     <string name="arabic">Арабська</string>
     <string name="hebrew">Іврит</string>
     <string name="indonesian">Індонезійська</string>
-    <string name="vietnamese">В'єтнамська</string>
+    <string name="vietnamese">В\'єтнамська</string>
+    <string name="persian">Перська</string>
     <string name="language_changed">Перезапустіть програму, щоб оновити мову.</string>
     <string name="service_started">Steam Служба Запущена</string>
     <string name="idle_custom_app">Пуск Таємних/Не-Steam Ігор</string>
