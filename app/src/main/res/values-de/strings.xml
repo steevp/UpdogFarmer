@@ -123,6 +123,7 @@
     <string name="hebrew">Hebräisch</string>
     <string name="indonesian">Indonesisch</string>
     <string name="vietnamese">Vietnamesisch</string>
+    <string name="persian">Persisch</string>
     <string name="language_changed">Du musst die Anwendung für die zu aktualisierende Sprache neu starten.</string>
     <string name="service_started">Steam Service gestartet</string>
     <string name="idle_custom_app">Spiele inaktiv Versteckte/Steam-fremde Spiele</string>
