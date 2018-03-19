@@ -23,7 +23,6 @@ public class PrefsManager {
     private final static String LOGIN_KEY = "login_key";
     private final static String MACHINE_ID = "machine_id";
     private final static String SENTRY_HASH = "sentry_hash";
-    private final static String CM_SERVERS = "cm_servers";
     private final static String OFFLINE = "offline";
     private final static String STAY_AWAKE = "stay_awake";
     private final static String MINIMIZE_DATA = "minimize_data";
@@ -86,10 +85,6 @@ public class PrefsManager {
         writePref(SENTRY_HASH, sentryHash);
     }
 
-    public static void writeCmServers(String servers) {
-        writePref(CM_SERVERS, servers);
-    }
-
     public static void writeBlacklist(List<String> blacklist) {
         writePref(BLACKLIST, Utils.arrayToString(blacklist));
     }
@@ -129,10 +124,6 @@ public class PrefsManager {
 
     public static String getSentryHash() {
         return prefs.getString(SENTRY_HASH, "");
-    }
-
-    public static String getCmServers() {
-        return prefs.getString(CM_SERVERS, "");
     }
 
     public static boolean getOffline() {
