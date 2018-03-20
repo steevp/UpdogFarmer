@@ -1166,23 +1166,13 @@ public class SteamService extends Service {
 
     private void writeSentryFile(byte[] data) {
         final File sentryFolder = new File(getFilesDir(), "sentry");
+        final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
         if (sentryFolder.exists() || sentryFolder.mkdir()) {
-            final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
-            FileOutputStream fos = null;
-            try {
-                Log.i(TAG, "Writing sentry file to " + sentryFile.getAbsolutePath());
-                fos = new FileOutputStream(sentryFile);
+            Log.i(TAG, "Writing sentry file to " + sentryFile.getAbsolutePath());
+            try (final FileOutputStream fos = new FileOutputStream(sentryFile)) {
                 fos.write(data);
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                if (fos != null) {
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         }
     }
@@ -1192,22 +1182,12 @@ public class SteamService extends Service {
         final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
         if (sentryFile.exists()) {
             Log.i(TAG, "Reading sentry file " + sentryFile.getAbsolutePath());
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(sentryFile);
+            try (final FileInputStream fis = new FileInputStream(sentryFile)) {
                 final byte[] data = new byte[(int) sentryFile.length()];
                 fis.read(data);
                 return data;
             } catch (IOException e) {
                 e.printStackTrace();
-            } finally {
-                if (fis != null) {
-                    try {
-                        fis.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         }
         return null;

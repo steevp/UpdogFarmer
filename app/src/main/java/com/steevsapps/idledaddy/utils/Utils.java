@@ -55,26 +55,16 @@ public class Utils {
      * Save Logcat to file
      */
     public static void saveLogcat(File file) throws IOException {
-        BufferedReader reader = null;
-        BufferedWriter writer = null;
-        try {
-            final Process p = Runtime.getRuntime().exec("logcat -d");
-            reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            writer = new BufferedWriter(new FileWriter(file));
+        final Process p = Runtime.getRuntime().exec("logcat -d");
+        try ( final BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+              final BufferedWriter bw = new BufferedWriter(new FileWriter(file)) ) {
             String line;
-            while ((line = reader.readLine()) != null) {
-                writer.write(line);
-                writer.write("\n");
+            while ((line = br.readLine()) != null) {
+                bw.write(line);
+                bw.write("\n");
             }
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                reader.close();
-            }
-            if (writer != null) {
-                writer.close();
-            }
         }
     }
 
