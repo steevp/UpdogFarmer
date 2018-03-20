@@ -498,6 +498,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             Utils.saveLogcat(file);
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("*/*");
