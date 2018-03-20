@@ -124,6 +124,7 @@
     <string name="hebrew">عبری</string>
     <string name="indonesian">اندونزیایی</string>
     <string name="vietnamese">ویتنامی</string>
+    <string name="persian">فارسی</string>
     <string name="language_changed">برای تغییر زبان، برنامه را دوباره راه اندازی کنید</string>
     <string name="service_started">سرویس استیم آغاز شد</string>
     <string name="idle_custom_app">آیدل کردن بازی مخفی یا غیر استیم</string>
