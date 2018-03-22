@@ -122,7 +122,7 @@
     <string name="arabic">Арабська</string>
     <string name="hebrew">Іврит</string>
     <string name="indonesian">Індонезійська</string>
-    <string name="vietnamese">В'єтнамська</string>
+    <string name="vietnamese">В\'єтнамська</string>
     <string name="language_changed">Перезапустіть програму, щоб оновити мову.</string>
     <string name="service_started">Steam Служба Запущена</string>
     <string name="idle_custom_app">Пуск Таємної/Не-Steam Гри</string>
