@@ -49,8 +49,8 @@ public class PrefsManager {
      * Clear all preferences related to user
      */
     public static void clearUser() {
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(USERNAME, "")
+        prefs.edit()
+                .putString(USERNAME, "")
                 .putString(LOGIN_KEY, "")
                 .putString(SENTRY_HASH, "")
                 .putString(BLACKLIST, "")
@@ -141,6 +141,14 @@ public class PrefsManager {
         if (games == null) {
             return new ArrayList<>();
         }
+        for (Game game : games) {
+            if (game.name == null) {
+                // Last session may not deserialize correctly if we upgraded from an older
+                // version of the app. In that case just return an empty session
+                writePref(LAST_SESSION, "");
+                return new ArrayList<>();
+            }
+        }
         return games;
     }
 
@@ -169,8 +177,6 @@ public class PrefsManager {
     }
 
     private static void writePref(String key, String value) {
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(key, value);
-        editor.apply();
+        prefs.edit().putString(key, value).apply();
     }
 }
