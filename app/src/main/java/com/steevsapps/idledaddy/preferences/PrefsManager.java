@@ -13,7 +13,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * SharedPreferences manager
@@ -21,7 +20,6 @@ import java.util.UUID;
 public class PrefsManager {
     private final static String USERNAME = "username";
     private final static String LOGIN_KEY = "login_key";
-    private final static String MACHINE_ID = "machine_id";
     private final static String SENTRY_HASH = "sentry_hash";
     private final static String OFFLINE = "offline";
     private final static String STAY_AWAKE = "stay_awake";
@@ -44,11 +42,6 @@ public class PrefsManager {
     public static void init(Context c) {
         if (prefs == null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(c);
-
-            if (getMachineId().isEmpty()) {
-                // Generate machine id
-                writePref(MACHINE_ID, UUID.randomUUID().toString());
-            }
         }
     }
 
@@ -116,10 +109,6 @@ public class PrefsManager {
 
     public static String getLoginKey() {
         return prefs.getString(LOGIN_KEY, "");
-    }
-
-    public static String getMachineId() {
-        return prefs.getString(MACHINE_ID, "");
     }
 
     public static String getSentryHash() {
