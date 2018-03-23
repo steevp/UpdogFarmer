@@ -122,6 +122,12 @@ Seteaza starea ta ca "Offline", astfel incat prietenii tai sa nu vada ca esti in
     <string name="slovenian">Slovaca</string>
     <string name="french">Franceza</string>
     <string name="romanian">Română</string>
+    <string name="spanish">Spaniola</string>
+    <string name="arabic">Araba</string>
+    <string name="hebrew">Ebraică</string>
+    <string name="indonesian">Indoneziană</string>
+    <string name="vietnamese">Vietnameză</string>
+    <string name="persian">Persană</string>
     <string name="language_changed">Trebuie sa restartezi aplicatia pentru ca limba sa fie schimbata.</string>
     <string name="service_started">Serviciul Steam a inceput</string>
     <string name="idle_custom_app">Idle ascuns in jocuri Non-Steam </string>
