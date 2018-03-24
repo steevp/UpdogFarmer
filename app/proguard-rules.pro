@@ -39,3 +39,5 @@
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 -dontwarn android.test.**
 -dontwarn org.junit.**
+# Not sure if needed...
+-keepclassmembers class org.apache.commons.lang3.SystemUtils { <fields>; }
