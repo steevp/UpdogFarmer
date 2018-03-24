@@ -22,6 +22,7 @@ import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.utils.Utils;
 
+import in.dragonbra.javasteam.enums.EOSType;
 import in.dragonbra.javasteam.enums.EResult;
 import in.dragonbra.javasteam.steam.handlers.steamuser.LogOnDetails;
 
@@ -173,6 +174,7 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
             final LogOnDetails details = new LogOnDetails();
             details.setUsername(username);
             details.setPassword(password);
+            details.setClientOSType(EOSType.LinuxUnknown);
             if (twoFactorRequired) {
                 details.setTwoFactorCode(twoFactorEditText.getText().toString().trim());
             } else {
