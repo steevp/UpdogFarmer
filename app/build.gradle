@@ -6,8 +6,8 @@ android {
         applicationId "com.steevsapps.idledaddy"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 62
-        versionName "2.0.38"
+        versionCode 67
+        versionName "2.0.39"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
@@ -54,7 +54,6 @@ dependencies {
     implementation "com.android.support:preference-v14:$supportLibraryVersion"
     implementation "com.android.support:support-media-compat:$supportLibraryVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    //implementation 'com.github.steevp:SteamKit-Java:9db70061e1'
     implementation 'com.madgag.spongycastle:prov:1.58.0.0'
     implementation ('in.dragonbra:javasteam:1.0.0-SNAPSHOT') {
         changing = true
