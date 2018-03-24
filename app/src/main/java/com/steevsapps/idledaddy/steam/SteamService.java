@@ -31,9 +31,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.steevsapps.idledaddy.BuildConfig;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.handlers.ItemNotifications;
 import com.steevsapps.idledaddy.handlers.PurchaseResponse;
-import com.steevsapps.idledaddy.handlers.callbacks.ItemNotificationsCallback;
 import com.steevsapps.idledaddy.handlers.callbacks.PurchaseResponseCallback;
 import com.steevsapps.idledaddy.listeners.AndroidLogListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
@@ -71,6 +69,7 @@ import in.dragonbra.javasteam.steam.handlers.steamapps.callback.FreeLicenseCallb
 import in.dragonbra.javasteam.steam.handlers.steamfriends.PersonaState;
 import in.dragonbra.javasteam.steam.handlers.steamfriends.SteamFriends;
 import in.dragonbra.javasteam.steam.handlers.steamfriends.callback.PersonaStatesCallback;
+import in.dragonbra.javasteam.steam.handlers.steamnotifications.callback.ItemAnnouncementsCallback;
 import in.dragonbra.javasteam.steam.handlers.steamuser.LogOnDetails;
 import in.dragonbra.javasteam.steam.handlers.steamuser.MachineAuthDetails;
 import in.dragonbra.javasteam.steam.handlers.steamuser.OTPDetails;
@@ -404,7 +403,6 @@ public class SteamService extends Service {
             b.withServerListProvider(new FileServerListProvider(new File(getFilesDir(), "servers.bin")));
         });
         steamClient = new SteamClient(config);
-        steamClient.addHandler(new ItemNotifications());
         steamClient.addHandler(new PurchaseResponse());
         steamUser = steamClient.getHandler(SteamUser.class);
         steamFriends = steamClient.getHandler(SteamFriends.class);
@@ -422,7 +420,7 @@ public class SteamService extends Service {
         manager.subscribe(FreeLicenseCallback.class, this::onFreeLicense);
         manager.subscribe(AccountInfoCallback.class, this::onAccountInfo);
         manager.subscribe(WebAPIUserNonceCallback.class, this::onWebAPIUserNonce);
-        manager.subscribe(ItemNotificationsCallback.class, this::onItemNotification);
+        manager.subscribe(ItemAnnouncementsCallback.class, this::onItemAnnouncements);
         manager.subscribe(PurchaseResponseCallback.class, this::onPurchaseResponse);
 
         // Detect Huawei devices running Lollipop which have a bug with MediaStyle notifications
@@ -1111,7 +1109,7 @@ public class SteamService extends Service {
         });
     }
 
-    private void onItemNotification(ItemNotificationsCallback callback) {
+    private void onItemAnnouncements(ItemAnnouncementsCallback callback) {
         Log.i(TAG, "New item notification " + callback.getCount());
         if (callback.getCount() > 0 && farming) {
             // Possible card drop
