@@ -57,6 +57,7 @@ import java.util.zip.CRC32;
 
 import in.dragonbra.javasteam.base.ClientMsgProtobuf;
 import in.dragonbra.javasteam.enums.EMsg;
+import in.dragonbra.javasteam.enums.EOSType;
 import in.dragonbra.javasteam.enums.EPaymentMethod;
 import in.dragonbra.javasteam.enums.EPersonaState;
 import in.dragonbra.javasteam.enums.EPurchaseResultDetail;
@@ -846,6 +847,7 @@ public class SteamService extends Service {
         final LogOnDetails details = new LogOnDetails();
         details.setUsername(username);
         details.setLoginKey(loginKey);
+        details.setClientOSType(EOSType.LinuxUnknown);
         if (sentryData != null) {
             details.setSentryFileHash(Utils.SHAHash(sentryData));
         }
