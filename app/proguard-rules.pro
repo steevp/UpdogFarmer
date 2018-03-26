@@ -16,8 +16,9 @@
 #   public *;
 #}
 
-# Don't really care about obfuscation just shrinking
--dontobfuscate
+# Some Xiaomi devices seem to ship an outdated apache commons that's exported on the classpath.
+# Obfuscate the names in this package so their's isn't accidentally used
+-keepnames class !org.apache.commons.** { *; }
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
@@ -39,5 +40,3 @@
 -keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
 -dontwarn android.test.**
 -dontwarn org.junit.**
-# Not sure if needed...
--keepclassmembers class org.apache.commons.lang3.SystemUtils { <fields>; }
