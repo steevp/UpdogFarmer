@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -221,6 +222,10 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             getSupportActionBar().setHomeButtonEnabled(true);
         }
         drawerView = findViewById(R.id.left_drawer);
+        // Disable shadow
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            drawerView.setElevation(0f);
+        }
         drawerView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
