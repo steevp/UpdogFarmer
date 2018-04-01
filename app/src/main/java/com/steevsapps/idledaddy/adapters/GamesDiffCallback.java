@@ -2,7 +2,7 @@ package com.steevsapps.idledaddy.adapters;
 
 import android.support.v7.util.DiffUtil;
 
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 
 import java.util.List;
 
