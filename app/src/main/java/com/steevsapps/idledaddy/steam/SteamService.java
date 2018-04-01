@@ -35,7 +35,7 @@ import com.steevsapps.idledaddy.handlers.PurchaseResponse;
 import com.steevsapps.idledaddy.handlers.callbacks.PurchaseResponseCallback;
 import com.steevsapps.idledaddy.listeners.AndroidLogListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.utils.LocaleManager;
 import com.steevsapps.idledaddy.utils.Utils;
 

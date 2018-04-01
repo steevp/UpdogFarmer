@@ -6,7 +6,7 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.lang.reflect.Type;

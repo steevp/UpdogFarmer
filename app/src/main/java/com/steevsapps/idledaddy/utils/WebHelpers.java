@@ -1,7 +1,7 @@
 package com.steevsapps.idledaddy.utils;
 
 public class WebHelpers {
-    static boolean isUrlSafeChar(char ch) {
+    private static boolean isUrlSafeChar(char ch) {
         if (ch >= 'a' && ch <= 'z' || ch >= 'A' && ch <= 'Z' || ch >= '0' && ch <= '9') {
             return true;
         }

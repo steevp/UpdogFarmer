@@ -53,7 +53,7 @@ import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.listeners.SpinnerInteractionListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.SteamService;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.io.File;

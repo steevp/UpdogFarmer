@@ -1,6 +1,6 @@
 package com.steevsapps.idledaddy.listeners;
 
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 
 import java.util.List;
 

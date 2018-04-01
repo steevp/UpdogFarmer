@@ -1,17 +1,21 @@
 package com.steevsapps.idledaddy.fragments;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.os.AsyncTask;
 
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
+import com.steevsapps.idledaddy.steam.model.GamesOwnedResponse;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Reminder: Must be public or else you will get a runtime exception
@@ -75,18 +79,17 @@ public class GamesViewModel extends ViewModel {
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
     void fetchGames() {
-        new AsyncTask<Void,Void,List<Game>>() {
+        webHandler.getGamesOwned(steamId).enqueue(new Callback<GamesOwnedResponse>() {
             @Override
-            protected List<Game> doInBackground(Void... voids) {
-                return webHandler.getGamesOwned(steamId);
+            public void onResponse(Call<GamesOwnedResponse> call, Response<GamesOwnedResponse> response) {
+                setGames(response.body().getGames());
             }
 
             @Override
-            protected void onPostExecute(List<Game> games) {
-                setGames(games);
+            public void onFailure(Call<GamesOwnedResponse> call, Throwable t) {
+                setGames(new ArrayList<>());
             }
-        }.execute();
+        });
     }
 }

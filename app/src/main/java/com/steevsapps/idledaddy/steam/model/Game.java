@@ -1,28 +1,24 @@
-package com.steevsapps.idledaddy.steam.wrapper;
+package com.steevsapps.idledaddy.steam.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import org.json.JSONObject;
-
-import java.util.Locale;
+import com.google.gson.annotations.SerializedName;
 
 public class Game implements Comparable<Game>, Parcelable {
     private final static String IMG_URL = "http://media.steampowered.com/steamcommunity/public/images/apps/%d/%s.jpg";
-    public int appId;
-    public String name;
-    public String iconUrl;
-    public float hoursPlayed;
-    public int dropsRemaining;
 
-    public Game(JSONObject obj) {
-        appId = obj.optInt("appid", 0);
-        name = obj.optString("name", "Unknown app");
-        iconUrl = String.format(Locale.US, IMG_URL, appId, obj.optString("img_logo_url"));
-        hoursPlayed = obj.optInt("playtime_forever", 0) / 60f;
-        dropsRemaining = 0;
-    }
+    @SerializedName("appid")
+    public int appId;
+    @SerializedName("name")
+    public String name;
+    @SerializedName("img_logo_url")
+    public String iconUrl;
+    @SerializedName("playtime_forever")
+    public float hoursPlayed;
+    @SerializedName("drops_remaining")
+    public int dropsRemaining;
 
     public Game(int appId, String name, float hoursPlayed, int dropsRemaining) {
         this.appId = appId;

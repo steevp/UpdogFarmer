@@ -2,11 +2,15 @@ package com.steevsapps.idledaddy.steam;
 
 import android.support.annotation.IntDef;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.steevsapps.idledaddy.Secrets;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.converter.GamesOwnedResponseDeserializer;
+import com.steevsapps.idledaddy.steam.converter.VdfConverterFactory;
+import com.steevsapps.idledaddy.steam.model.Game;
+import com.steevsapps.idledaddy.steam.model.GamesOwnedResponse;
 import com.steevsapps.idledaddy.utils.Utils;
-import com.steevsapps.idledaddy.utils.WebAPI;
 import com.steevsapps.idledaddy.utils.WebHelpers;
 
 import org.json.JSONArray;
@@ -17,17 +21,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
@@ -40,6 +39,9 @@ import in.dragonbra.javasteam.util.KeyDictionary;
 import in.dragonbra.javasteam.util.crypto.CryptoException;
 import in.dragonbra.javasteam.util.crypto.CryptoHelper;
 import in.dragonbra.javasteam.util.crypto.RSACrypto;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Scrapes card drop info from Steam website
@@ -66,8 +68,20 @@ public class SteamWebHandler {
     private String steamParental;
     private String apiKey = Secrets.API_KEY;
 
-    private SteamWebHandler() {
+    private final SteamAPI api;
 
+    private SteamWebHandler() {
+        final Gson gson = new GsonBuilder()
+                .registerTypeAdapter(GamesOwnedResponse.class, new GamesOwnedResponseDeserializer())
+                .create();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(STEAM_API)
+                .addConverterFactory(VdfConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        api = retrofit.create(SteamAPI.class);
     }
 
     public static SteamWebHandler getInstance() {
@@ -90,7 +104,6 @@ public class SteamWebHandler {
         steamId = clientSteamId.convertToUInt64();
         sessionId = Utils.bytesToHex(CryptoHelper.generateRandomBlock(4));
 
-        final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);
         // generate an AES session key
         final byte[] sessionKey = CryptoHelper.generateRandomBlock(32);
 
@@ -116,9 +129,17 @@ public class SteamWebHandler {
         }
 
         final KeyValue authResult;
+
+        final Map<String,String> args = new HashMap<>();
+        args.put("steamid", String.valueOf(steamId));
+        args.put("sessionkey", WebHelpers.urlEncode(cryptedSessionKey));
+        args.put("encrypted_loginkey", WebHelpers.urlEncode(cryptedLoginKey));
+        args.put("format", "vdf");
+
         try {
-            authResult = userAuth.authenticateUser(String.valueOf(steamId), WebHelpers.urlEncode(cryptedSessionKey), WebHelpers.urlEncode(cryptedLoginKey), "POST", "true");
-        } catch (final Exception e) {
+            authResult = api.authenticateUser(args).execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
 
@@ -287,34 +308,14 @@ public class SteamWebHandler {
         return null;
     }
 
-    public List<Game> getGamesOwned(long steamId) {
-        final String gamesOwned = STEAM_API + "IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=%d&format=json";
-        HttpURLConnection conn = null;
-        try {
-            final URL url = new URL(String.format(Locale.US, gamesOwned, apiKey, steamId, PrefsManager.includeFreeGames() ? 1 : 0));
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            final StringBuilder builder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
-            final JSONObject json = new JSONObject(builder.toString());
-            final List<Game> games = new ArrayList<>();
-            final JSONArray arr = json.getJSONObject("response").getJSONArray("games");
-            for (int i=0,size=arr.length();i<size;i++) {
-                games.add(new Game(arr.getJSONObject(i)));
-            }
-            return games;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
+    public Call<GamesOwnedResponse> getGamesOwned(long steamId) {
+        final Map<String,String> args = new HashMap<>();
+        args.put("key", apiKey);
+        args.put("steamid", String.valueOf(steamId));
+        if (PrefsManager.includeFreeGames()) {
+            args.put("include_played_free_games", "1");
         }
+        return api.getGamesOwned(args);
     }
 
     /**
