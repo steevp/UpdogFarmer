@@ -16,7 +16,7 @@ import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.listeners.GamesListUpdateListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
