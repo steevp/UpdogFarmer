@@ -15,7 +15,7 @@ import android.widget.Spinner;
 
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 
 public class CustomAppDialog extends DialogFragment {
     public final static String TAG = CustomAppDialog.class.getSimpleName();
