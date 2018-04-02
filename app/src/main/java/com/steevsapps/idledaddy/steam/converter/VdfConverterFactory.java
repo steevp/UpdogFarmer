@@ -2,6 +2,7 @@ package com.steevsapps.idledaddy.steam.converter;
 
 import android.support.annotation.Nullable;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -37,7 +38,7 @@ public class VdfConverterFactory extends Converter.Factory {
         @Override
         public KeyValue convert(ResponseBody value) throws IOException {
             final KeyValue kv = new KeyValue();
-            kv.readAsText(value.byteStream());
+            kv.readAsText(new ByteArrayInputStream(value.bytes()));
             return kv;
         }
     }
