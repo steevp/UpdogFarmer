@@ -3,6 +3,7 @@ package com.steevsapps.idledaddy.fragments;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
 import com.steevsapps.idledaddy.steam.model.Game;
@@ -21,6 +22,8 @@ import retrofit2.Response;
  * Reminder: Must be public or else you will get a runtime exception
  */
 public class GamesViewModel extends ViewModel {
+    private final static String TAG = GamesViewModel.class.getSimpleName();
+
     private final static int SORT_ALPHABETICALLY = 0;
     private final static int SORT_HOURS_PLAYED = 1;
 
@@ -80,14 +83,22 @@ public class GamesViewModel extends ViewModel {
     }
 
     void fetchGames() {
+        Log.i(TAG, "Fetching games...");
         webHandler.getGamesOwned(steamId).enqueue(new Callback<GamesOwnedResponse>() {
             @Override
             public void onResponse(Call<GamesOwnedResponse> call, Response<GamesOwnedResponse> response) {
-                setGames(response.body().getGames());
+                if (response.isSuccessful()) {
+                    Log.i(TAG, "Success!");
+                    setGames(response.body().getGames());
+                } else {
+                    Log.i(TAG, "Got error code: " + response.code());
+                    setGames(new ArrayList<>());
+                }
             }
 
             @Override
             public void onFailure(Call<GamesOwnedResponse> call, Throwable t) {
+                Log.i(TAG, "Got error", t);
                 setGames(new ArrayList<>());
             }
         });
