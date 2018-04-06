@@ -18,6 +18,8 @@ import java.util.List;
  * SharedPreferences manager
  */
 public class PrefsManager {
+    private final static int CURRENT_VERSION = 2;
+
     private final static String USERNAME = "username";
     private final static String LOGIN_KEY = "login_key";
     private final static String SENTRY_HASH = "sentry_hash";
@@ -33,6 +35,7 @@ public class PrefsManager {
     private final static String AVATAR_HASH = "avatar_hash";
     private final static String API_KEY = "api_key";
     private final static String LANGUAGE = "language";
+    private final static String VERSION = "version";
 
     private static SharedPreferences prefs;
 
@@ -43,6 +46,18 @@ public class PrefsManager {
         if (prefs == null) {
             prefs = PreferenceManager.getDefaultSharedPreferences(c);
         }
+
+        if (getVersion() != CURRENT_VERSION) {
+            onUpgrade(getVersion());
+        }
+    }
+
+    private static void onUpgrade(int oldVersion) {
+        if (oldVersion < 2) {
+            // Serialized names have changed
+            writeLastSession(new ArrayList<>());
+        }
+        writeVersion(CURRENT_VERSION);
     }
 
     /**
@@ -103,6 +118,10 @@ public class PrefsManager {
         writePref(LANGUAGE, language);
     }
 
+    public static void writeVersion(int version) {
+        writePref(VERSION, version);
+    }
+
     public static String getUsername() {
         return prefs.getString(USERNAME, "");
     }
@@ -141,14 +160,6 @@ public class PrefsManager {
         if (games == null) {
             return new ArrayList<>();
         }
-        for (Game game : games) {
-            if (game.name == null) {
-                // Last session may not deserialize correctly if we upgraded from an older
-                // version of the app. In that case just return an empty session
-                writePref(LAST_SESSION, "");
-                return new ArrayList<>();
-            }
-        }
         return games;
     }
 
@@ -176,7 +187,15 @@ public class PrefsManager {
         return prefs.getString(LANGUAGE, "");
     }
 
+    public static int getVersion() {
+        return prefs.getInt(VERSION, 1);
+    }
+
     private static void writePref(String key, String value) {
         prefs.edit().putString(key, value).apply();
+    }
+
+    private static void writePref(String key, int value) {
+        prefs.edit().putInt(key, value).apply();
     }
 }
