@@ -1,7 +1,5 @@
 package com.steevsapps.idledaddy.utils;
 
-import android.support.annotation.Nullable;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,7 +19,7 @@ public class Utils {
      * Convert byte array to hex string
      * https://stackoverflow.com/a/9855338
      */
-    public static String bytesToHex(@Nullable byte[] bytes) {
+    public static String bytesToHex(byte[] bytes) {
         final char[] hexArray = "0123456789ABCDEF".toCharArray();
 
         char[] hexChars = new char[bytes.length * 2];
