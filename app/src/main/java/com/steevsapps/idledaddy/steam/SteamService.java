@@ -40,9 +40,11 @@ import com.steevsapps.idledaddy.utils.LocaleManager;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -149,6 +151,8 @@ public class SteamService extends Service {
     private ScheduledFuture<?> waitHandle;
 
     private final LinkedList<Integer> pendingFreeLicenses = new LinkedList<>();
+
+    private File sentryFolder;
 
     /**
      * Class for clients to access.  Because we know this service always
@@ -400,9 +404,14 @@ public class SteamService extends Service {
     public void onCreate() {
         Log.i(TAG, "Service created");
         super.onCreate();
+
+        sentryFolder = new File(getFilesDir(), "sentry");
+        sentryFolder.mkdirs();
+
         final SteamConfiguration config = SteamConfiguration.create(b -> {
             b.withServerListProvider(new FileServerListProvider(new File(getFilesDir(), "servers.bin")));
         });
+
         steamClient = new SteamClient(config);
         steamClient.addHandler(new PurchaseResponse());
         steamUser = steamClient.getHandler(SteamUser.class);
@@ -839,7 +848,6 @@ public class SteamService extends Service {
     private void attemptRestoreLogin() {
         final String username = PrefsManager.getUsername();
         final String loginKey = PrefsManager.getLoginKey();
-        final byte[] sentryData = readSentryFile();
         if (username.isEmpty() || loginKey.isEmpty()) {
             return;
         }
@@ -848,8 +856,11 @@ public class SteamService extends Service {
         details.setUsername(username);
         details.setLoginKey(loginKey);
         details.setClientOSType(EOSType.LinuxUnknown);
-        if (sentryData != null) {
-            details.setSentryFileHash(Utils.SHAHash(sentryData));
+        try {
+            final File sentryFile = new File(sentryFolder, username + ".sentry");
+            details.setSentryFileHash(Utils.calculateSHA1(sentryFile));
+        } catch (IOException | NoSuchAlgorithmException e) {
+            e.printStackTrace();
         }
         details.setShouldRememberPassword(true);
         steamUser.logOn(details);
@@ -993,36 +1004,40 @@ public class SteamService extends Service {
     private void onLoginKey(LoginKeyCallback callback) {
         Log.i(TAG, "Saving loginkey");
         PrefsManager.writeLoginKey(callback.getLoginKey());
+        steamUser.acceptNewLoginKey(callback);
     }
 
     private void onUpdateMachineAuth(UpdateMachineAuthCallback callback) {
-        Log.i(TAG, "Got new sentry file");
-        final byte[] data = callback.getData();
-        final byte[] sha1 = Utils.SHAHash(data);
+        final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
+        Log.i(TAG, "Saving sentry file to " + sentryFile.getAbsolutePath());
+        try (final FileOutputStream fos = new FileOutputStream(sentryFile)) {
+            final FileChannel channel = fos.getChannel();
+            channel.position(callback.getOffset());
+            channel.write(ByteBuffer.wrap(callback.getData(), 0, callback.getBytesToWrite()));
 
-        writeSentryFile(data);
+            final byte[] sha1 = Utils.calculateSHA1(sentryFile);
 
-        final MachineAuthDetails auth = new MachineAuthDetails();
-        auth.setJobID(callback.getJobID());
-        auth.setFileName(callback.getFileName());
-        auth.setBytesWritten(callback.getBytesToWrite());
-        auth.setFileSize(data.length);
-        auth.setOffset(callback.getOffset());
-        auth.seteResult(EResult.OK);
-        auth.setLastError(0);
-        auth.setSentryFileHash(sha1);
-        // Conflicting types
-        final OTPDetails otp = new OTPDetails();
-        final UpdateMachineAuthCallback.OTPDetails callbackOtp = callback.getOneTimePassword();
-        otp.setIdentifier(callbackOtp.getIdentifier());
-        otp.setType(callbackOtp.getType());
-        //otp.setValue(0);
-        auth.setOneTimePassword(otp);
+            final OTPDetails otp = new OTPDetails();
+            otp.setIdentifier(callback.getOneTimePassword().getIdentifier());
+            otp.setType(callback.getOneTimePassword().getType());
 
-        steamUser.sendMachineAuthResponse(auth);
+            final MachineAuthDetails auth = new MachineAuthDetails();
+            auth.setJobID(callback.getJobID());
+            auth.setFileName(callback.getFileName());
+            auth.setBytesWritten(callback.getBytesToWrite());
+            auth.setFileSize((int) sentryFile.length());
+            auth.setOffset(callback.getOffset());
+            auth.seteResult(EResult.OK);
+            auth.setLastError(0);
+            auth.setSentryFileHash(sha1);
+            auth.setOneTimePassword(otp);
 
-        final String sentryHash = Utils.bytesToHex(sha1);
-        PrefsManager.writeSentryHash(sentryHash);
+            steamUser.sendMachineAuthResponse(auth);
+
+            PrefsManager.writeSentryHash(Utils.bytesToHex(sha1));
+        } catch (IOException | NoSuchAlgorithmException e) {
+            Log.i(TAG, "Error saving sentry file", e);
+        }
     }
 
     private void onPurchaseResponse(PurchaseResponseCallback callback) {
@@ -1162,34 +1177,5 @@ public class SteamService extends Service {
         executor.execute(() -> steamClient.send(stopGame));
         // Tell the activity
         LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING_EVENT));
-    }
-
-    private void writeSentryFile(byte[] data) {
-        final File sentryFolder = new File(getFilesDir(), "sentry");
-        final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
-        if (sentryFolder.exists() || sentryFolder.mkdir()) {
-            Log.i(TAG, "Writing sentry file to " + sentryFile.getAbsolutePath());
-            try (final FileOutputStream fos = new FileOutputStream(sentryFile)) {
-                fos.write(data);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private byte[] readSentryFile() {
-        final File sentryFolder = new File(getFilesDir(), "sentry");
-        final File sentryFile = new File(sentryFolder, PrefsManager.getUsername() + ".sentry");
-        if (sentryFile.exists()) {
-            Log.i(TAG, "Reading sentry file " + sentryFile.getAbsolutePath());
-            try (final FileInputStream fis = new FileInputStream(sentryFile)) {
-                final byte[] data = new byte[(int) sentryFile.length()];
-                fis.read(data);
-                return data;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
     }
 }
