@@ -1,10 +1,14 @@
 package com.steevsapps.idledaddy.utils;
 
+import android.support.annotation.Nullable;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -17,7 +21,7 @@ public class Utils {
      * Convert byte array to hex string
      * https://stackoverflow.com/a/9855338
      */
-    public static String bytesToHex(byte[] bytes) {
+    public static String bytesToHex(@Nullable byte[] bytes) {
         final char[] hexArray = "0123456789ABCDEF".toCharArray();
 
         char[] hexChars = new char[bytes.length * 2];
@@ -83,16 +87,18 @@ public class Utils {
     }
 
     /**
-     * Calculate the SHA-1 hash of a byte input array
+     * Calculate the SHA-1 hash of a file
      */
-    public static byte[] SHAHash(byte[] input) {
-        try {
+    public static byte[] calculateSHA1(File file) throws IOException, NoSuchAlgorithmException {
+        try (final InputStream fis = new FileInputStream(file)) {
             final MessageDigest md = MessageDigest.getInstance("SHA-1");
-            return md.digest(input);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            final byte[] buffer = new byte[8192];
+            int n;
+            while ((n = fis.read(buffer)) != -1) {
+                md.update(buffer, 0, n);
+            }
+            return md.digest();
         }
-        return null;
     }
 
 }
