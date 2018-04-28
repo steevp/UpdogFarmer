@@ -47,7 +47,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Scrapes card drop info from Steam website
  */
 public class SteamWebHandler {
-    private final static String STEAM_STORE = "http://store.steampowered.com/";
+    private final static String STEAM_STORE = "https://store.steampowered.com/";
     private final static String STEAM_COMMUNITY = "https://steamcommunity.com/";
     private final static String STEAM_API = "https://api.steampowered.com/";
 
