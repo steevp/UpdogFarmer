@@ -33,6 +33,8 @@
         <item>@string/indonesian</item>
         <item>@string/vietnamese</item>
         <item>@string/persian</item>
+        <item>@string/bosnian_croatian</item>
+        <item>@string/serbian</item>
     </string-array>
 
     <string-array name="language_option_values">
@@ -58,6 +60,8 @@
         <item>in</item>
         <item>vi</item>
         <item>fa</item>
+        <item>bs</item>
+        <item>sr</item>
     </string-array>
 
     <string-array name="custom_app_type_options">

@@ -124,6 +124,8 @@
     <string name="indonesian">Indonesian</string>
     <string name="vietnamese">Vietnamese</string>
     <string name="persian">Persian</string>
+    <string name="bosnian_croatian">Bosnian/Croatian</string>
+    <string name="serbian">Serbian</string>
     <string name="language_changed">You must restart the application for the language to be updated.</string>
     <string name="service_started">Steam Service Started</string>
     <string name="idle_custom_app">Idle Hidden/Non-Steam Game</string>
