@@ -24,7 +24,7 @@
     <string name="pref_offline">Оффлайн фарм</string>
     <string name="sum_offline">Установите статус \'Не в сети\', чтобы ваши друзья не видели фарм.</string>
     <string name="pref_stay_awake">Держать экран включенным</string>
-    <string name="sum_stay_awake">Включите эту функцию, если Idle Daddy прекращает работать, когда гаснет экран. ПРЕДУПРЕЖДЕНИЕ: Некоторые устройства могут автоматически убить приложение через некоторое время.</string>
+    <string name="sum_stay_awake">Включите эту функцию, если Idle Daddy прекращает работать, когда гаснет экран. ПРЕДУПРЕЖДЕНИЕ: Некоторые устройства могут автоматически убить приложение спустя некоторое время.</string>
     <string name="pref_minimize_data">Минимизировать использование данных</string>
     <string name="sum_minimize_data">Не скачивать обложки игр.</string>
     <string name="pref_parental_pin">Родительский PIN</string>
