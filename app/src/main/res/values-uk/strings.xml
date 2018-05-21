@@ -74,7 +74,7 @@
     <string name="web_login_failed">Не вдалося увійти на сайт Steam!</string>
     <string name="login_key_expired">Прострочений ключ авторизації!</string>
     <string name="stopped">Зупинено</string>
-    <string name="paused">Припинено</string>
+    <string name="paused">Призупинено</string>
     <string name="idling_multiple">Грає разом</string>
     <string name="logged_out">Ви вийшли</string>
     <string name="about">Довідка</string>
