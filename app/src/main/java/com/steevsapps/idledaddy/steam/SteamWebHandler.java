@@ -2,10 +2,16 @@ package com.steevsapps.idledaddy.steam;
 
 import android.support.annotation.IntDef;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.steevsapps.idledaddy.Secrets;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.converter.GamesOwnedResponseDeserializer;
+import com.steevsapps.idledaddy.steam.converter.VdfConverterFactory;
+import com.steevsapps.idledaddy.steam.model.Game;
+import com.steevsapps.idledaddy.steam.model.GamesOwnedResponse;
 import com.steevsapps.idledaddy.utils.Utils;
+import com.steevsapps.idledaddy.utils.WebHelpers;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,36 +21,33 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import uk.co.thomasc.steamkit.steam3.steamclient.SteamClient;
-import uk.co.thomasc.steamkit.steam3.webapi.WebAPI;
-import uk.co.thomasc.steamkit.types.keyvalue.KeyValue;
-import uk.co.thomasc.steamkit.types.steamid.SteamID;
-import uk.co.thomasc.steamkit.util.KeyDictionary;
-import uk.co.thomasc.steamkit.util.WebHelpers;
-import uk.co.thomasc.steamkit.util.crypto.CryptoHelper;
-import uk.co.thomasc.steamkit.util.crypto.RSACrypto;
+import in.dragonbra.javasteam.steam.steamclient.SteamClient;
+import in.dragonbra.javasteam.types.KeyValue;
+import in.dragonbra.javasteam.types.SteamID;
+import in.dragonbra.javasteam.util.KeyDictionary;
+import in.dragonbra.javasteam.util.crypto.CryptoException;
+import in.dragonbra.javasteam.util.crypto.CryptoHelper;
+import in.dragonbra.javasteam.util.crypto.RSACrypto;
+import retrofit2.Call;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Scrapes card drop info from Steam website
  */
 public class SteamWebHandler {
-    private final static String STEAM_STORE = "http://store.steampowered.com/";
+    private final static String STEAM_STORE = "https://store.steampowered.com/";
     private final static String STEAM_COMMUNITY = "https://steamcommunity.com/";
     private final static String STEAM_API = "https://api.steampowered.com/";
 
@@ -65,8 +68,20 @@ public class SteamWebHandler {
     private String steamParental;
     private String apiKey = Secrets.API_KEY;
 
-    private SteamWebHandler() {
+    private final SteamAPI api;
 
+    private SteamWebHandler() {
+        final Gson gson = new GsonBuilder()
+                .registerTypeAdapter(GamesOwnedResponse.class, new GamesOwnedResponseDeserializer())
+                .create();
+
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(STEAM_API)
+                .addConverterFactory(VdfConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .build();
+
+        api = retrofit.create(SteamAPI.class);
     }
 
     public static SteamWebHandler getInstance() {
@@ -74,7 +89,7 @@ public class SteamWebHandler {
     }
 
     /**
-     * Authenticate with the Steam website
+     * Authenticate on the Steam website
      *
      * @param client the Steam client
      * @param webApiUserNonce the WebAPI User Nonce returned by LoggedOnCallback
@@ -82,22 +97,22 @@ public class SteamWebHandler {
      */
     boolean authenticate(SteamClient client, String webApiUserNonce) {
         authenticated = false;
-        final SteamID clientSteamId = client.getSteamId();
+        final SteamID clientSteamId = client.getSteamID();
         if (clientSteamId == null) {
             return false;
         }
-        steamId = clientSteamId.convertToLong();
-        sessionId = Utils.bytesToHex(CryptoHelper.GenerateRandomBlock(4));
+        steamId = clientSteamId.convertToUInt64();
+        sessionId = Utils.bytesToHex(CryptoHelper.generateRandomBlock(4));
 
-        final WebAPI userAuth = new WebAPI("ISteamUserAuth", null);
         // generate an AES session key
-        final byte[] sessionKey = CryptoHelper.GenerateRandomBlock(32);
+        final byte[] sessionKey = CryptoHelper.generateRandomBlock(32);
 
         // rsa encrypt it with the public key for the universe we're on
-        final byte[] publicKey = KeyDictionary.getPublicKey(client.getConnectedUniverse());
+        final byte[] publicKey = KeyDictionary.getPublicKey(client.getUniverse());
         if (publicKey == null) {
             return false;
         }
+
         final RSACrypto rsa = new RSACrypto(publicKey);
         final byte[] cryptedSessionKey = rsa.encrypt(sessionKey);
 
@@ -105,12 +120,26 @@ public class SteamWebHandler {
         System.arraycopy(webApiUserNonce.getBytes(), 0, loginKey, 0, webApiUserNonce.length());
 
         // aes encrypt the loginkey with our session key
-        final byte[] cryptedLoginKey = CryptoHelper.SymmetricEncrypt(loginKey, sessionKey);
+        final byte[] cryptedLoginKey;
+        try {
+            cryptedLoginKey = CryptoHelper.symmetricEncrypt(loginKey, sessionKey);
+        } catch (CryptoException e) {
+            e.printStackTrace();
+            return false;
+        }
 
         final KeyValue authResult;
+
+        final Map<String,String> args = new HashMap<>();
+        args.put("steamid", String.valueOf(steamId));
+        args.put("sessionkey", WebHelpers.urlEncode(cryptedSessionKey));
+        args.put("encrypted_loginkey", WebHelpers.urlEncode(cryptedLoginKey));
+        args.put("format", "vdf");
+
         try {
-            authResult = userAuth.authenticateUser(String.valueOf(steamId), WebHelpers.UrlEncode(cryptedSessionKey), WebHelpers.UrlEncode(cryptedLoginKey), "POST", "true");
-        } catch (final Exception e) {
+            authResult = api.authenticateUser(args).execute().body();
+        } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
 
@@ -258,21 +287,6 @@ public class SteamWebHandler {
     }
 
     /**
-     * View inventory to clear notifications
-     */
-    void viewInventory() {
-        final String url = STEAM_COMMUNITY + "my/inventory";
-        try {
-            Jsoup.connect(url)
-                    .followRedirects(true)
-                    .cookies(generateWebCookies())
-                    .get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Unlock Steam parental controls with a pin
      */
     private String unlockParental(String pin) {
@@ -294,34 +308,14 @@ public class SteamWebHandler {
         return null;
     }
 
-    public List<Game> getGamesOwned(long steamId) {
-        final String gamesOwned = STEAM_API + "IPlayerService/GetOwnedGames/v0001/?key=%s&steamid=%d&include_appinfo=1&include_played_free_games=%d&format=json";
-        HttpURLConnection conn = null;
-        try {
-            final URL url = new URL(String.format(Locale.US, gamesOwned, apiKey, steamId, PrefsManager.includeFreeGames() ? 1 : 0));
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            final StringBuilder builder = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                builder.append(line);
-            }
-            final JSONObject json = new JSONObject(builder.toString());
-            final List<Game> games = new ArrayList<>();
-            final JSONArray arr = json.getJSONObject("response").getJSONArray("games");
-            for (int i=0,size=arr.length();i<size;i++) {
-                games.add(new Game(arr.getJSONObject(i)));
-            }
-            return games;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ArrayList<>();
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
+    public Call<GamesOwnedResponse> getGamesOwned(long steamId) {
+        final Map<String,String> args = new HashMap<>();
+        args.put("key", apiKey);
+        args.put("steamid", String.valueOf(steamId));
+        if (PrefsManager.includeFreeGames()) {
+            args.put("include_played_free_games", "1");
         }
+        return api.getGamesOwned(args);
     }
 
     /**
@@ -414,7 +408,7 @@ public class SteamWebHandler {
             }
             final String voteId = container.attr("data-voteid");
             final Elements voteNominations = container.select("div.vote_nomination");
-            if (voteNominations == null) {
+            if (voteNominations.isEmpty()) {
                 return false;
             }
             final Element choice = voteNominations.get(new Random().nextInt(voteNominations.size()));
@@ -447,7 +441,7 @@ public class SteamWebHandler {
                     .followRedirects(true)
                     .cookies(generateWebCookies())
                     .get();
-            final Element titleNode = doc.select("div#mainContents").select("h2").first();
+            final Element titleNode = doc.select("div#mainContents h2").first();
             if (titleNode == null) {
                 return ApiKeyState.ERROR;
             }
@@ -458,7 +452,7 @@ public class SteamWebHandler {
                 PrefsManager.writeApiKey(apiKey);
                 return ApiKeyState.ACCESS_DENIED;
             }
-            final Element bodyContentsEx = doc.select("div#bodyContents_ex").select("p").first();
+            final Element bodyContentsEx = doc.select("div#bodyContents_ex p").first();
             if (bodyContentsEx == null) {
                 return ApiKeyState.ERROR;
             }

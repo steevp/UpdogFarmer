@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,12 +16,14 @@ import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.listeners.GamesListUpdateListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
 
 public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Game> dataSet = new ArrayList<>();
@@ -137,44 +138,10 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == ITEM_HEADER) {
             final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.games_header_item, parent, false);
-            final VHHeader vh = new VHHeader(view);
-            vh.button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    gamePickedListener.onGamesPicked(dataSet);
-                    currentGames.clear();
-                    currentGames.addAll(dataSet);
-                    notifyDataSetChanged();
-                }
-            });
-            return vh;
+            return new VHHeader(view);
         } else if (viewType == ITEM_NORMAL) {
             final View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.games_item, parent, false);
-            final VHItem vh = new VHItem(view);
-            vh.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final Game game = dataSet.get(headerEnabled ? vh.getAdapterPosition() - 1 : vh.getAdapterPosition());
-                    if (!currentGames.contains(game) && currentGames.size() < 32) {
-                        currentGames.add(game);
-                        vh.itemView.setActivated(true);
-                        gamePickedListener.onGamePicked(game);
-                    } else {
-                        currentGames.remove(game);
-                        vh.itemView.setActivated(false);
-                        gamePickedListener.onGameRemoved(game);
-                    }
-                }
-            });
-            vh.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    final Game game = dataSet.get(headerEnabled ? vh.getAdapterPosition() - 1 : vh.getAdapterPosition());
-                    gamePickedListener.onGameLongPressed(game);
-                    return true;
-                }
-            });
-            return vh;
+            return new VHItem(view);
         }
         throw new IllegalArgumentException("Unknown view type: " + viewType);
     }
@@ -217,16 +184,23 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         return dataSet.size();
     }
 
-    private static class VHHeader extends RecyclerView.ViewHolder {
-        private Button button;
-
+    private class VHHeader extends RecyclerView.ViewHolder implements View.OnClickListener {
         private VHHeader(View itemView) {
             super(itemView);
-            button = (Button) itemView;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            gamePickedListener.onGamesPicked(dataSet);
+            currentGames.clear();
+            currentGames.addAll(dataSet);
+            notifyDataSetChanged();
         }
     }
 
-    private static class VHItem extends RecyclerView.ViewHolder {
+    private class VHItem extends RecyclerView.ViewHolder
+            implements View.OnClickListener, View.OnLongClickListener {
         private TextView name;
         private ImageView logo;
         private TextView hours;
@@ -236,6 +210,37 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             name = itemView.findViewById(R.id.name);
             logo = itemView.findViewById(R.id.logo);
             hours = itemView.findViewById(R.id.hours);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            final int position = getAdapterPosition();
+            if (position == NO_POSITION) {
+                return;
+            }
+            final Game game = dataSet.get(headerEnabled ? position - 1 : position);
+            if (!currentGames.contains(game) && currentGames.size() < 32) {
+                currentGames.add(game);
+                itemView.setActivated(true);
+                gamePickedListener.onGamePicked(game);
+            } else {
+                currentGames.remove(game);
+                itemView.setActivated(false);
+                gamePickedListener.onGameRemoved(game);
+            }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            final int position = getAdapterPosition();
+            if (position == NO_POSITION) {
+                return false;
+            }
+            final Game game = dataSet.get(headerEnabled ? position - 1 : position);
+            gamePickedListener.onGameLongPressed(game);
+            return true;
         }
     }
 }

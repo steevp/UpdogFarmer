@@ -1,48 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar" />
+    <android.support.design.widget.NavigationView
+        android:id="@+id/left_drawer"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        app:itemIconTint="@color/menu_text_color"
+        app:itemTextColor="@color/menu_text_color"
+        app:menu="@menu/menu_navigation"
+        app:headerLayout="@layout/drawer_header" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:id="@+id/main_container"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.design.widget.NavigationView
-            android:id="@+id/left_drawer"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            app:itemIconTint="@color/menu_text_color"
-            app:itemTextColor="@color/menu_text_color"
-            app:menu="@menu/menu_navigation"
-            app:headerLayout="@layout/drawer_header" />
+        <include layout="@layout/toolbar" />
 
-        <LinearLayout
-            android:id="@+id/main_container"
-            android:orientation="vertical"
+        <FrameLayout
+            android:id="@+id/content_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-            <FrameLayout
-                android:id="@+id/content_frame"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <ViewStub
-                android:id="@+id/ad_inflater"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout="@layout/banner_ad"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp" />
-
-        </LinearLayout>
+        <ViewStub
+            android:id="@+id/ad_inflater"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout="@layout/banner_ad"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp" />
 
     </LinearLayout>
 

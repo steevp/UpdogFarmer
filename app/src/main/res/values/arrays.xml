@@ -10,4 +10,63 @@
         <item>@string/pref_blacklist</item>
     </string-array>
 
+    <string-array name="language_options">
+        <item>@string/english</item>
+        <item>@string/german</item>
+        <item>@string/russian</item>
+        <item>@string/portuguese_eu</item>
+        <item>@string/portuguese_br</item>
+        <item>@string/ukrainian</item>
+        <item>@string/czech</item>
+        <item>@string/polish</item>
+        <item>@string/turkish</item>
+        <item>@string/thai</item>
+        <item>@string/chinese_traditional</item>
+        <item>@string/chinese_simple</item>
+        <item>@string/bulgarian</item>
+        <item>@string/slovenian</item>
+        <item>@string/french</item>
+        <item>@string/romanian</item>
+        <item>@string/spanish</item>
+        <item>@string/arabic</item>
+        <item>@string/hebrew</item>
+        <item>@string/indonesian</item>
+        <item>@string/vietnamese</item>
+        <item>@string/persian</item>
+        <item>@string/bosnian_croatian</item>
+        <item>@string/serbian</item>
+    </string-array>
+
+    <string-array name="language_option_values">
+        <item>en</item>
+        <item>de</item>
+        <item>ru</item>
+        <item>pt-PT</item>
+        <item>pt-BR</item>
+        <item>uk</item>
+        <item>cs</item>
+        <item>pl</item>
+        <item>tr</item>
+        <item>th</item>
+        <item>zh</item>
+        <item>zh-CN</item>
+        <item>bg</item>
+        <item>sl</item>
+        <item>fr</item>
+        <item>ro</item>
+        <item>es-ES</item>
+        <item>ar</item>
+        <item>iw</item>
+        <item>in</item>
+        <item>vi</item>
+        <item>fa</item>
+        <item>bs</item>
+        <item>sr</item>
+    </string-array>
+
+    <string-array name="custom_app_type_options">
+        <item>@string/hidden_appid</item>
+        <item>@string/non_steam_game</item>
+    </string-array>
+
 </resources>

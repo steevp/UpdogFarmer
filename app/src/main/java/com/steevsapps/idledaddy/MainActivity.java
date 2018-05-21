@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,11 +38,11 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.steevsapps.idledaddy.base.BaseActivity;
 import com.steevsapps.idledaddy.billing.BillingManager;
 import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.AutoDiscoverDialog;
+import com.steevsapps.idledaddy.dialogs.CustomAppDialog;
 import com.steevsapps.idledaddy.dialogs.GameOptionsDialog;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
@@ -52,7 +53,7 @@ import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.listeners.SpinnerInteractionListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.SteamService;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.io.File;
@@ -60,8 +61,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EPersonaState;
-
+import in.dragonbra.javasteam.enums.EPersonaState;
 
 public class MainActivity extends BaseActivity implements BillingUpdatesListener, DialogListener,
         GamePickedListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -222,6 +222,10 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             getSupportActionBar().setHomeButtonEnabled(true);
         }
         drawerView = findViewById(R.id.left_drawer);
+        // Disable shadow
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            drawerView.setElevation(0f);
+        }
         drawerView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -439,7 +443,8 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         final boolean loggedIn = steamService != null && steamService.isLoggedIn();
         drawerView.getHeaderView(0).setClickable(loggedIn);
         menu.findItem(R.id.auto_discovery).setVisible(loggedIn);
-        menu.findItem(R.id.auto_vote).setVisible(loggedIn);
+        menu.findItem(R.id.custom_app).setVisible(loggedIn);
+        //menu.findItem(R.id.auto_vote).setVisible(loggedIn);
         menu.findItem(R.id.search).setVisible(drawerItemId == R.id.games);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -474,9 +479,12 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             case R.id.auto_discovery:
                 AutoDiscoverDialog.newInstance().show(getSupportFragmentManager(), AutoDiscoverDialog.TAG);
                 return true;
-            case R.id.auto_vote:
-                steamService.autoVote();
+            case R.id.custom_app:
+                CustomAppDialog.newInstance().show(getSupportFragmentManager(), CustomAppDialog.TAG);
                 return true;
+            //case R.id.auto_vote:
+            //    steamService.autoVote();
+            //    return true;
         }
         return false;
     }
@@ -495,6 +503,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             Utils.saveLogcat(file);
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
         final Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("*/*");
@@ -641,6 +650,8 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         } else if (key.equals("offline")) {
             // Change status
             steamService.changeStatus(PrefsManager.getOffline() ? EPersonaState.Offline : EPersonaState.Online);
+        } else if (key.equals("language")) {
+            Toast.makeText(this, R.string.language_changed, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -669,8 +680,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         }
         MobileAds.initialize(this, "ca-app-pub-6413501894389361~6190763130");
         final AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("0BCBCBBDA9FCA8FE47AEA0C5D1BCBE99")
-                .addTestDevice("E8F66CC8599C1F21FDBC86370F926F88")
                 .build();
         adView.loadAd(adRequest);
     }

@@ -77,4 +77,9 @@
     <string name="resume">Pokračovat</string>
     <string name="refresh">Obnovit</string>
     <string name="last_session">Poslední Sezení</string>
+    <string name="pref_hours_until">Počet hodin, než začnou padat karty</string>
+    <string name="sum_hours_until">Počet hodin, které zabere farmení, než začnou padat karty. Při farmení, Idle Daddy bude farmit více her najednou, dokud nedosáhnou tohoto čísla. Pro většinu uživatelů, 3 hodiny jsou nejlepší možností.</string>
+    <string name="pref_include_free_games">Zahrnout hraní her zdarma</string>
+    <string name="sum_include_free_games">Podle výchozího nastavení je farmení her zdarma jako Team Fortress 2 vypnuto (technicky vzato je kazdý vlastní). Pokud je tato možnost zapnuta, tak je uvidíte na seznamu, pokud jsi je někdy hrál.</string>
+    <string name="remove_ads">Odstranit reklamy</string>
 </resources>

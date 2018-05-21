@@ -25,6 +25,13 @@
             android:key="parental_pin"
             android:title="@string/pref_parental_pin"
             android:summary="@string/sum_parental_pin" />
+
+        <ListPreference
+            android:key="language"
+            android:title="@string/pref_language"
+            android:summary="@string/sum_language"
+            android:entries="@array/language_options"
+            android:entryValues="@array/language_option_values" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/cat_idle">

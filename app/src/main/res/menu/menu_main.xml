@@ -11,18 +11,27 @@
         android:visible="false" />
 
     <item
-        android:id="@+id/auto_discovery"
-        android:title="@string/auto_discovery_title"
+        android:id="@+id/custom_app"
+        android:title="@string/idle_custom_app"
         app:showAsAction="never"
         android:visible="false"
         android:orderInCategory="100" />
 
     <item
+        android:id="@+id/auto_discovery"
+        android:title="@string/auto_discovery_title"
+        app:showAsAction="never"
+        android:visible="false"
+        android:orderInCategory="101" />
+
+    <!--
+    <item
         android:id="@+id/auto_vote"
         android:title="@string/auto_vote"
         app:showAsAction="never"
         android:visible="false"
-        android:orderInCategory="101" />
+        android:orderInCategory="102" />
+        -->
 
     <item
         android:id="@+id/logcat"
