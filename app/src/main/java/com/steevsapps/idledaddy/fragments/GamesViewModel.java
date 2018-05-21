@@ -1,22 +1,29 @@
 package com.steevsapps.idledaddy.fragments;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.os.AsyncTask;
+import android.util.Log;
 
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
+import com.steevsapps.idledaddy.steam.model.GamesOwnedResponse;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Reminder: Must be public or else you will get a runtime exception
  */
 public class GamesViewModel extends ViewModel {
+    private final static String TAG = GamesViewModel.class.getSimpleName();
+
     private final static int SORT_ALPHABETICALLY = 0;
     private final static int SORT_HOURS_PLAYED = 1;
 
@@ -75,18 +82,25 @@ public class GamesViewModel extends ViewModel {
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
     void fetchGames() {
-        new AsyncTask<Void,Void,List<Game>>() {
+        Log.i(TAG, "Fetching games...");
+        webHandler.getGamesOwned(steamId).enqueue(new Callback<GamesOwnedResponse>() {
             @Override
-            protected List<Game> doInBackground(Void... voids) {
-                return webHandler.getGamesOwned(steamId);
+            public void onResponse(Call<GamesOwnedResponse> call, Response<GamesOwnedResponse> response) {
+                if (response.isSuccessful()) {
+                    Log.i(TAG, "Success!");
+                    setGames(response.body().getGames());
+                } else {
+                    Log.i(TAG, "Got error code: " + response.code());
+                    setGames(new ArrayList<>());
+                }
             }
 
             @Override
-            protected void onPostExecute(List<Game> games) {
-                setGames(games);
+            public void onFailure(Call<GamesOwnedResponse> call, Throwable t) {
+                Log.i(TAG, "Got error", t);
+                setGames(new ArrayList<>());
             }
-        }.execute();
+        });
     }
 }

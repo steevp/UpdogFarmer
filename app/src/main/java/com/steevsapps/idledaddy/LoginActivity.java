@@ -16,15 +16,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.steevsapps.idledaddy.base.BaseActivity;
 import com.steevsapps.idledaddy.fragments.TimeoutFragment;
 import com.steevsapps.idledaddy.listeners.TimeoutListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.utils.Utils;
 
-import uk.co.thomasc.steamkit.base.generated.steamlanguage.EResult;
-import uk.co.thomasc.steamkit.steam3.handlers.steamuser.types.LogOnDetails;
+import in.dragonbra.javasteam.enums.EOSType;
+import in.dragonbra.javasteam.enums.EResult;
+import in.dragonbra.javasteam.steam.handlers.steamuser.LogOnDetails;
 
 import static com.steevsapps.idledaddy.steam.SteamService.LOGIN_EVENT;
 
@@ -172,14 +172,15 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
             loginButton.setEnabled(false);
             progress.setVisibility(View.VISIBLE);
             final LogOnDetails details = new LogOnDetails();
-            details.username(username);
-            details.password(password);
+            details.setUsername(username);
+            details.setPassword(password);
+            details.setClientOSType(EOSType.LinuxUnknown);
             if (twoFactorRequired) {
-                details.twoFactorCode(twoFactorEditText.getText().toString().trim());
+                details.setTwoFactorCode(twoFactorEditText.getText().toString().trim());
             } else {
-                details.authCode(twoFactorEditText.getText().toString().trim());
+                details.setAuthCode(twoFactorEditText.getText().toString().trim());
             }
-            details.shouldRememberPassword = true;
+            details.setShouldRememberPassword(true);
             getService().login(details);
             startTimeout();
         }

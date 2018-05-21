@@ -10,7 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.widget.Toast;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 
 import java.util.List;

@@ -6,24 +6,23 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.steevsapps.idledaddy.steam.wrapper.Game;
+import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * SharedPreferences manager
  */
 public class PrefsManager {
+    private final static int CURRENT_VERSION = 2;
+
     private final static String USERNAME = "username";
     private final static String LOGIN_KEY = "login_key";
-    private final static String MACHINE_ID = "machine_id";
     private final static String SENTRY_HASH = "sentry_hash";
-    private final static String CM_SERVERS = "cm_servers";
     private final static String OFFLINE = "offline";
     private final static String STAY_AWAKE = "stay_awake";
     private final static String MINIMIZE_DATA = "minimize_data";
@@ -35,6 +34,8 @@ public class PrefsManager {
     private final static String PERSONA_NAME = "persona_name";
     private final static String AVATAR_HASH = "avatar_hash";
     private final static String API_KEY = "api_key";
+    private final static String LANGUAGE = "language";
+    private final static String VERSION = "version";
 
     private static SharedPreferences prefs;
 
@@ -43,21 +44,28 @@ public class PrefsManager {
 
     public static void init(Context c) {
         if (prefs == null) {
-            prefs = PreferenceManager.getDefaultSharedPreferences(c.getApplicationContext());
-
-            if (getMachineId().isEmpty()) {
-                // Generate machine id
-                writePref(MACHINE_ID, UUID.randomUUID().toString());
-            }
+            prefs = PreferenceManager.getDefaultSharedPreferences(c);
         }
+
+        if (getVersion() != CURRENT_VERSION) {
+            onUpgrade(getVersion());
+        }
+    }
+
+    private static void onUpgrade(int oldVersion) {
+        if (oldVersion < 2) {
+            // Serialized names have changed
+            writeLastSession(new ArrayList<>());
+        }
+        writeVersion(CURRENT_VERSION);
     }
 
     /**
      * Clear all preferences related to user
      */
     public static void clearUser() {
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(USERNAME, "")
+        prefs.edit()
+                .putString(USERNAME, "")
                 .putString(LOGIN_KEY, "")
                 .putString(SENTRY_HASH, "")
                 .putString(BLACKLIST, "")
@@ -65,6 +73,7 @@ public class PrefsManager {
                 .putString(PARENTAL_PIN, "")
                 .putString(PERSONA_NAME, "")
                 .putString(AVATAR_HASH, "")
+                .putString(API_KEY, "")
                 .apply();
     }
 
@@ -82,10 +91,6 @@ public class PrefsManager {
 
     public static void writeSentryHash(String sentryHash) {
         writePref(SENTRY_HASH, sentryHash);
-    }
-
-    public static void writeCmServers(String servers) {
-        writePref(CM_SERVERS, servers);
     }
 
     public static void writeBlacklist(List<String> blacklist) {
@@ -109,6 +114,14 @@ public class PrefsManager {
         writePref(API_KEY, apiKey);
     }
 
+    public static void writeLanguage(String language) {
+        writePref(LANGUAGE, language);
+    }
+
+    public static void writeVersion(int version) {
+        writePref(VERSION, version);
+    }
+
     public static String getUsername() {
         return prefs.getString(USERNAME, "");
     }
@@ -117,16 +130,8 @@ public class PrefsManager {
         return prefs.getString(LOGIN_KEY, "");
     }
 
-    public static String getMachineId() {
-        return prefs.getString(MACHINE_ID, "");
-    }
-
     public static String getSentryHash() {
         return prefs.getString(SENTRY_HASH, "");
-    }
-
-    public static String getCmServers() {
-        return prefs.getString(CM_SERVERS, "");
     }
 
     public static boolean getOffline() {
@@ -178,9 +183,19 @@ public class PrefsManager {
         return prefs.getString(API_KEY, "");
     }
 
+    public static String getLanguage() {
+        return prefs.getString(LANGUAGE, "");
+    }
+
+    public static int getVersion() {
+        return prefs.getInt(VERSION, 1);
+    }
+
     private static void writePref(String key, String value) {
-        final SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(key, value);
-        editor.apply();
+        prefs.edit().putString(key, value).apply();
+    }
+
+    private static void writePref(String key, int value) {
+        prefs.edit().putInt(key, value).apply();
     }
 }
