@@ -7,4 +7,5 @@ import java.util.List;
 public interface BillingUpdatesListener {
     void onBillingClientSetupFinished();
     void onPurchasesUpdated(List<Purchase> purchases);
+    void onPurchaseCanceled();
 }
