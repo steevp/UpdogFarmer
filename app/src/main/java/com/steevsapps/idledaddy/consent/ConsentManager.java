@@ -42,11 +42,7 @@ public class ConsentManager {
             @Override
             public void onConsentInfoUpdated(ConsentStatus consentStatus) {
                 // User's consent status successfully updated.
-                if (consentInfo.isRequestLocationInEeaOrUnknown()) {
-                    handleConsent(consentStatus);
-                } else {
-                    listener.onConsentInfoUpdated(consentStatus, false);
-                }
+                handleConsent(consentStatus);
             }
 
             @Override
@@ -112,8 +108,13 @@ public class ConsentManager {
                 listener.onConsentInfoUpdated(consentStatus, false);
                 break;
             case UNKNOWN:
-                // Request user consent
-                consentForm.load();
+                if (consentInfo.isRequestLocationInEeaOrUnknown()) {
+                    // EU user detected. Request user consent
+                    consentForm.load();
+                } else {
+                    // Show personalized ads
+                    listener.onConsentInfoUpdated(consentStatus, false);
+                }
                 break;
         }
     }
