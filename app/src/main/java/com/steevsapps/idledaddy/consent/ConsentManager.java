@@ -8,7 +8,6 @@ import com.google.ads.consent.ConsentFormListener;
 import com.google.ads.consent.ConsentInfoUpdateListener;
 import com.google.ads.consent.ConsentInformation;
 import com.google.ads.consent.ConsentStatus;
-import com.google.ads.consent.DebugGeography;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -59,8 +58,6 @@ public class ConsentManager {
 
     private void setupConsentInfo() {
         consentInfo = ConsentInformation.getInstance(context);
-        consentInfo.addTestDevice("4A88C5F6AED0FB3E97E38F1719B2EEDB");
-        consentInfo.setDebugGeography(DebugGeography.DEBUG_GEOGRAPHY_EEA);
     }
 
     private void setupConsentForm() {

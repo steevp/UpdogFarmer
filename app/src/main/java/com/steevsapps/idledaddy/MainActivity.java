@@ -717,7 +717,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         }
         MobileAds.initialize(this, "***REMOVED***");
         final AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice("4A88C5F6AED0FB3E97E38F1719B2EEDB")
                 .addNetworkExtrasBundle(AdMobAdapter.class, args)
                 .build();
         adView.loadAd(adRequest);
