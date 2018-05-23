@@ -38,7 +38,7 @@
     <string name="pref_language">Ngôn ngữ</string>
     <string name="sum_language">Thay đổi ngôn ngữ của ứng dụng (Yêu cầu khởi động lại).</string>
     <string name="pref_gdpr_consent">Bỏ qua kiến nghị GDPR</string>
-    <string name="sum_gdpr_consent">Dưới kiến nghị mới của EU - General Data Privacy Regulation (GDPR), người dùng phải đồng ý trước khi hiển thị quảng cáo. Ấn vào đây để huỷ bỏ kiến nghị.</string>
+    <string name="sum_gdpr_consent">Dưới kiến nghị mới của EU - General Data Protection Regulation (GDPR), người dùng phải đồng ý trước khi hiển thị quảng cáo. Ấn vào đây để huỷ bỏ kiến nghị.</string>
     <string name="gdpr_consent_not_needed">Không cần thiết vì Idle Daddy Premium không hiển thị quảng cáo.</string>
     <string name="blacklist_hint">Nhập appid và ấn +</string>
     <string name="add_to_blacklist">Thêm game vào danh sách đen</string>
