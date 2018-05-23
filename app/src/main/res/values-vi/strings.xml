@@ -37,6 +37,9 @@
     <string name="sum_include_free_games">Theo mặc định, game miễn phí như Team Fortress 2 sẽ bị loại (vì hầu hết mọi người đều có game). Nếu như cài đặt này được bật, game sẽ được liệt kê nếu người chơi đã chơi tại một thời điểm nào đó.</string>
     <string name="pref_language">Ngôn ngữ</string>
     <string name="sum_language">Thay đổi ngôn ngữ của ứng dụng (Yêu cầu khởi động lại).</string>
+    <string name="pref_gdpr_consent">Bỏ qua kiến nghị GDPR</string>
+    <string name="sum_gdpr_consent">Dưới kiến nghị mới của EU - General Data Privacy Regulation (GDPR), người dùng phải đồng ý trước khi hiển thị quảng cáo. Ấn vào đây để huỷ bỏ kiến nghị.</string>
+    <string name="gdpr_consent_not_needed">Không cần thiết vì Idle Daddy Premium không hiển thị quảng cáo.</string>
     <string name="blacklist_hint">Nhập appid và ấn +</string>
     <string name="add_to_blacklist">Thêm game vào danh sách đen</string>
     <string name="added_to_blacklist">Game đã được thêm vào danh sách đen</string>
@@ -122,6 +125,8 @@
     <string name="arabic">Tiếng Ả Rập</string>
     <string name="hebrew">Tiếng Hebrew</string>
     <string name="indonesian">Tiếng Indonesian</string>
+    <string name="bosnian_croatian">Tiếng Bosnian/Croatian</string>
+    <string name="serbian">Tiếng Serbian</string>
     <string name="language_changed">Bạn phải khởi động lại ứng dụng để ngôn ngữ có thể được đổi.</string>
     <string name="service_started">Đã khởi động dịch vụ Steam</string>
     <string name="idle_custom_app">Đang treo game ẩn/non-Steam game</string>
