@@ -38,7 +38,7 @@
     <string name="pref_language">Language</string>
     <string name="sum_language">Change the app\'s language (Requires restart).</string>
     <string name="pref_gdpr_consent">Revoke GDPR Consent</string>
-    <string name="sum_gdpr_consent">Under the EU\'s General Data Privacy Regulation (GDPR), a user\'s consent is required before displaying ads. Click here to revoke your consent.</string>
+    <string name="sum_gdpr_consent">Under the EU\'s General Data Protection Regulation (GDPR), a user\'s consent is required before displaying ads. Click here to revoke your consent.</string>
     <string name="gdpr_consent_not_needed">Not needed. Idle Daddy Premium doesn\'t display ads.</string>
     <string name="blacklist_hint">Enter an appid and click +</string>
     <string name="add_to_blacklist">Add game to blacklist</string>
