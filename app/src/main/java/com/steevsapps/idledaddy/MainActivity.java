@@ -35,11 +35,15 @@ import android.widget.Toast;
 
 import com.android.billingclient.api.Purchase;
 import com.bumptech.glide.Glide;
+import com.google.ads.consent.ConsentStatus;
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.steevsapps.idledaddy.billing.BillingManager;
 import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
+import com.steevsapps.idledaddy.consent.ConsentListener;
+import com.steevsapps.idledaddy.consent.ConsentManager;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.AutoDiscoverDialog;
 import com.steevsapps.idledaddy.dialogs.CustomAppDialog;
@@ -63,7 +67,7 @@ import java.util.Locale;
 
 import in.dragonbra.javasteam.enums.EPersonaState;
 
-public class MainActivity extends BaseActivity implements BillingUpdatesListener, DialogListener,
+public class MainActivity extends BaseActivity implements BillingUpdatesListener, ConsentListener, DialogListener,
         GamePickedListener, SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String DRAWER_ITEM = "DRAWER_ITEM";
@@ -88,6 +92,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     private AdView adView;
 
     private BillingManager billingManager;
+    private ConsentManager consentManager;
 
     private boolean logoutExpanded = false;
     private int drawerItemId;
@@ -188,8 +193,9 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
 
         mainContainer = findViewById(R.id.main_container);
 
-        // Setup Billing Manager
+        // Setup Billing Manager & Consent Manager
         billingManager = new BillingManager(this);
+        consentManager = new ConsentManager(this);
 
         // Setup the navigation spinner (Games fragment only)
         spinnerNav = findViewById(R.id.spinner_nav);
@@ -658,7 +664,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     @Override
     public void onBillingClientSetupFinished() {
         if (billingManager.shouldDisplayAds()) {
-            loadAds();
+            consentManager.requestConsentInfo();
             drawerView.getMenu().findItem(R.id.remove_ads).setVisible(true);
         }
     }
@@ -671,15 +677,47 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         }
     }
 
+    @Override
+    public void onPurchaseCanceled() {
+        if (billingManager.shouldDisplayAds()) {
+            consentManager.requestConsentInfo();
+        }
+    }
+
+    @Override
+    public void onConsentInfoUpdated(ConsentStatus consentStatus, boolean userPrefersAdFree) {
+        if (userPrefersAdFree) {
+            billingManager.launchPurchaseFlow();
+        } else {
+            final Bundle args = new Bundle();
+            if (consentStatus == ConsentStatus.NON_PERSONALIZED) {
+                args.putString("npa", "1");
+            }
+            loadAds(args);
+        }
+
+    }
+
+    @Override
+    public void onConsentRevoked() {
+        if (billingManager.shouldDisplayAds()) {
+            consentManager.revokeConsent();
+        } else {
+            // Consent not needed. No ads are shown in Idle Daddy Premium
+            Toast.makeText(this, R.string.gdpr_consent_not_needed, Toast.LENGTH_LONG).show();
+        }
+    }
+
     /**
      * Inflate adView and load the ad request
      */
-    private void loadAds() {
+    private void loadAds(Bundle args) {
         if (adView == null) {
             adView = (AdView) adInflater.inflate();
         }
         MobileAds.initialize(this, "***REMOVED***");
         final AdRequest adRequest = new AdRequest.Builder()
+                .addNetworkExtrasBundle(AdMobAdapter.class, args)
                 .build();
         adView.loadAd(adRequest);
     }

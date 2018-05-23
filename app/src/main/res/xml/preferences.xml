@@ -32,6 +32,11 @@
             android:summary="@string/sum_language"
             android:entries="@array/language_options"
             android:entryValues="@array/language_option_values" />
+
+        <Preference
+            android:key="gdpr_consent"
+            android:title="@string/pref_gdpr_consent"
+            android:summary="@string/sum_gdpr_consent" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/cat_idle">
