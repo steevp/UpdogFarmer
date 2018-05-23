@@ -52,6 +52,11 @@ public class ConsentManager {
         });
     }
 
+    public void revokeConsent() {
+        consentInfo.setConsentStatus(ConsentStatus.UNKNOWN);
+        requestConsentInfo();
+    }
+
     private void setupConsentInfo() {
         consentInfo = ConsentInformation.getInstance(context);
         consentInfo.addTestDevice("4A88C5F6AED0FB3E97E38F1719B2EEDB");

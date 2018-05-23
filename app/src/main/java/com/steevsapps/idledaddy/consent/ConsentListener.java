@@ -4,4 +4,5 @@ import com.google.ads.consent.ConsentStatus;
 
 public interface ConsentListener {
     void onConsentInfoUpdated(ConsentStatus consentStatus, boolean userPrefersAdFree);
+    void onConsentRevoked();
 }
