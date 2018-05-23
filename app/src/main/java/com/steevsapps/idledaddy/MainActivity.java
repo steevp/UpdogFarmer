@@ -698,6 +698,16 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
 
     }
 
+    @Override
+    public void onConsentRevoked() {
+        if (billingManager.shouldDisplayAds()) {
+            consentManager.revokeConsent();
+        } else {
+            // Consent not needed. No ads are shown in Idle Daddy Premium
+            Toast.makeText(this, R.string.gdpr_consent_not_needed, Toast.LENGTH_LONG).show();
+        }
+    }
+
     /**
      * Inflate adView and load the ad request
      */

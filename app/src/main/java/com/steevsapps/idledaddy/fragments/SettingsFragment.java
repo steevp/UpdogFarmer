@@ -6,6 +6,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.consent.ConsentListener;
 import com.steevsapps.idledaddy.preferences.BlacklistDialog;
 import com.steevsapps.idledaddy.preferences.BlacklistPreference;
 import com.steevsapps.idledaddy.preferences.NumPickerDialog;
@@ -23,6 +24,23 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         // Load preferences from XML resource
         addPreferencesFromResource(R.xml.preferences);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        setupGdpr();
+    }
+
+    private void setupGdpr() {
+        findPreference("gdpr_consent").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                ((ConsentListener) getActivity()).onConsentRevoked();
+                return true;
+            }
+        });
     }
 
     @Override
