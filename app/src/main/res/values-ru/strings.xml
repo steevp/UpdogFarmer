@@ -37,7 +37,7 @@
     <string name="sum_include_free_games">По умолчанию бесплатные игры, такие как Team Fortress 2, скрываются (как формально каждый владеет ими). Если эта функция включена, то сыгранные ранее бесплатные игры будут отображены.</string>
     <string name="pref_language">Язык</string>
     <string name="sum_language">Сменить язык приложения (Требуется перезапуск).</string>
-    <string name="pref_gdpr_consent">Отозвать GDPR Согласие</string>
+    <string name="pref_gdpr_consent">Отозвать Соглашение GDPR</string>
     <string name="sum_gdpr_consent">В соответствии с Общим Регламентом ЕС о Защите Данных (GDPR), для отображения рекламы требуется согласие пользователя. Нажмите здесь, чтобы отозвать свое согласие.</string>
     <string name="gdpr_consent_not_needed">Нет необходимости. Idle Daddy Premium не отображает рекламу.</string>
     <string name="blacklist_hint">Введите appid игры и нажмите +</string>
