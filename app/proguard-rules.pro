@@ -29,9 +29,38 @@
 #-renamesourcefileattribute SourceFile
 -keep class android.support.v7.widget.SearchView { *; }
 -keeppackagenames org.jsoup.nodes
--keep class org.spongycastle.**
+
+# Spongy Castle
+# Not sure how much of this is really needed but it removes enough to keep us under the 64K dex limit at least.
+-keep class org.spongycastle.crypto.* {*;}
+-keep class org.spongycastle.crypto.agreement.** {*;}
+-keep class org.spongycastle.crypto.digests.* {*;}
+-keep class org.spongycastle.crypto.ec.* {*;}
+-keep class org.spongycastle.crypto.encodings.* {*;}
+-keep class org.spongycastle.crypto.engines.* {*;}
+-keep class org.spongycastle.crypto.macs.* {*;}
+-keep class org.spongycastle.crypto.modes.* {*;}
+-keep class org.spongycastle.crypto.paddings.* {*;}
+-keep class org.spongycastle.crypto.params.* {*;}
+-keep class org.spongycastle.crypto.prng.* {*;}
+-keep class org.spongycastle.crypto.signers.* {*;}
+
+-keep class org.spongycastle.jcajce.provider.asymmetric.* {*;}
+-keep class org.spongycastle.jcajce.provider.asymmetric.util.* {*;}
+-keep class org.spongycastle.jcajce.provider.asymmetric.dh.* {*;}
+-keep class org.spongycastle.jcajce.provider.asymmetric.ec.* {*;}
+-keep class org.spongycastle.jcajce.provider.asymmetric.rsa.* {*;}
+
+-keep class org.spongycastle.jcajce.provider.digest.** {*;}
+-keep class org.spongycastle.jcajce.provider.keystore.** {*;}
+-keep class org.spongycastle.jcajce.provider.symmetric.** {*;}
+-keep class org.spongycastle.jcajce.spec.* {*;}
+-keep class org.spongycastle.jce.** {*;}
+
 -dontwarn org.spongycastle.jce.provider.X509LDAPCertStoreSpi
 -dontwarn org.spongycastle.x509.util.LDAPStoreHelper
+# End Spongy Castle
+
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn javax.annotation.**
