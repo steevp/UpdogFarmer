@@ -37,6 +37,9 @@
     <string name="sum_include_free_games">Standardowo gry, takie jak Team Fortress 2 są wykluczone z symulacji (z technicznego punktu widzenia wszyscy je posiadają). Jeśli ta opcja jest włączona darmowe gry będą pokazywane na liście aktywności, jeśli wcześniej były uruchomione.</string>
     <string name="pref_language">Język aplikacji</string>
     <string name="sum_language">Zmiana języka interfejsu aplikacji (wymaga ponownego uruchomienia).</string>
+    <string name="pref_gdpr_consent">Unieważnij zgodę GDPR</string>
+    <string name="sum_gdpr_consent">Zgodnie z rozporządzeniem Unii Europejskiej o ochronie danych osobowych (GDPR) do wyświetlania reklam wymagana jest zgoda użytkownika. Kliknij tutaj, aby wycofać swoją zgodę.</string>
+    <string name="gdpr_consent_not_needed">Zgoda nie jest wymagana. Wersja premium Idle Daddy nie wyświetla reklam.</string>
     <string name="blacklist_hint">Wpisz AppID i naciśnij +</string>
     <string name="add_to_blacklist">Dodaj grę do listy wykluczonych</string>
     <string name="added_to_blacklist">Gra dodana do listy wykluczonch</string>
