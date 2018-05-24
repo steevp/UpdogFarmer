@@ -37,6 +37,9 @@
     <string name="sum_include_free_games">По умолчанию бесплатные игры, такие как Team Fortress 2, скрываются (как формально каждый владеет ими). Если эта функция включена, то сыгранные ранее бесплатные игры будут отображены.</string>
     <string name="pref_language">Язык</string>
     <string name="sum_language">Сменить язык приложения (Требуется перезапуск).</string>
+    <string name="pref_gdpr_consent">Отозвать GDPR Согласие</string>
+    <string name="sum_gdpr_consent">В соответствии с Общим Регламентом ЕС о Защите Данных (GDPR), для отображения рекламы требуется согласие пользователя. Нажмите здесь, чтобы отозвать свое согласие.</string>
+    <string name="gdpr_consent_not_needed">Нет необходимости. Idle Daddy Premium не отображает рекламу.</string>
     <string name="blacklist_hint">Введите appid игры и нажмите +</string>
     <string name="add_to_blacklist">Внести игру в чёрный список</string>
     <string name="added_to_blacklist">Игра внесена в чёрный список</string>
@@ -127,7 +130,7 @@
     <string name="bosnian_croatian">Боснийский/Хорватский</string>
     <string name="serbian">Сербский</string>
     <string name="language_changed">Перезапустите приложение для смены языка.</string>
-    <string name="service_started">Служба Steam Запущена</string>
+    <string name="service_started">Запущено Обслуживание Steam</string>
     <string name="idle_custom_app">Пуск Скрытой/Не-Steam Игры</string>
     <string name="hidden_appid">Скрытый appid</string>
     <string name="non_steam_game">Не-Steam игра</string>
