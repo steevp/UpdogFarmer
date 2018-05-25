@@ -427,6 +427,98 @@ public class SteamWebHandler {
         return false;
     }
 
+    /**
+     * Get daily tasks for the Spring Cleaning Event 2018
+     */
+    public List<String> getDailyTaskAppIds() {
+        final String url = STEAM_STORE + "springcleaning?l=english";
+        try {
+            // Get list of task urls
+            final List<String> taskAppIds = new ArrayList<>();
+            final Document doc = Jsoup.connect(url)
+                    .referrer(STEAM_STORE)
+                    .followRedirects(true)
+                    .cookies(generateWebCookies())
+                    .get();
+
+            final Element stickyNotes = doc.select("div.spring_sticky_notes").first();
+            if (stickyNotes == null) {
+                return new ArrayList<>();
+            }
+            for (Element a : stickyNotes.select("a")) {
+                final String taskUrl = a.attr("href") + "?l=english";
+                if (taskUrl.startsWith("https://store.steampowered.com/springcleaning/task")) {
+                    final String taskAppId = getDailyTaskAppId(taskUrl);
+                    if (!taskAppId.isEmpty()) {
+                        taskAppIds.add(taskAppId);
+                    }
+                }
+            }
+            return taskAppIds;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    public List<String> getProjectAppIds() {
+        final String url = STEAM_STORE + "springcleaning?l=english";
+        try {
+            // Get list of task urls
+            final List<String> taskAppIds = new ArrayList<>();
+            final Document doc = Jsoup.connect(url)
+                    .referrer(STEAM_STORE)
+                    .followRedirects(true)
+                    .cookies(generateWebCookies())
+                    .get();
+
+            final Elements trophies = doc.select("div.spring_trophy_desc");
+            for (Element trophy : trophies) {
+                final Element a = trophy.select("a").first();
+                if (a == null) {
+                    continue;
+                }
+                final String taskUrl = a.attr("href") + "?l=english";
+                if (taskUrl.startsWith("https://store.steampowered.com/springcleaning/task")) {
+                    final String taskAppId = getDailyTaskAppId(taskUrl);
+                    if (!taskAppId.isEmpty()) {
+                        taskAppIds.add(taskAppId);
+                    }
+                }
+            }
+            return taskAppIds;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
+    }
+
+    private String getDailyTaskAppId(String taskUrl) {
+        final Pattern ptrn = Pattern.compile("^https://store.steampowered.com/app/(\\d+)/.+$");
+        try {
+            final Document doc = Jsoup.connect(taskUrl)
+                    .referrer(STEAM_STORE)
+                    .cookies(generateWebCookies())
+                    .get();
+            final Element springGame = doc.select("span.spring_game").first();
+            if (springGame == null) {
+                return "";
+            }
+            final Element springGameLink = springGame.select("a").first();
+            if (springGameLink == null) {
+                return "";
+            }
+            final Matcher m = ptrn.matcher(springGameLink.attr("href"));
+            if (!m.find()) {
+                return "";
+            }
+            return m.group(1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
     @ApiKeyState int updateApiKey() {
         if (Utils.isValidKey(PrefsManager.getApiKey())) {
             // Use saved API key

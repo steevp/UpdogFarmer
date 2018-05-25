@@ -1178,4 +1178,31 @@ public class SteamService extends Service {
         // Tell the activity
         LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING_EVENT));
     }
+
+    /**
+     * Register and idle a game for a few seconds to complete the Spring Cleaning daily tasks
+     */
+    public void registerAndIdle(String game) {
+        try {
+            final int appId = Integer.parseInt(game);
+
+            // Register the game
+            steamApps.requestFreeLicense(appId);
+            Thread.sleep(1000);
+
+            // Play it for a few seconds
+            final ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed.Builder> playGame;
+            playGame = new ClientMsgProtobuf<>(SteammessagesClientserver.CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
+            playGame.getBody().addGamesPlayedBuilder().setGameId(appId);
+            steamClient.send(playGame);
+            Thread.sleep(3000);
+
+            // Stop playing
+            playGame.getBody().clearGamesPlayed().addGamesPlayedBuilder().setGameId(0);
+            steamClient.send(playGame);
+            Thread.sleep(1000);
+        } catch (NumberFormatException|InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }
