@@ -24,6 +24,13 @@
         android:visible="false"
         android:orderInCategory="101" />
 
+    <item
+        android:id="@+id/spring_cleaning"
+        android:title="@string/spring_cleaning_title"
+        app:showAsAction="never"
+        android:visible="false"
+        android:orderInCategory="102" />
+
     <!--
     <item
         android:id="@+id/auto_vote"
@@ -37,6 +44,6 @@
         android:id="@+id/logcat"
         android:title="@string/logcat"
         app:showAsAction="never"
-        android:orderInCategory="102" />
+        android:orderInCategory="103" />
 
 </menu>
