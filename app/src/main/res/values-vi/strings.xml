@@ -136,4 +136,10 @@
     <string name="playing_non_steam_game">Non-Steam game: %s</string>
     <string name="vietnamese">Tiếng Việt</string>
     <string name="persian">Tiếng Ba Tư</string>
+    <string name="spring_cleaning_title">Sự kiện dọn dẹp Mùa Xuân (2018)</string>
+    <string name="spring_cleaning_desc">Hoàn thành các nhiệm vụ để lên cấp cho huy hiệu Dọn dẹp Mùa Xuân. Sự kiện kết thúc vào ngày 25 tháng 5.</string>
+    <string name="complete_daily_tasks">Hoàn thành nhiệm vụ hàng ngày</string>
+    <string name="complete_projects">Hoàn thành nhiệm vụ kế hoạch</string>
+    <string name="daily_tasks_completed">Nhiệm vụ hàng ngày đã hoàn thành. Hãy quay lại vào ngày mai.</string>
+    <string name="project_tasks_completed">Nhiệm vụ kế hoạch đã hoàn thành. Bạn chỉ cần làm một lần.</string>
 </resources>
