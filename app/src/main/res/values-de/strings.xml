@@ -22,7 +22,7 @@
     <string name="cat_idle">Karten sammeln</string>
     <string name="cat_general">Generell</string>
     <string name="pref_offline">Offline Modus</string>
-    <string name="sum_offline">Du wirst bei jedem als offline angezeigt, also sieht keiner das du inaktiv Spiele laufen lässt.</string>
+    <string name="sum_offline">Du wirst bei jedem als offline angezeigt, also sieht keiner das du inaktiv Spiele spielst.</string>
     <string name="pref_stay_awake">Gerät anlassen</string>
     <string name="sum_stay_awake">Aktiviere dies, wenn Idle Daddy bei ausgeschaltetem Bildschirm nicht mehr funktioniert. WARNUNG: Einige Geräte können die App nach kurzer Zeit automatisch beenden, wenn diese Option aktiviert ist.</string>
     <string name="pref_minimize_data">Minimiere den Datenverbrauch</string>
@@ -34,13 +34,13 @@
     <string name="pref_hours_until">Stunden bis die Karten im Inventar sind</string>
     <string name="sum_hours_until">Die Anzahl der Stunden die ein Spiel benötigt, um Karten im Inventar abzulegen. Während dem Sammeln der Karten wird Idle Daddy mehrere Spiele gleichzeitig, inaktiv im Hintergrund laufen lassen, bis diese Zeit erreicht wird. Für die meisten Benutzer sind hier drei Stunden die beste Wahl.</string>
     <string name="pref_include_free_games">Kostenlose Spiele anzeigen</string>
-    <string name="sum_include_free_games">Standardmäßig werden kostenlose Spiele wie Team Fortress 2 nicht angezeigt (da sie technisch alle besitzen). Wenn diese Option aktiviert ist, werden diese aufgelistet, wenn der Spieler sie irgendwann gespielt hat</string>
+    <string name="sum_include_free_games">Standardmäßig werden kostenlose Spiele wie Team Fortress 2 nicht angezeigt (da sie technisch alle besitzen). Wenn diese Option aktiviert ist, werden diese aufgelistet, wenn der Spieler sie irgendwann gespielt hat.</string>
     <string name="pref_language">Sprache</string>
     <string name="sum_language">Ändere die Sprache der App (Neustart erforderlich).</string>
     <string name="pref_gdpr_consent">Widerrufe die DSGVO Zustimmung</string>
     <string name="sum_gdpr_consent"> Gemäß der EU-Datenschutz-Grundverordnung (DSGVO) ist die Zustimmung eines Nutzers erforderlich, bevor Anzeigen geschaltet werden. Klicke hier, um deine Zustimmung zu widerrufen.</string>
     <string name="gdpr_consent_not_needed">Nicht erforderlich. Idle Daddy Premium zeigt keine Werbung an.</string>
-    <string name="blacklist_hint">Gebe die Spiele ID ein und klicke auf das +</string>
+    <string name="blacklist_hint">Gebe appid ein und klicke auf das +</string>
     <string name="add_to_blacklist">Füge ein Spiel zu der schwarzen Liste hinzu</string>
     <string name="added_to_blacklist">Spiel wurde zu der schwarzen Liste hinzugefügt</string>
     <string name="remove_from_blacklist">Entferne Spiele von der schwarzen Liste</string>
@@ -103,8 +103,8 @@
     <string name="auto_vote">Automatische Abstimmung (Steam Awards)</string>
     <string name="vote_successful">Abstimmung erfolgreich!</string>
     <string name="vote_failed">Abstimmung fehlgeschlagen!</string>
-    <string name="apikey_access_denied">Der Zugriff auf den Steam-API-Schlüssel wurde mithilfe eines integrierten Schlüssels verweigert.</string>
-    <string name="apikey_register_failed">Fehler beim Registrieren eines API-Schlüssels unter Verwendung eines integrierten Schlüssels.</string>
+    <string name="apikey_access_denied">Der Zugriff auf den Steam API Schlüssel wurde mithilfe eines integrierten Schlüssels verweigert.</string>
+    <string name="apikey_register_failed">Fehler beim Registrieren eines API Schlüssels unter Verwendung eines integrierten Schlüssels.</string>
     <string name="english">Englisch</string>
     <string name="german">Deutsch</string>
     <string name="russian">Russisch</string>
@@ -136,4 +136,10 @@
     <string name="non_steam_game">Steam-fremdes Spiel</string>
     <string name="playing_unknown_app">Unbekannte Anwendung: %d</string>
     <string name="playing_non_steam_game">In Steam-fremdem Spiel: %s</string>
+    <string name="spring_cleaning_title">Frühjahrsputzaktion (2018)</string>
+    <string name="spring_cleaning_desc">Erfülle Aufgaben, um dein Frühjahrsputzaktions Abzeichen zu bekommen. Dieses Ereignis endet am 28. Mai.</string>
+    <string name="complete_daily_tasks">Erledige tägliche Aufgaben</string>
+    <string name="complete_projects">Erledige Projekt Aufgaben</string>
+    <string name="daily_tasks_completed">Tägliche Aufgaben erledigt. Komm morgen wieder zurück.</string>
+    <string name="project_tasks_completed">Projekt Aufgaben erledigt. Du musst das nur einmal erledigen.</string>
 </resources>
