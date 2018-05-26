@@ -27,7 +27,9 @@ public class SpringCleaningViewModel extends AndroidViewModel {
 
     void init(SteamWebHandler webHandler, SteamService service) {
         this.webHandler = webHandler;
-        this.service = service;
+        if (this.service == null) {
+            this.service = service;
+        }
     }
 
     LiveData<String> getStatus() {
@@ -41,6 +43,7 @@ public class SpringCleaningViewModel extends AndroidViewModel {
     @SuppressLint("StaticFieldLeak")
     void completeDailyTasks() {
         finished = false;
+        statusText.setValue("");
         new AsyncTask<Void,String,Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
@@ -68,6 +71,7 @@ public class SpringCleaningViewModel extends AndroidViewModel {
     @SuppressLint("StaticFieldLeak")
     void completeProjectTasks() {
         finished = false;
+        statusText.setValue("");
         new AsyncTask<Void,String,Void>() {
             @Override
             protected Void doInBackground(Void... voids) {

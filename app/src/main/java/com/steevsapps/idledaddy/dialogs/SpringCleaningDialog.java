@@ -48,25 +48,11 @@ public class SpringCleaningDialog extends DialogFragment implements View.OnClick
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        viewModel = ViewModelProviders.of(this).get(SpringCleaningViewModel.class);
-        viewModel.init(SteamWebHandler.getInstance(), ((BaseActivity) getActivity()).getService());
-        viewModel.getStatus().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                statusTv.setText(s);
-                dailyTasksBtn.setEnabled(viewModel.isFinished());
-                projectsBtn.setEnabled(viewModel.isFinished());
-            }
-        });
+        setupViewModel();
     }
 
     @Override
     public void onClick(View v) {
-        dailyTasksBtn.setEnabled(false);
-        projectsBtn.setEnabled(false);
-        statusTv.setText("");
-        statusTv.setVisibility(View.VISIBLE);
-
         switch (v.getId()) {
             case R.id.btn_daily_tasks:
                 viewModel.completeDailyTasks();
@@ -75,5 +61,19 @@ public class SpringCleaningDialog extends DialogFragment implements View.OnClick
                 viewModel.completeProjectTasks();
                 break;
         }
+    }
+
+    private void setupViewModel() {
+        viewModel = ViewModelProviders.of(this).get(SpringCleaningViewModel.class);
+        viewModel.init(SteamWebHandler.getInstance(), ((BaseActivity) getActivity()).getService());
+        viewModel.getStatus().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                statusTv.setVisibility(View.VISIBLE);
+                statusTv.setText(s);
+                dailyTasksBtn.setEnabled(viewModel.isFinished());
+                projectsBtn.setEnabled(viewModel.isFinished());
+            }
+        });
     }
 }
