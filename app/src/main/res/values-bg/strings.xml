@@ -131,4 +131,7 @@
     <string name="non_steam_game">Игра извън Steam</string>
     <string name="playing_unknown_app">Непозната игра: %d</string>
     <string name="playing_non_steam_game">Игра извън Steam: %s</string>
+    <string name="spring_cleaning_desc">Правете задачи за да вдигнете нивото на вашата значка за събитието \'\'Sprint Cleaning (2018)\'\'. Събитието приключва на 28 май.</string>
+    <string name="spring_cleaning_title">"Spring Cleaning Event (2018) "</string>
+    <string name="complete_daily_tasks">"Завършете Ежедневните Задачи "</string>
 </resources>
