@@ -136,8 +136,8 @@
     <string name="non_steam_game">Не-Steam гра</string>
     <string name="playing_unknown_app">Невідома гра: %d</string>
     <string name="playing_non_steam_game">Не-Steam гра: %s</string>
-    <string name="spring_cleaning_title">Подія "Весняне прибирання" (2018)</string>
-    <string name="spring_cleaning_desc">Підвищуйте рівень значка події "Весняне прибирання", виконуючи завдання. Кінець події 28 травня.</string>
+    <string name="spring_cleaning_title">Подія \"Весняне прибирання\" (2018)</string>
+    <string name="spring_cleaning_desc">Підвищуйте рівень значка події \"Весняне прибирання\", виконуючи завдання. Кінець події 28 травня.</string>
     <string name="complete_daily_tasks">Виконати щоденні завдання</string>
     <string name="complete_projects">Виконати завдання проектів</string>
     <string name="daily_tasks_completed">Щоденні завдання виконані. Повертайтесь завтра.</string>
