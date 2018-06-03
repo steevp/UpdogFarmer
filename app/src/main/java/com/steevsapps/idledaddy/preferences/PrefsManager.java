@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.steevsapps.idledaddy.steam.model.Game;
+import com.steevsapps.idledaddy.utils.CryptHelper;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.lang.reflect.Type;
@@ -21,6 +22,7 @@ public class PrefsManager {
     private final static int CURRENT_VERSION = 2;
 
     private final static String USERNAME = "username";
+    private final static String PASSWORD = "password";
     private final static String LOGIN_KEY = "login_key";
     private final static String SENTRY_HASH = "sentry_hash";
     private final static String OFFLINE = "offline";
@@ -85,6 +87,10 @@ public class PrefsManager {
         writePref(USERNAME, username);
     }
 
+    public static void writePassword(Context context, String password) {
+        writePref(PASSWORD, CryptHelper.encryptString(context, password));
+    }
+
     public static void writeLoginKey(String loginKey) {
         writePref(LOGIN_KEY, loginKey);
     }
@@ -124,6 +130,10 @@ public class PrefsManager {
 
     public static String getUsername() {
         return prefs.getString(USERNAME, "");
+    }
+
+    public static String getPassword(Context context) {
+        return CryptHelper.decryptString(context, prefs.getString(PASSWORD, ""));
     }
 
     public static String getLoginKey() {
