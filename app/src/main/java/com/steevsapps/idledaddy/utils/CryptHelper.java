@@ -134,7 +134,7 @@ public class CryptHelper {
 
                 entry = ks.getEntry(ALIAS, null);
                 if (entry == null) {
-                    Log.i(TAG, "Generating new key failed");
+                    Log.e(TAG, "Generating new key failed");
                     return null;
                 }
             } catch (NoSuchProviderException|InvalidAlgorithmParameterException e) {
