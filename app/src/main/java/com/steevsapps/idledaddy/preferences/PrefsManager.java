@@ -25,6 +25,7 @@ public class PrefsManager {
     private final static String PASSWORD = "password";
     private final static String LOGIN_KEY = "login_key";
     private final static String SENTRY_HASH = "sentry_hash";
+    private final static String SHARED_SECRET = "shared_secret";
     private final static String OFFLINE = "offline";
     private final static String STAY_AWAKE = "stay_awake";
     private final static String MINIMIZE_DATA = "minimize_data";
@@ -99,6 +100,10 @@ public class PrefsManager {
         writePref(SENTRY_HASH, sentryHash);
     }
 
+    public static void writeSharedSecret(String sharedSecret) {
+        writePref(SHARED_SECRET, sharedSecret);
+    }
+
     public static void writeBlacklist(List<String> blacklist) {
         writePref(BLACKLIST, Utils.arrayToString(blacklist));
     }
@@ -142,6 +147,10 @@ public class PrefsManager {
 
     public static String getSentryHash() {
         return prefs.getString(SENTRY_HASH, "");
+    }
+
+    public static String getSharedSecret() {
+        return prefs.getString(SHARED_SECRET, "");
     }
 
     public static boolean getOffline() {

@@ -142,4 +142,11 @@
     <string name="complete_projects">Complete Project Tasks</string>
     <string name="daily_tasks_completed">Daily tasks completed. Come back again tomorrow.</string>
     <string name="project_tasks_completed">Project tasks completed. You only need to do this once.</string>
+    <string name="shared_secret_desc">Import the \'shared_secret\' code from your mobile authenticator. This allows Idle Daddy to automatically log in again when the login key expires.</string>
+    <string name="import_shared_secret">Import shared_secret</string>
+    <string name="enter_manually">Enter manually</string>
+    <string name="enter_shared_secret">Enter your shared_secret:</string>
+    <string name="device_not_rooted">Your device must be rooted to use this option.</string>
+    <string name="your_shared_secret">Your shared_secret: %s</string>
+    <string name="import_shared_secret_failed">Failed to import shared_secret! Make sure you\'re using the Steam mobile authenticator.</string>
 </resources>
