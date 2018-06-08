@@ -69,6 +69,7 @@ public class PrefsManager {
     public static void clearUser() {
         prefs.edit()
                 .putString(USERNAME, "")
+                .putString(PASSWORD, "")
                 .putString(LOGIN_KEY, "")
                 .putString(SENTRY_HASH, "")
                 .putString(BLACKLIST, "")
