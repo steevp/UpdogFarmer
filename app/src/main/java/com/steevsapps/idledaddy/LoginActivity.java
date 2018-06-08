@@ -1,10 +1,13 @@
 package com.steevsapps.idledaddy;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
@@ -20,6 +23,8 @@ import com.steevsapps.idledaddy.fragments.TimeoutFragment;
 import com.steevsapps.idledaddy.listeners.TimeoutListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.SteamService;
+import com.steevsapps.idledaddy.steam.SteamWebHandler;
+import com.steevsapps.idledaddy.steam.SteamGuard;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import in.dragonbra.javasteam.enums.EOSType;
@@ -36,6 +41,9 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
 
     private boolean loginInProgress;
     private boolean twoFactorRequired;
+    private Integer timeDifference = null;
+
+    private LoginViewModel viewModel;
 
     // Views
     private CoordinatorLayout coordinatorLayout;
@@ -66,6 +74,10 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
                         passwordInput.setError(getString(R.string.invalid_password));
                     } else if (result == EResult.AccountLoginDeniedNeedTwoFactor || result == EResult.AccountLogonDenied || result == EResult.AccountLogonDeniedNoMail || result == EResult.AccountLogonDeniedVerifiedEmailRequired) {
                         twoFactorRequired = result == EResult.AccountLoginDeniedNeedTwoFactor;
+                        if (twoFactorRequired && timeDifference != null) {
+                            // Fill in the SteamGuard code
+                            twoFactorEditText.setText(SteamGuard.generateSteamGuardCodeForTime(Utils.getCurrentUnixTime() + timeDifference));
+                        }
                         twoFactorInput.setVisibility(View.VISIBLE);
                         twoFactorInput.setError(getString(R.string.steamguard_required));
                         twoFactorEditText.requestFocus();
@@ -141,6 +153,8 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
             usernameEditText.setText(PrefsManager.getUsername());
             passwordEditText.setText(PrefsManager.getPassword(this));
         }
+
+        setupViewModel();
     }
 
     @Override
@@ -187,6 +201,17 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
             getService().login(details);
             startTimeout();
         }
+    }
+
+    private void setupViewModel() {
+        viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+        viewModel.init(SteamWebHandler.getInstance());
+        viewModel.getTimeDifference().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer value) {
+                timeDifference = value;
+            }
+        });
     }
 
     @Override
