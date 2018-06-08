@@ -90,6 +90,7 @@ public class SharedSecretViewModel extends AndroidViewModel {
                 } catch (JSONException e) {
                     Log.e(TAG, "Failed to import shared_secret", e);
                     statusText.setValue(getApplication().getString(R.string.import_shared_secret_failed));
+                    return;
                 }
 
                 Log.e(TAG, "Failed to import shared_secret");
