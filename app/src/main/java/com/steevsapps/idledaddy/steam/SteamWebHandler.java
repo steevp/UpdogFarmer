@@ -10,6 +10,7 @@ import com.steevsapps.idledaddy.steam.converter.GamesOwnedResponseDeserializer;
 import com.steevsapps.idledaddy.steam.converter.VdfConverterFactory;
 import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.steam.model.GamesOwnedResponse;
+import com.steevsapps.idledaddy.steam.model.TimeQuery;
 import com.steevsapps.idledaddy.utils.Utils;
 import com.steevsapps.idledaddy.utils.WebHelpers;
 
@@ -316,6 +317,10 @@ public class SteamWebHandler {
             args.put("include_played_free_games", "1");
         }
         return api.getGamesOwned(args);
+    }
+
+    public Call<TimeQuery> queryServerTime() {
+        return api.queryServerTime("0");
     }
 
     /**
