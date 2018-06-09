@@ -150,5 +150,5 @@
     <string name="enter_shared_secret">Wpisz kod shared_secret:</string>
     <string name="device_not_rooted">Twoje urządzenie potrzebuje dostępu do root'\a, aby używać tej funkcji.</string>
     <string name="your_shared_secret">Twój kod shared_secret: %s</string>
-    <string name="import_shared_secret_failed">Błąd podczas importowania shared_secret! Upewnij się, że używasz mobilnego tokenu uwierzytelniającego Steam.</string>
+    <string name="import_shared_secret_failed">Błąd podczas importowania kodu shared_secret! Upewnij się, że używasz mobilnego tokenu uwierzytelniającego Steam.</string>
 </resources>
