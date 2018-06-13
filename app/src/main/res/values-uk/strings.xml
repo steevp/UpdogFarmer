@@ -142,7 +142,7 @@
     <string name="complete_projects">Виконати завдання проектів</string>
     <string name="daily_tasks_completed">Щоденні завдання виконані. Повертайтесь завтра.</string>
     <string name="project_tasks_completed">Завдання проектів виконані. Ці завдання виконуються тільки один раз.</string>
-    <string name="shared_secret_desc">Скопіюйте код \'shared_secret\' з мобільного аутентификатора. Це дозволить Idle Daddy автоматично входити в систему після прострочення терміну дії ключа входу.</string>
+    <string name="shared_secret_desc">Скопіюйте код \'shared_secret\' з мобільного аутентифікатора. Це дозволить Idle Daddy автоматично входити в систему після прострочення терміну дії ключа входу.</string>
     <string name="import_shared_secret">Імпорт shared_secret</string>
     <string name="enter_manually">Ввести вручну</string>
     <string name="enter_shared_secret">Введіть свій shared_secret:</string>
