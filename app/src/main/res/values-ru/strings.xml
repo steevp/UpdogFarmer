@@ -136,10 +136,17 @@
     <string name="non_steam_game">Не-Steam игра</string>
     <string name="playing_unknown_app">Неизвестная игра: %d</string>
     <string name="playing_non_steam_game">Не-Steam игра: %s</string>
-    <string name="spring_cleaning_title">Акция "Весенняя уборка" (2018)</string>
-    <string name="spring_cleaning_desc">Выполняйте задания для поднятия уровня значка акции "Весенней уборки". Окончание акции 28 мая.</string>
+    <string name="spring_cleaning_title">Акция \'Весенняя уборка\' (2018)</string>
+    <string name="spring_cleaning_desc">Выполняйте задания для повышения уровня значка акции \'Весенняя уборка\'. Окончание акции 28 мая.</string>
     <string name="complete_daily_tasks">Выполнить ежедневные задания</string>
     <string name="complete_projects">Выполнить задания проектов</string>
     <string name="daily_tasks_completed">Ежедневные задания выполнены. Возвращайтесь завтра.</string>
     <string name="project_tasks_completed">Задания проектов выполнены. Эти задания выполняются один раз.</string>
+    <string name="shared_secret_desc">Скопируйте код \'shared_secret\' из мобильного аутентификатора. Это позволит Idle Daddy автоматически входить в систему по истечении срока действия ключа входа.</string>
+    <string name="import_shared_secret">Импорт shared_secret</string>
+    <string name="enter_manually">Ввести вручную</string>
+    <string name="enter_shared_secret">Введите свой shared_secret:</string>
+    <string name="device_not_rooted">Устройство должно иметь рут-права, чтобы использовать эту опцию.</string>
+    <string name="your_shared_secret">Ваш shared_secret: %s</string>
+    <string name="import_shared_secret_failed">Не удалось импортировать shared_secret! Убедитесь, что вы используете мобильный аутентификатор Steam.</string>
 </resources>
