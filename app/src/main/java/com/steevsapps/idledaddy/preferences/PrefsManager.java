@@ -34,6 +34,7 @@ public class PrefsManager {
     private final static String LAST_SESSION = "last_session";
     private final static String HOURS_UNTIL_DROPS = "hours_until_drops";
     private final static String INCLUDE_FREE_GAMES = "include_free_games";
+    private final static String USE_CUSTOM_LOGINID = "use_custom_loginid";
     private final static String PERSONA_NAME = "persona_name";
     private final static String AVATAR_HASH = "avatar_hash";
     private final static String API_KEY = "api_key";
@@ -197,6 +198,10 @@ public class PrefsManager {
 
     public static boolean includeFreeGames() {
         return prefs.getBoolean(INCLUDE_FREE_GAMES, false);
+    }
+
+    public static boolean useCustomLoginId() {
+        return prefs.getBoolean(USE_CUSTOM_LOGINID, false);
     }
 
     public static String getApiKey() {

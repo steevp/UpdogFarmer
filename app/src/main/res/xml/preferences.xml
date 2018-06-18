@@ -21,6 +21,12 @@
             android:summary="@string/sum_include_free_games"
             android:defaultValue="true" />
 
+        <SwitchPreference
+            android:key="use_custom_loginid"
+            android:title="@string/pref_use_custom_loginid"
+            android:summary="@string/sum_use_custom_loginid"
+            android:defaultValue="false" />
+
         <EditTextPreference
             android:key="parental_pin"
             android:title="@string/pref_parental_pin"

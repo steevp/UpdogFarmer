@@ -31,6 +31,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.steevsapps.idledaddy.BuildConfig;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.Secrets;
 import com.steevsapps.idledaddy.handlers.PurchaseResponse;
 import com.steevsapps.idledaddy.handlers.callbacks.PurchaseResponseCallback;
 import com.steevsapps.idledaddy.listeners.AndroidLogListener;
@@ -90,6 +91,7 @@ import in.dragonbra.javasteam.steam.steamclient.callbacks.DisconnectedCallback;
 import in.dragonbra.javasteam.steam.steamclient.configuration.SteamConfiguration;
 import in.dragonbra.javasteam.types.GameID;
 import in.dragonbra.javasteam.types.KeyValue;
+import in.dragonbra.javasteam.util.NetHelpers;
 import in.dragonbra.javasteam.util.log.LogManager;
 
 public class SteamService extends Service {
@@ -838,6 +840,10 @@ public class SteamService extends Service {
      * Perform log in. Needs to happen as soon as we connect or else we'll get an error
      */
     private void doLogin() {
+        if (PrefsManager.useCustomLoginId()) {
+            final int localIp = NetHelpers.getIPAddress(steamClient.getLocalIP());
+            logOnDetails.setLoginID(localIp ^ Secrets.CUSTOM_OBFUSCATION_MASK);
+        }
         steamUser.logOn(logOnDetails);
         logOnDetails = null; // No longer need this
     }
@@ -856,6 +862,10 @@ public class SteamService extends Service {
         details.setUsername(username);
         details.setLoginKey(loginKey);
         details.setClientOSType(EOSType.LinuxUnknown);
+        if (PrefsManager.useCustomLoginId()) {
+            final int localIp = NetHelpers.getIPAddress(steamClient.getLocalIP());
+            details.setLoginID(localIp ^ Secrets.CUSTOM_OBFUSCATION_MASK);
+        }
         try {
             final File sentryFile = new File(sentryFolder, username + ".sentry");
             details.setSentryFileHash(Utils.calculateSHA1(sentryFile));
