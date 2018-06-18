@@ -49,6 +49,7 @@ import com.steevsapps.idledaddy.dialogs.AutoDiscoverDialog;
 import com.steevsapps.idledaddy.dialogs.CustomAppDialog;
 import com.steevsapps.idledaddy.dialogs.GameOptionsDialog;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
+import com.steevsapps.idledaddy.dialogs.SharedSecretDialog;
 import com.steevsapps.idledaddy.dialogs.SpringCleaningDialog;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
 import com.steevsapps.idledaddy.fragments.HomeFragment;
@@ -452,6 +453,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         menu.findItem(R.id.auto_discovery).setVisible(loggedIn);
         menu.findItem(R.id.custom_app).setVisible(loggedIn);
         menu.findItem(R.id.spring_cleaning).setVisible(loggedIn);
+        menu.findItem(R.id.import_shared_secret).setVisible(loggedIn);
         //menu.findItem(R.id.auto_vote).setVisible(loggedIn);
         menu.findItem(R.id.search).setVisible(drawerItemId == R.id.games);
         return super.onPrepareOptionsMenu(menu);
@@ -492,6 +494,9 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                 return true;
             case R.id.spring_cleaning:
                 SpringCleaningDialog.newInstance().show(getSupportFragmentManager(), SpringCleaningDialog.TAG);
+                return true;
+            case R.id.import_shared_secret:
+                SharedSecretDialog.newInstance(steamService.getSteamId()).show(getSupportFragmentManager(), SharedSecretDialog.TAG);
                 return true;
             //case R.id.auto_vote:
             //    steamService.autoVote();
