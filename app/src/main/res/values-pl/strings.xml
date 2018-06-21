@@ -45,6 +45,8 @@
     <string name="added_to_blacklist">Gra dodana do listy wykluczonch</string>
     <string name="remove_from_blacklist">Usuń grę z listy wykluczonych</string>
     <string name="removed_from_blacklist">Gra usunięta z listy wykluczonych</string>
+    <string name="pref_use_custom_loginid">Użyj niestandardowego ID logowania</string>
+    <string name="sum_use_custom_loginid">Włączenie opcji pozwala uruchamiać inne aplikacje korzystające z biblioteki SteamKit równocześnie z Idle Daddy (np. Ice Client). W razie wątpliwości zostaw opcję wyłączoną (wymaga ponownego uruchomienia).</string>
     <string name="open_drawer">Otwórz menu</string>
     <string name="close_drawer">Zamknij menu</string>
     <string name="home">Strona główna</string>
