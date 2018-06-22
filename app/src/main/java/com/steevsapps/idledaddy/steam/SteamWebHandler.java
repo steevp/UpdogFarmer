@@ -537,6 +537,9 @@ public class SteamWebHandler {
     public String getPlayerScore() {
         try {
             final String accessToken = getSaliensToken();
+            if (accessToken == null) {
+                return null;
+            }
             final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/GetPlayerInfo/v0001/")
                     .followRedirects(true)
                     .ignoreContentType(true)
