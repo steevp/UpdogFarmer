@@ -22,7 +22,7 @@ public class ConsentManager {
     private ConsentForm consentForm;
 
     public ConsentManager(Context context) {
-        this.context = context;
+        this.context = context.getApplicationContext();
         try {
             listener = (ConsentListener) context;
         } catch (ClassCastException e) {
