@@ -142,4 +142,11 @@
     <string name="complete_projects">Erledige Projekt Aufgaben</string>
     <string name="daily_tasks_completed">Tägliche Aufgaben erledigt. Komm morgen wieder zurück.</string>
     <string name="project_tasks_completed">Projekt Aufgaben erledigt. Du musst das nur einmal erledigen.</string>
+    <string name="shared_secret_desc">Importiere den Wiederherstellungscode von deinem Steam Mobile Authentifikator. Dadurch kann Idle Daddy sich automatisch neu anmelden, wenn der Login Schlüssel abläuft.</string>
+    <string name="import_shared_secret">Importiere Wiederherstellungscode</string>
+    <string name="enter_manually">Manuell eintragen</string>
+    <string name="enter_shared_secret">Gebe deinen Wiederherstellungscode ein:</string>
+    <string name="device_not_rooted">Dein Gerät muss gerootet sein, um diese Option verwenden zu können.</string>
+    <string name="your_shared_secret">Dein Wiederherstellungscode: %s</string>
+    <string name="import_shared_secret_failed">Fehler beim Importieren des Wiederherstellungscodes! Stelle sicher, dass du den Steam Mobile Authentikator verwendest.</string>
 </resources>
