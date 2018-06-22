@@ -47,6 +47,11 @@ public class SummerEventViewModel extends AndroidViewModel {
                     if (!webHandler.playSaliens()) {
                         return false;
                     }
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
                 return true;
             }
