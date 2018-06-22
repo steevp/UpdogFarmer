@@ -1,5 +1,7 @@
 package com.steevsapps.idledaddy.utils;
 
+import com.steevsapps.idledaddy.ThrowingTask;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -120,5 +122,23 @@ public class Utils {
         final Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
         mac.init(secretKey);
         return mac.doFinal(data);
+    }
+
+    /**
+     * Run a block of code a maximum of maxTries
+     */
+    public static void runWithRetries(int maxTries, ThrowingTask task) throws Exception {
+        int count = 0;
+        while (count < maxTries) {
+            try {
+                task.run();
+                return;
+            } catch (Exception e) {
+                if (++count >= maxTries) {
+                    throw e;
+                }
+                Thread.sleep(1000);
+            }
+        }
     }
 }
