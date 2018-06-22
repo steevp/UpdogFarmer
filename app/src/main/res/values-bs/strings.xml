@@ -12,7 +12,7 @@
     <string name="desc_start">Idlaj igre dok sve kartice ne dropaju.</string>
     <string name="stop_idling">Zaustavi uslugu</string>
     <string name="desc_stop">Zaustavite uslugu i napustite aplikaciju.</string>
-    <string name="idling_finished">Nema više igara za idljanje.</string>
+    <string name="idling_finished">Nema više igara za idlanje.</string>
     <string name="search">Traži</string>
     <string name="settings">Postavke</string>
     <string name="logout">Odjavite se</string>
