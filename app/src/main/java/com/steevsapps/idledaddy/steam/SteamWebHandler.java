@@ -1,6 +1,7 @@
 package com.steevsapps.idledaddy.steam;
 
 import android.support.annotation.IntDef;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -436,7 +437,10 @@ public class SteamWebHandler {
         return false;
     }
 
-    public boolean autoSaliens() {
+    /**
+     * Play Saliens just to get the card drop
+     */
+    public boolean playSaliens() {
         try {
             // Get the access token for saliens
             final String accessToken = getSaliensToken();
@@ -449,21 +453,116 @@ public class SteamWebHandler {
             if (planetId == null) {
                 return false;
             }
+            Log.i(TAG, "Joining planet: " + planetId);
             joinPlanet(planetId, accessToken);
 
             // Find an uncaptured zone and join it
-            final String zoneId = getUncapturedZone(planetId);
+            final JSONObject zone = getUncapturedZone(planetId);
+            if (zone == null) {
+                return false;
+            }
+
+            final String zoneId = zone.getString("zone_position");
             if (zoneId == null) {
                 return false;
             }
+
+            Log.i(TAG, "Joining zone: " + zoneId);
             joinZone(zoneId, accessToken);
 
             // That should be all we need to get the card
             return true;
-        } catch (IOException e) {
+        } catch (IOException|JSONException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+
+    /**
+     * Play a full round of Saliens
+     */
+    public boolean playSaliensRound() {
+        try {
+            // Get the access token for saliens
+            final String accessToken = getSaliensToken();
+            if (accessToken == null) {
+                return false;
+            }
+
+            // Find an uncaptured planet and join it
+            final String planetId = getUncapturedPlanet();
+            if (planetId == null) {
+                return false;
+            }
+            Log.i(TAG, "Joining planet: " + planetId);
+            joinPlanet(planetId, accessToken);
+
+            // Find an uncaptured zone and join it
+            final JSONObject zone = getUncapturedZone(planetId);
+            if (zone == null) {
+                return false;
+            }
+
+            final String zoneId = zone.getString("zone_position");
+            if (zoneId == null) {
+                return false;
+            }
+
+            final int difficulty = zone.getInt("difficulty") - 1;
+            if (difficulty < 0) {
+                return false;
+            }
+
+            final String maxScore = new String[]{"590", "1180", "2360"}[difficulty];
+
+            Log.i(TAG, "Joining zone: " + zoneId);
+            joinZone(zoneId, accessToken);
+
+            Log.i(TAG, "sleeping for 2 minutes");
+            try {
+                Thread.sleep(125000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            reportScore(maxScore, accessToken);
+            return true;
+        } catch (IOException|JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getPlayerScore() {
+        try {
+            final String accessToken = getSaliensToken();
+            final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/GetPlayerInfo/v0001/")
+                    .followRedirects(true)
+                    .ignoreContentType(true)
+                    .cookies(generateWebCookies())
+                    .referrer("https://steamcommunity.com/saliengame/play/")
+                    .method(Connection.Method.POST)
+                    .data("access_token", accessToken)
+                    .execute()
+                    .body();
+            return new JSONObject(json).getJSONObject("response").getString("score");
+        } catch (IOException|JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void reportScore(String score, String accessToken) throws IOException, JSONException {
+        Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/ReportScore/v0001/")
+                .followRedirects(true)
+                .ignoreContentType(true)
+                .cookies(generateWebCookies())
+                .referrer("https://steamcommunity.com/saliengame/play/")
+                .data("access_token", accessToken)
+                .data("score", score)
+                .data("language", "english")
+                .post();
     }
 
     private String getUncapturedPlanet() {
@@ -515,7 +614,7 @@ public class SteamWebHandler {
         }
     }
 
-    private String getUncapturedZone(String planetId) {
+    private JSONObject getUncapturedZone(String planetId) {
         try {
             final String url = "https://community.steam-api.com/ITerritoryControlMinigameService/GetPlanet/v0001/?id=%s&language=english";
             final String json = Jsoup.connect(String.format(Locale.US, url, planetId))
@@ -545,7 +644,7 @@ public class SteamWebHandler {
             if (uncapturedZone == null) {
                 return null;
             }
-            return uncapturedZone.getString("zone_position");
+            return uncapturedZone;
         } catch (IOException|JSONException e) {
             e.printStackTrace();
             return null;

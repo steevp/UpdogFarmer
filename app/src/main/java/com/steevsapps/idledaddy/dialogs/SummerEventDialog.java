@@ -23,6 +23,7 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
 
     private TextView statusTv;
     private Button playSaliensBtn;
+    private Button playSaliensFullBtn;
 
     public static SummerEventDialog newInstance() {
         return new SummerEventDialog();
@@ -35,6 +36,8 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
         statusTv = view.findViewById(R.id.status);
         playSaliensBtn = view.findViewById(R.id.btn_play_saliens);
         playSaliensBtn.setOnClickListener(this);
+        playSaliensFullBtn = view.findViewById(R.id.btn_play_saliens_full);
+        playSaliensFullBtn.setOnClickListener(this);
 
         return new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.summer_event)
@@ -57,6 +60,7 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
                 statusTv.setVisibility(View.VISIBLE);
                 statusTv.setText(s);
                 playSaliensBtn.setEnabled(viewModel.isFinished());
+                playSaliensFullBtn.setEnabled(viewModel.isFinished());
             }
         });
     }
@@ -66,6 +70,9 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
         switch (v.getId()) {
             case R.id.btn_play_saliens:
                 viewModel.playSaliens();
+                break;
+            case R.id.btn_play_saliens_full:
+                viewModel.playSaliensFull();
                 break;
         }
     }
