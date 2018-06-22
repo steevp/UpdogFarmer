@@ -25,8 +25,8 @@
         android:orderInCategory="101" />
 
     <item
-        android:id="@+id/spring_cleaning"
-        android:title="@string/spring_cleaning_title"
+        android:id="@+id/summer_event"
+        android:title="@string/summer_event"
         app:showAsAction="never"
         android:visible="false"
         android:orderInCategory="102" />
