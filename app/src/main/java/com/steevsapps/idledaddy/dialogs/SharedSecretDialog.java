@@ -64,6 +64,7 @@ public class SharedSecretDialog extends DialogFragment implements View.OnClickLi
         viewModel.getStatus().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
+                statusTv.setVisibility(View.VISIBLE);
                 statusTv.setText(s);
             }
         });
@@ -92,10 +93,8 @@ public class SharedSecretDialog extends DialogFragment implements View.OnClickLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final String text = editText.getText().toString().trim();
-                        if (!text.isEmpty()) {
-                            PrefsManager.writeSharedSecret(text);
-                            viewModel.setValue(getString(R.string.your_shared_secret, text));
-                        }
+                        PrefsManager.writeSharedSecret(text);
+                        viewModel.setValue(getString(R.string.your_shared_secret, text));
                     }
                 })
                 .setNegativeButton(android.R.string.cancel, null)
