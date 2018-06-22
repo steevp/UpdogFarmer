@@ -37,6 +37,9 @@
     <string name="sum_include_free_games">Po defaultu, besplatne igre kao Team Fortress 2 nisu prikazane (zato što tehnički, svako ih posjeduje). Ako je ova opcija omogućena, bit će prikazane sve igre koje ste ikada igrali.</string>
     <string name="pref_language">Jezik</string>
     <string name="sum_language">Promijenite jezik aplikacije (zahtijeva ponovno pokretanje).</string>
+    <string name="pref_gdpr_consent">Opoziv GDPR-a</string>
+    <string name="sum_gdpr_consent">Prema EU-ovoj Uredbi o zaštiti podataka (GDPR), potrebna je saglasnost korisnika prije prikazivanja oglasa. Kliknite ovde da biste opozvali vašu saglasnost.</string>
+    <string name="gdpr_consent_not_needed">Nije potrebno. Idle Daddy Premium ne prikazuje oglase.</string>
     <string name="blacklist_hint">Unesite appid i kliknite +</string>
     <string name="add_to_blacklist">Dodajte igru na Crnu Listu</string>
     <string name="added_to_blacklist">Igra dodana na Crnu Listu</string>
@@ -44,12 +47,12 @@
     <string name="removed_from_blacklist">Igra uklonjena sa Crne Liste</string>
     <string name="open_drawer">Otvori ladicu</string>
     <string name="close_drawer">Zatvori ladicu</string>
-    <string name="home">Početna</string>
+    <string name="home">Pocetna</string>
     <string name="games">Igre</string>
-    <string name="no_games_found">Nije moguće dohvatiti popis igara.</string>
+    <string name="no_games_found">Nije moguce dohvatiti popis igara.</string>
     <string name="now_playing">Sada igram</string>
     <string name="error_not_logged_in">Morate biti prijavljeni na Steam</string>
-    <string name="invalid_password">Netačna lozinka</string>
+    <string name="invalid_password">Netacna lozinka</string>
     <string name="steamguard_required">Potreban je Steam Guard kod</string>
     <string name="invalid_code">Netačan kod</string>
     <string name="timeout_error">Veza je istekla. Molimo pokušajte ponovo</string>
@@ -133,4 +136,10 @@
     <string name="non_steam_game">Ime igre</string>
     <string name="playing_unknown_app">Nepoznata aplikacija: %d</string>
     <string name="playing_non_steam_game">Igra koja nije na Steamu: %s</string>
+    <string name="spring_cleaning_title">Proljetno cišcenje (2018)</string>
+    <string name="spring_cleaning_desc">Završi zadatke da biste unaprijedili vašu znacku proljetnog cišcenja. Ovaj dogadaj se završava 28. maja.</string>
+    <string name="complete_daily_tasks">Završi dnevne zadatke</string>
+    <string name="complete_projects">Završi zadatke projekta</string>
+    <string name="daily_tasks_completed">Dnevni zadaci završeni. Vratite se ponovo sutra.</string>
+    <string name="project_tasks_completed">Završeni zadaci projekta. Ovo trebate uraditi samo jednom.</string>
 </resources>
