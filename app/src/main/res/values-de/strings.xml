@@ -36,9 +36,11 @@
     <string name="pref_include_free_games">Kostenlose Spiele anzeigen</string>
     <string name="sum_include_free_games">Standardmäßig werden kostenlose Spiele wie Team Fortress 2 nicht angezeigt (da sie technisch alle besitzen). Wenn diese Option aktiviert ist, werden diese aufgelistet, wenn der Spieler sie irgendwann gespielt hat.</string>
     <string name="pref_language">Sprache</string>
-    <string name="sum_language">Ändere die Sprache der App (Neustart erforderlich).</string>
+    <string name="sum_language">Ändere die Sprache der App (Erfordert Neustart).</string>
     <string name="pref_gdpr_consent">Widerrufe die DSGVO Zustimmung</string>
     <string name="sum_gdpr_consent"> Gemäß der EU-Datenschutz-Grundverordnung (DSGVO) ist die Zustimmung eines Nutzers erforderlich, bevor Anzeigen geschaltet werden. Klicke hier, um deine Zustimmung zu widerrufen.</string>
+    <string name="pref_use_custom_loginid">Verwende die benutzerdefinierte Anmelde-ID</string>
+    <string name="sum_use_custom_loginid">Wenn du diese Option aktivierst, können andere SteamKit-Apps (z.B. Ice Client) gleichzeitig mit Idle Daddy ausgeführt werden. Wenn du dir nicht sicher bist, lasse dies aus (Erfordert Neustart).</string>
     <string name="gdpr_consent_not_needed">Nicht erforderlich. Idle Daddy Premium zeigt keine Werbung an.</string>
     <string name="blacklist_hint">Gebe appid ein und klicke auf das +</string>
     <string name="add_to_blacklist">Füge ein Spiel zu der schwarzen Liste hinzu</string>
@@ -96,13 +98,21 @@
     <string name="sort_hours_played">Spielzeit</string>
     <string name="auto_discovery_title">Automatische Entdeckungsliste</string>
     <string name="auto_discovery">Dadurch wird die Entdeckungsliste automatisch abgearbeitet. Während der Sommer- und Winterverkäufe kannst du bis zu 3 Sammelkarten pro Tag bekommen, indem du deine Entdeckungsliste abarbeitest.</string>
-    <string name="generating_discovery">Generiere neue Entdeckungsliste</string>
+    <string name="generating_discovery">Generiere neue Entdeckungsliste…</string>
     <string name="discovering">Entdecke %s (%d/%d)</string>
     <string name="discovery_finished">Entdeckungsliste fertig</string>
     <string name="discovery_error">Die Entdeckungsliste konnte zu diesem Zeitpunkt nicht abgeschlossen werden. Versuche es später noch einmal</string>
     <string name="auto_vote">Automatische Abstimmung (Steam Awards)</string>
     <string name="vote_successful">Abstimmung erfolgreich!</string>
     <string name="vote_failed">Abstimmung fehlgeschlagen!</string>
+    <string name="summer_event">Sommer Aktion</string>
+    <string name="play_saliens">Spiele Saliens (Um Sammelkarten zu bekommen)</string>
+    <string name="play_saliens_indefinitely">Spiele Saliens auf unbestimmte Zeit</string>
+    <string name="play_saliens_desc">Man kann bis zu 3 Sammelkarten pro Tag verdienen, indem man das Sommerspiel Salien spielt. Dieses Ereignis endet am 5. Juli.</string>
+    <string name="playing_saliens">Spiele Saliens (%d/%d)…</string>
+    <string name="playing_saliens_indefinitely">Spiele Saliens (Score: %s)</string>
+    <string name="success_check_inventory">Erfolg! Überprüfe dein Inventar auf neue Sammelkarten.</string>
+    <string name="play_saliens_failed">Saliens kann jetzt nicht automatisch gespielt werden. Versuchen Sie es später noch einmal.</string>
     <string name="apikey_access_denied">Der Zugriff auf den Steam API Schlüssel wurde mithilfe eines integrierten Schlüssels verweigert.</string>
     <string name="apikey_register_failed">Fehler beim Registrieren eines API Schlüssels unter Verwendung eines integrierten Schlüssels.</string>
     <string name="english">Englisch</string>
