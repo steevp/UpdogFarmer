@@ -151,4 +151,12 @@
     <string name="device_not_rooted">Устройство должно иметь рут-права, чтобы использовать эту опцию.</string>
     <string name="your_shared_secret">Ваш shared_secret: %s</string>
     <string name="import_shared_secret_failed">Не удалось импортировать shared_secret! Убедитесь, что вы используете мобильный аутентификатор Steam.</string>
+    <string name="summer_event">Стимопланетяне</string>
+    <string name="play_saliens_desc">Вы можете получать до 3 карт каждый день, играя в Стимопланетянена. Это событие заканчивается 5 июля.</string>
+    <string name="play_saliens">Играть в Стимопланетянена (Чтобы просто получить карты)</string>
+    <string name="play_saliens_indefinitely">Играть в Стимопланетянена</string>
+    <string name="playing_saliens">Получаем карты в Стимопланетянена (%d/%d)…</string>
+    <string name="playing_saliens_indefinitely">Играет в Стимопланетянена (Опыт: %s)</string>
+    <string name="success_check_inventory">Успех! Проверьте свой инвентарь на новые карты.</string>
+    <string name="play_saliens_failed">Невозможно автоматически играть в Стимопланетянена прямо сейчас. Попробуйте позже.</string>
 </resources>
