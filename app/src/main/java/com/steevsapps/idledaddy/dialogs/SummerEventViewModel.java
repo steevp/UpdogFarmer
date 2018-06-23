@@ -45,6 +45,7 @@ public class SummerEventViewModel extends AndroidViewModel {
         task = new AsyncTask<Void,String,Boolean>() {
             @Override
             protected Boolean doInBackground(Void... voids) {
+                publishProgress(getApplication().getString(R.string.playing_saliens, 1, 3));
                 final String accessToken = webHandler.getSaliensToken();
                 if (accessToken == null) {
                     return false;
