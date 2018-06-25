@@ -156,7 +156,11 @@
     <string name="play_saliens">Играть в Стимопланетянена (Чтобы просто получить карты)</string>
     <string name="play_saliens_indefinitely">Играть в Стимопланетянена</string>
     <string name="playing_saliens">Получаем карты в Стимопланетянена (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Играет в Стимопланетянена (Опыт: %s)</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\\nScore: %s/%s\\nLevel: %s</string>
     <string name="success_check_inventory">Успех! Проверьте свой инвентарь на новые карты.</string>
     <string name="play_saliens_failed">Невозможно автоматически играть в Стимопланетянена прямо сейчас. Попробуйте позже.</string>
+    <!-- Untranslated strings: -->
+    <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="reporting_score">Reporting score…</string>
+    <!-- End untranslated strings -->
 </resources>

@@ -453,15 +453,15 @@ public class SteamWebHandler {
                 leaveGame(playerInfo.getString("active_planet"), accessToken);
             }
             // Find an uncaptured planet and join it
-            final String planetId = getUncapturedPlanet();
-            if (planetId == null) {
+            final JSONObject planet = getUncapturedPlanet();
+            if (planet == null) {
                 return false;
             }
-            Log.i(TAG, "Joining planet: " + planetId);
-            joinPlanet(planetId, accessToken);
+            Log.i(TAG, "Joining planet: " + planet.getString("id"));
+            joinPlanet(planet.getString("id"), accessToken);
 
             // Find an uncaptured zone and join it
-            final JSONObject zone = getUncapturedZone(planetId);
+            final JSONObject zone = getUncapturedZone(planet);
             if (zone == null) {
                 return false;
             }
@@ -497,15 +497,15 @@ public class SteamWebHandler {
                 leaveGame(playerInfo.getString("active_planet"), accessToken);
             }
             // Find an uncaptured planet and join it
-            final String planetId = getUncapturedPlanet();
-            if (planetId == null) {
+            final JSONObject planet = getUncapturedPlanet();
+            if (planet == null) {
                 return false;
             }
-            Log.i(TAG, "Joining planet: " + planetId);
-            joinPlanet(planetId, accessToken);
+            Log.i(TAG, "Joining planet: " + planet.getString("id"));
+            joinPlanet(planet.getString("id"), accessToken);
 
             // Find an uncaptured zone and join it
-            final JSONObject zone = getUncapturedZone(planetId);
+            final JSONObject zone = getUncapturedZone(planet);
             if (zone == null) {
                 return false;
             }
@@ -596,28 +596,70 @@ public class SteamWebHandler {
         }
     }
 
-    private String getUncapturedPlanet() {
+    private JSONObject getUncapturedPlanet() {
         try {
-            final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/GetPlanets/v0001/?active_only=1&language=english")
-                    .followRedirects(true)
-                    .ignoreContentType(true)
-                    .referrer("https://steamcommunity.com/saliengame/play/")
-                    .method(Connection.Method.GET)
-                    .execute()
-                    .body();
-            final JSONArray planets = new JSONObject(json).getJSONObject("response").getJSONArray("planets");
+            final JSONArray planets = getPlanets();
             if (planets.length() == 0) {
                 return null;
             }
 
             final List<JSONObject> uncapturedPlanets = new ArrayList<>();
             for (int i=0; i < planets.length(); i++) {
-                final JSONObject planet = planets.getJSONObject(i);
-                final boolean uncaptured = !planet.getJSONObject("state").getBoolean("captured");
-                if (uncaptured) {
-                    uncapturedPlanets.add(planet);
+                final JSONObject planetInfo = getPlanet(planets.getJSONObject(i).getString("id"));
+                if (planetInfo.getJSONObject("state").getBoolean("captured")) {
+                    continue;
                 }
+                final JSONArray zones = planetInfo.getJSONArray("zones");
+
+                JSONArray easyZones = new JSONArray();
+                JSONArray medZones = new JSONArray();
+                JSONArray hardZones = new JSONArray();
+                JSONArray bossZones = new JSONArray();
+
+                for (int j=0; j < zones.length(); j++) {
+                    final JSONObject zone = zones.getJSONObject(j);
+                    if (zone.getBoolean("captured")) {
+                        continue;
+                    }
+                    int difficulty = zone.getInt("difficulty");
+                    if (difficulty == 1) {
+                        easyZones.put(zone);
+                    }
+                    if (difficulty == 2) {
+                        medZones.put(zone);
+                    }
+                    if (difficulty == 3) {
+                        hardZones.put(zone);
+                    }
+                    if (zone.getInt("type") == 4) {
+                        bossZones.put(zone);
+                    }
+                }
+
+                int sortKey = 0;
+                if (easyZones.length() > 0) {
+                    sortKey += 99 - easyZones.length();
+                }
+                if (medZones.length() > 0) {
+                    sortKey += ((int) Math.pow(10, 2)) * (99 - medZones.length());
+                }
+                if (hardZones.length() > 0) {
+                    sortKey += ((int) Math.pow(10, 4)) * (99 - hardZones.length());
+                }
+                if (bossZones.length() > 0) {
+                    sortKey += ((int) Math.pow(10, 6)) * (99 - bossZones.length());
+                }
+
+                planetInfo.put("sort_key", sortKey);
+
+                planetInfo.put("easy_zones", easyZones)
+                        .put("med_zones", medZones)
+                        .put("hard_zones", hardZones)
+                        .put("boss_zones", bossZones);
+
+                uncapturedPlanets.add(planetInfo);
             }
+
             if (uncapturedPlanets.isEmpty()) {
                 return null;
             }
@@ -626,19 +668,19 @@ public class SteamWebHandler {
                 @Override
                 public int compare(JSONObject o1, JSONObject o2) {
                     try {
-                        final int d1 = o1.getJSONObject("state").getInt("difficulty");
-                        final int d2 = o2.getJSONObject("state").getInt("difficulty");
-                        if (d1 == d2) {
+                        final int s1 = o1.getInt("sort_key");
+                        final int s2 = o2.getInt("sort_key");
+                        if (s1 == s2) {
                             return 0;
                         }
-                        return d1 > d2 ? 1 : -1;
+                        return s1 > s2 ? 1 : -1;
                     } catch (JSONException e) {
                         e.printStackTrace();
                         return 0;
                     }
                 }
             }));
-            return uncapturedPlanets.get(0).getString("id");
+            return uncapturedPlanets.get(0);
         } catch (IOException|JSONException e) {
             e.printStackTrace();
             return null;
@@ -661,62 +703,53 @@ public class SteamWebHandler {
         }
     }
 
-    private JSONObject getUncapturedZone(String planetId) {
-        try {
-            final String url = "https://community.steam-api.com/ITerritoryControlMinigameService/GetPlanet/v0001/?id=%s&language=english";
-            final String json = Jsoup.connect(String.format(Locale.US, url, planetId))
-                    .followRedirects(true)
-                    .ignoreContentType(true)
-                    .cookies(generateWebCookies())
-                    .referrer("https://steamcommunity.com/saliengame/play/")
-                    .method(Connection.Method.GET)
-                    .execute()
-                    .body();
-
-            final JSONArray zones = new JSONObject(json)
-                    .getJSONObject("response")
-                    .getJSONArray("planets")
-                    .getJSONObject(0)
-                    .getJSONArray("zones");
-
-
-            final List<JSONObject> uncapturedZones = new ArrayList<>();
-            for (int i = 0; i < zones.length(); i++) {
-                final JSONObject zone = zones.getJSONObject(i);
-                final boolean uncaptured = !zone.getBoolean("captured");
-                if (uncaptured) {
-                    uncapturedZones.add(zone);
-                }
-            }
-
-            if (uncapturedZones.isEmpty()) {
-                return null;
-            }
-
-            Collections.sort(uncapturedZones, Collections.reverseOrder(new Comparator<JSONObject>() {
-                @Override
-                public int compare(JSONObject o1, JSONObject o2) {
-                    try {
-                        final int d1 = o1.getInt("difficulty");
-                        final int d2 = o2.getInt("difficulty");
-                        if (d1 == d2) {
-                            return 0;
-                        }
-                        return d1 > d2 ? 1 : -1;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        return 0;
-                    }
-                }
-            }));
-
-            Log.i(TAG, "Zone difficulty " + uncapturedZones.get(0).getInt("difficulty"));
-
-            return uncapturedZones.get(0);
-        } catch (IOException|JSONException e) {
-            e.printStackTrace();
-            return null;
+    private JSONObject getUncapturedZone(JSONObject planet) throws JSONException {
+        JSONArray easyZones = planet.getJSONArray("easy_zones");
+        JSONArray medZones = planet.getJSONArray("med_zones");
+        JSONArray hardZones = planet.getJSONArray("hard_zones");
+        JSONArray bossZones = planet.getJSONArray("boss_zones");
+        if (bossZones.length() > 0) {
+            Log.i(TAG, "Choosing boss zone");
+            return bossZones.getJSONObject(0);
         }
+        if (hardZones.length() > 0) {
+            Log.i(TAG, "Choosing hard zone");
+            return hardZones.getJSONObject(0);
+        }
+        if (medZones.length() > 0) {
+            Log.i(TAG, "Choosing med zone");
+            return medZones.getJSONObject(0);
+        }
+        if (easyZones.length() > 0) {
+            Log.i(TAG, "Choosing easy zone");
+            return easyZones.getJSONObject(0);
+        }
+        return null;
+    }
+
+    private JSONArray getPlanets() throws IOException, JSONException {
+        final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/GetPlanets/v0001/?active_only=1&language=english")
+                .followRedirects(true)
+                .ignoreContentType(true)
+                .referrer("https://steamcommunity.com/saliengame/play/")
+                .method(Connection.Method.GET)
+                .execute()
+                .body();
+        return new JSONObject(json).getJSONObject("response").getJSONArray("planets");
+    }
+
+    private JSONObject getPlanet(String planetId) throws IOException, JSONException {
+        final String url = "https://community.steam-api.com/ITerritoryControlMinigameService/GetPlanet/v0001/?id=%s&language=english";
+        final String json = Jsoup.connect(String.format(Locale.US, url, planetId))
+                .followRedirects(true)
+                .ignoreContentType(true)
+                .cookies(generateWebCookies())
+                .referrer("https://steamcommunity.com/saliengame/play/")
+                .method(Connection.Method.GET)
+                .execute()
+                .body();
+
+        return new JSONObject(json).getJSONObject("response").getJSONArray("planets").getJSONObject(0);
     }
 
     private void joinPlanet(String planetId, String accessToken) throws IOException {
