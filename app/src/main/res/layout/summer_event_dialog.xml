@@ -20,6 +20,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />
 
+    <TextView
+        android:id="@+id/countdown"
+        android:visibility="gone"
+        style="@style/AppTheme.TextStyle.Secondary.Small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <Button
         android:id="@+id/btn_play_saliens"
         android:text="@string/play_saliens"

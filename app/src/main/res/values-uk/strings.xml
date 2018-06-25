@@ -151,14 +151,16 @@
     <string name="device_not_rooted">Ваш пристрій повинен мати рут-права для використання цієї опції.</string>
     <string name="your_shared_secret">Ваш shared_secret: %s</string>
     <string name="import_shared_secret_failed">Не вдалося імпортувати shared_secret! Переконайтесь, що ви використовуєте мобільний аутентифікатор Steam.</string>
-    <!-- Untranslated strings: -->
     <string name="summer_event">Summer Event</string>
     <string name="play_saliens">Play Saliens (Just get trading cards)</string>
     <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
     <string name="play_saliens_desc">You can earn up to 3 trading cards each day by playing the Summer Salien game. This event ends on July 5th.</string>
     <string name="playing_saliens">Playing Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Playing Saliens (Score: %s)</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\\nScore: %s/%s\\nLevel: %s</string>
     <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
     <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
+    <!-- Untranslated strings: -->
+    <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="reporting_score">Reporting score…</string>
     <!-- End untranslated strings -->
 </resources>

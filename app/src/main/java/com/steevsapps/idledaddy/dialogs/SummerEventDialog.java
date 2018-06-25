@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.steevsapps.idledaddy.BaseActivity;
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
 
@@ -22,6 +23,7 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
     private SummerEventViewModel viewModel;
 
     private TextView statusTv;
+    private TextView countdownTv;
     private Button playSaliensBtn;
     private Button playSaliensFullBtn;
 
@@ -34,6 +36,7 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final View view = LayoutInflater.from(getActivity()).inflate(R.layout.summer_event_dialog, null);
         statusTv = view.findViewById(R.id.status);
+        countdownTv = view.findViewById(R.id.countdown);
         playSaliensBtn = view.findViewById(R.id.btn_play_saliens);
         playSaliensBtn.setOnClickListener(this);
         playSaliensFullBtn = view.findViewById(R.id.btn_play_saliens_full);
@@ -53,7 +56,7 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
 
     private void setupViewModel(){
         viewModel = ViewModelProviders.of(this).get(SummerEventViewModel.class);
-        viewModel.init(SteamWebHandler.getInstance());
+        viewModel.init(SteamWebHandler.getInstance(), ((BaseActivity) getActivity()).getService());
         viewModel.getStatus().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -61,6 +64,13 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
                 statusTv.setText(s);
                 playSaliensBtn.setEnabled(viewModel.isFinished());
                 playSaliensFullBtn.setEnabled(viewModel.isFinished());
+            }
+        });
+        viewModel.getCountDown().observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String s) {
+                countdownTv.setVisibility(View.VISIBLE);
+                countdownTv.setText(s);
             }
         });
     }

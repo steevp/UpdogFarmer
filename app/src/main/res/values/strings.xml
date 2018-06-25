@@ -106,11 +106,13 @@
     <string name="vote_successful">Vote successful!</string>
     <string name="vote_failed">Vote failed!</string>
     <string name="summer_event">Summer Event</string>
-    <string name="play_saliens">Play Saliens (Just get trading cards)</string>
+    <string name="play_saliens">Play Saliens for trading cards</string>
     <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
     <string name="play_saliens_desc">You can earn up to 3 trading cards each day by playing the Summer Salien game. This event ends on July 5th.</string>
     <string name="playing_saliens">Playing Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Playing Saliens (Score: %s)</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
+    <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="reporting_score">Reporting score…</string>
     <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
     <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
     <string name="apikey_access_denied">Steam API key access denied, using a built-in key.</string>

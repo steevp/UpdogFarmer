@@ -64,14 +64,14 @@
     <string name="invalid_key">Nieprawidłowy klucz</string>
     <string name="activation_failed">Aktywacja zakończona niepowodzeniem</string>
     <plurals name="games_left">
-	<item quantity="one">Pozostała %d gra do symulacji</item>
-	<item quantity="few">Pozostały %d gry do symulacji</item>
-    	<item quantity="other">Pozostało %d gier do symulacji</item>
+        <item quantity="one">Pozostała %d gra do symulacji</item>
+        <item quantity="few">Pozostały %d gry do symulacji</item>
+        <item quantity="other">Pozostało %d gier do symulacji</item>
     </plurals>
     <plurals name="card_drops_remaining">
-	<item quantity="one">%d karta do uzyskania</item>
-	<item quantity="few">%d karty do uzyskania</item>
-    	<item quantity="other">%d kart do uzyskania</item>
+        <item quantity="one">%d karta do uzyskania</item>
+        <item quantity="few">%d karty do uzyskania</item>
+        <item quantity="other">%d kart do uzyskania</item>
     </plurals>
     <plurals name="hours_on_record">
         <item quantity="one">%.1f godz. łącznie</item>
@@ -92,7 +92,7 @@
     <string name="activated">Aktywowano: %s</string>
     <string name="refresh">Odśwież</string>
     <string name="last_session">Ostatnia sesja</string>
-    <string name="play_all">Uruchom wszystkie</string>	
+    <string name="play_all">Uruchom wszystkie</string>
     <string name="remove_ads">Usunięcie reklam</string>
     <string name="logcat">Wyślij logi</string>
     <string name="sort">Sortuj</string>
@@ -112,7 +112,7 @@
     <string name="play_saliens_indefinitely">Graj w Saliens (symulacja bez końca)</string>
     <string name="play_saliens_desc">Możesz uzyskać 3 karty maksymalnie dziennie grając w Saliens. Wydarzenie kończy się 4 lipca.</string>
     <string name="playing_saliens">Gram w Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Gram w Saliens (Wynik: %s)</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\\nScore: %s/%s\\nLevel: %s</string>
     <string name="success_check_inventory">Udało się! Karty powinny pojawić się w twoim ekwipunku Steam.</string>
     <string name="play_saliens_failed">Automatyczna symulacja gry Saliens jest aktualnie niemożliwa. Spróbuj później.</string>
     <string name="apikey_access_denied">Odmowa dostępu do klucza Steam API, zastosuję klucz wbudowany.</string>
@@ -161,4 +161,8 @@
     <string name="device_not_rooted">Twoje urządzenie potrzebuje dostępu do root\'a, aby używać tej funkcji.</string>
     <string name="your_shared_secret">Twój kod shared_secret: %s</string>
     <string name="import_shared_secret_failed">Błąd podczas importowania kodu shared_secret! Upewnij się, że używasz mobilnego tokenu uwierzytelniającego Steam.</string>
+    <!-- Untranslated strings: -->
+    <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="reporting_score">Reporting score…</string>
+    <!-- End untranslated strings -->
 </resources>

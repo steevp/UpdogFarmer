@@ -1215,4 +1215,13 @@ public class SteamService extends Service {
             e.printStackTrace();
         }
     }
+
+    public void refreshSession() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                steamUser.requestWebAPIUserNonce();
+            }
+        });
+    }
 }

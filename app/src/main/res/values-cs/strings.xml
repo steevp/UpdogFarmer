@@ -82,7 +82,6 @@
     <string name="pref_include_free_games">Zahrnout hraní her zdarma</string>
     <string name="sum_include_free_games">Podle výchozího nastavení je farmení her zdarma jako Team Fortress 2 vypnuto (technicky vzato je kazdý vlastní). Pokud je tato možnost zapnuta, tak je uvidíte na seznamu, pokud jsi je někdy hrál.</string>
     <string name="remove_ads">Odstranit reklamy</string>
-    <!-- Untranslated strings: -->
     <string name="pref_language">Language</string>
     <string name="sum_language">Change the app\'s language (Requires restart).</string>
     <string name="pref_gdpr_consent">Revoke GDPR Consent</string>
@@ -158,5 +157,8 @@
     <string name="device_not_rooted">Your device must be rooted to use this option.</string>
     <string name="your_shared_secret">Your shared_secret: %s</string>
     <string name="import_shared_secret_failed">Failed to import shared_secret! Make sure you\'re using the Steam mobile authenticator.</string>
+    <!-- Untranslated strings: -->
+    <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="reporting_score">Reporting score…</string>
     <!-- End untranslated strings -->
 </resources>

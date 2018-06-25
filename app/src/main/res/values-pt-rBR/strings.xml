@@ -110,7 +110,7 @@
     <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
     <string name="play_saliens_desc">Você pode ganhar até 3 cartas comerciais por dia jogando o Summer Salien. Este evento termina no dia 5 de julho.</string>
     <string name="playing_saliens">Jogando Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Jogando Saliens (Pontos: %s)</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
     <string name="success_check_inventory">Sucesso! Verifique o seu inventário.</string>
     <string name="play_saliens_failed">Não é possível auto iniciar Saliens agora. Tente mais tarde.</string>
     <string name="apikey_access_denied">Steam API key access denied, using a built-in key.</string>
@@ -159,4 +159,8 @@
     <string name="device_not_rooted">Seu dispositivo deve ter root para usar essa opção.</string>
     <string name="your_shared_secret">Seu shared_secret: %s</string>
     <string name="import_shared_secret_failed">Falha ao importar shared_secret! Certifique-se de que você está usando o autenticador móvel do Steam.</string>
+    <!-- Untranslated strings: -->
+    <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="reporting_score">Reporting score…</string>
+    <!-- End untranslated strings -->
 </resources>

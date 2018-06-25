@@ -131,7 +131,6 @@
     <string name="non_steam_game">بازی غیر استیم</string>
     <string name="playing_unknown_app">:نرم افزار ناشناخته %d</string>
     <string name="playing_non_steam_game">:بازی غیر استیم %s</string>
-    <!-- Untranslated strings: -->
     <string name="pref_gdpr_consent">Revoke GDPR Consent</string>
     <string name="sum_gdpr_consent">Under the EU\'s General Data Protection Regulation (GDPR), a user\'s consent is required before displaying ads. Click here to revoke your consent.</string>
     <string name="pref_use_custom_loginid">Use Custom Login ID</string>
@@ -142,7 +141,7 @@
     <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
     <string name="play_saliens_desc">You can earn up to 3 trading cards each day by playing the Summer Salien game. This event ends on July 5th.</string>
     <string name="playing_saliens">Playing Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Playing Saliens (Score: %s)</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\\nScore: %s/%s\\nLevel: %s</string>
     <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
     <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
     <string name="bosnian_croatian">Bosnian/Croatian</string>
@@ -160,5 +159,8 @@
     <string name="device_not_rooted">Your device must be rooted to use this option.</string>
     <string name="your_shared_secret">Your shared_secret: %s</string>
     <string name="import_shared_secret_failed">Failed to import shared_secret! Make sure you\'re using the Steam mobile authenticator.</string>
+    <!-- Untranslated strings: -->
+    <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="reporting_score">Reporting score…</string>
     <!-- End untranslated strings -->
 </resources>
