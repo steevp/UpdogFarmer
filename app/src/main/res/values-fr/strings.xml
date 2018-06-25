@@ -1,4 +1,4 @@
-﻿<resources>
+<resources>
     <string name="app_name">Idle Daddy</string>
     <string name="status">Statut</string>
     <string name="logged_in">Connecté</string>
@@ -116,4 +116,49 @@
     <string name="slovenian">Slovaque</string>
     <string name="french">Français</string>
     <string name="language_changed">Vous devez redémarrez l\'application pour que la langue se mette à jour.</string>
+    <!-- Untranslated strings: -->
+    <string name="pref_gdpr_consent">Revoke GDPR Consent</string>
+    <string name="sum_gdpr_consent">Under the EU\'s General Data Protection Regulation (GDPR), a user\'s consent is required before displaying ads. Click here to revoke your consent.</string>
+    <string name="pref_use_custom_loginid">Use Custom Login ID</string>
+    <string name="sum_use_custom_loginid">Enabling this option will allow you to run other SteamKit apps (such as Ice Client) at the same time as Idle Daddy. If unsure, leave this off. (Requires restart)</string>
+    <string name="gdpr_consent_not_needed">Not needed. Idle Daddy Premium doesn\'t display ads.</string>
+    <string name="summer_event">Summer Event</string>
+    <string name="play_saliens">Play Saliens (Just get trading cards)</string>
+    <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
+    <string name="play_saliens_desc">You can earn up to 3 trading cards each day by playing the Summer Salien game. This event ends on July 5th.</string>
+    <string name="playing_saliens">Playing Saliens (%d/%d)…</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens (Score: %s)</string>
+    <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
+    <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
+    <string name="apikey_access_denied">Steam API key access denied, using a built-in key.</string>
+    <string name="apikey_register_failed">Failed to register an API key, using a built-in key.</string>
+    <string name="romanian">Romanian</string>
+    <string name="spanish">Spanish</string>
+    <string name="arabic">Arabic</string>
+    <string name="hebrew">Hebrew</string>
+    <string name="indonesian">Indonesian</string>
+    <string name="vietnamese">Vietnamese</string>
+    <string name="persian">Persian</string>
+    <string name="bosnian_croatian">Bosnian/Croatian</string>
+    <string name="serbian">Serbian</string>
+    <string name="service_started">Steam Service Started</string>
+    <string name="idle_custom_app">Idle Hidden/Non-Steam Game</string>
+    <string name="hidden_appid">Hidden appid</string>
+    <string name="non_steam_game">Non-Steam game</string>
+    <string name="playing_unknown_app">Unknown app: %d</string>
+    <string name="playing_non_steam_game">Non-Steam game: %s</string>
+    <string name="spring_cleaning_title">Spring Cleaning Event (2018)</string>
+    <string name="spring_cleaning_desc">Complete tasks to level up your Spring Cleaning Event badge. This event ends May 28th.</string>
+    <string name="complete_daily_tasks">Complete Daily Tasks</string>
+    <string name="complete_projects">Complete Project Tasks</string>
+    <string name="daily_tasks_completed">Daily tasks completed. Come back again tomorrow.</string>
+    <string name="project_tasks_completed">Project tasks completed. You only need to do this once.</string>
+    <string name="shared_secret_desc">Import the \'shared_secret\' code from your mobile authenticator. This allows Idle Daddy to automatically log in again when the login key expires.</string>
+    <string name="import_shared_secret">Import shared_secret</string>
+    <string name="enter_manually">Enter manually</string>
+    <string name="enter_shared_secret">Enter your shared_secret:</string>
+    <string name="device_not_rooted">Your device must be rooted to use this option.</string>
+    <string name="your_shared_secret">Your shared_secret: %s</string>
+    <string name="import_shared_secret_failed">Failed to import shared_secret! Make sure you\'re using the Steam mobile authenticator.</string>
+    <!-- End untranslated strings -->
 </resources>
