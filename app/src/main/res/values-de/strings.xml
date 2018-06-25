@@ -110,7 +110,9 @@
     <string name="play_saliens_indefinitely">Spiele Saliens auf unbestimmte Zeit</string>
     <string name="play_saliens_desc">Man kann bis zu 3 Sammelkarten pro Tag verdienen, indem man das Sommerspiel Salien spielt. Dieses Ereignis endet am 5. Juli.</string>
     <string name="playing_saliens">Spiele Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
+    <string name="playing_saliens_indefinitely">Spiele Saliens…\nXP: %s/%s\nLevel: %s</string>
+    <string name="next_round_countdown">Nächste Runde: %02d:%02d</string>
+    <string name="reporting_score">Berichtsergebnis…</string>
     <string name="success_check_inventory">Erfolg! Überprüfe dein Inventar auf neue Sammelkarten.</string>
     <string name="play_saliens_failed">Saliens kann jetzt nicht automatisch gespielt werden. Versuchen Sie es später noch einmal.</string>
     <string name="apikey_access_denied">Der Zugriff auf den Steam API Schlüssel wurde mithilfe eines integrierten Schlüssels verweigert.</string>
@@ -159,8 +161,4 @@
     <string name="device_not_rooted">Dein Gerät muss gerootet sein, um diese Option verwenden zu können.</string>
     <string name="your_shared_secret">Dein Wiederherstellungscode: %s</string>
     <string name="import_shared_secret_failed">Fehler beim Importieren des Wiederherstellungscodes! Stelle sicher, dass du den Steam Mobile Authentikator verwendest.</string>
-    <!-- Untranslated strings: -->
-    <string name="next_round_countdown">Next round: %02d:%02d</string>
-    <string name="reporting_score">Reporting score…</string>
-    <!-- End untranslated strings -->
 </resources>
