@@ -145,7 +145,7 @@
     <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
     <string name="play_saliens_desc">You can earn up to 3 trading cards each day by playing the Summer Salien game. This event ends on July 5th.</string>
     <string name="playing_saliens">Playing Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Playing Saliens…\\nScore: %s/%s\\nLevel: %s</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
     <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
     <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
     <string name="bosnian_croatian">Bosnian/Croatian</string>

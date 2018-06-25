@@ -112,7 +112,7 @@
     <string name="play_saliens_indefinitely">Graj w Saliens (symulacja bez końca)</string>
     <string name="play_saliens_desc">Możesz uzyskać 3 karty maksymalnie dziennie grając w Saliens. Wydarzenie kończy się 4 lipca.</string>
     <string name="playing_saliens">Gram w Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Playing Saliens…\\nScore: %s/%s\\nLevel: %s</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
     <string name="success_check_inventory">Udało się! Karty powinny pojawić się w twoim ekwipunku Steam.</string>
     <string name="play_saliens_failed">Automatyczna symulacja gry Saliens jest aktualnie niemożliwa. Spróbuj później.</string>
     <string name="apikey_access_denied">Odmowa dostępu do klucza Steam API, zastosuję klucz wbudowany.</string>
