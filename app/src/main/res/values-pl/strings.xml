@@ -112,7 +112,9 @@
     <string name="play_saliens_indefinitely">Graj w Saliens (symulacja bez końca)</string>
     <string name="play_saliens_desc">Możesz uzyskać 3 karty maksymalnie dziennie grając w Saliens. Wydarzenie kończy się 4 lipca.</string>
     <string name="playing_saliens">Gram w Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
+    <string name="playing_saliens_indefinitely">Gram w Saliens…\nWynik: %s/%s\nPoziom: %s</string>
+    <string name="next_round_countdown">Następna runda: %02d:%02d</string>
+    <string name="reporting_score">Raportowany wynik…</string>
     <string name="success_check_inventory">Udało się! Karty powinny pojawić się w twoim ekwipunku Steam.</string>
     <string name="play_saliens_failed">Automatyczna symulacja gry Saliens jest aktualnie niemożliwa. Spróbuj później.</string>
     <string name="apikey_access_denied">Odmowa dostępu do klucza Steam API, zastosuję klucz wbudowany.</string>
@@ -162,7 +164,5 @@
     <string name="your_shared_secret">Twój kod shared_secret: %s</string>
     <string name="import_shared_secret_failed">Błąd podczas importowania kodu shared_secret! Upewnij się, że używasz mobilnego tokenu uwierzytelniającego Steam.</string>
     <!-- Untranslated strings: -->
-    <string name="next_round_countdown">Next round: %02d:%02d</string>
-    <string name="reporting_score">Reporting score…</string>
     <!-- End untranslated strings -->
 </resources>
