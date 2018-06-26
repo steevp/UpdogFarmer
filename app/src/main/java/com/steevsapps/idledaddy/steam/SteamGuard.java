@@ -27,7 +27,13 @@ public class SteamGuard {
             return "";
         }
 
-        final byte[] sharedSecretArray = Base64.decode(sharedSecret, Base64.DEFAULT);
+        final byte[] sharedSecretArray;
+        try {
+            sharedSecretArray = Base64.decode(sharedSecret, Base64.DEFAULT);
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, "Invalid base64", e);
+            return "";
+        }
         final byte[] timeArray = new byte[8];
 
         time /= 30L;
