@@ -753,21 +753,27 @@ public class SteamWebHandler {
     }
 
     private void joinPlanet(String planetId, String accessToken) throws IOException {
-        Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/JoinPlanet/v0001/")
+        final Connection.Response response = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/JoinPlanet/v0001/")
                 .followRedirects(true)
                 .ignoreContentType(true)
+                .method(Connection.Method.POST)
                 .data("id", planetId)
                 .data("access_token", accessToken)
-                .post();
+                .execute();
+        Log.i(TAG, "JoinPlanet eresult: " + response.header("X-eresult"));
+        Log.i(TAG, "JoinPlanet error msg: " + response.header("X-error_message"));
     }
 
     private void joinZone(String zoneId, String accessToken) throws IOException {
-        Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/JoinZone/v0001/")
+        final Connection.Response response = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/JoinZone/v0001/")
                 .followRedirects(true)
                 .ignoreContentType(true)
+                .method(Connection.Method.POST)
                 .data("zone_position", zoneId)
                 .data("access_token", accessToken)
-                .post();
+                .execute();
+        Log.i(TAG, "JoinZone eresult: " + response.header("X-eresult"));
+        Log.i(TAG, "JoinZone error_message: " + response.header("X-error_message"));
     }
 
     /**
