@@ -76,7 +76,7 @@ public class SummerEventViewModel extends AndroidViewModel {
                 final String accessToken = webHandler.getSaliensToken();
                 if (accessToken == null) {
                     // Probably means the session cookies have expired
-                    refreshEvent.call();
+                    refreshEvent.postCall();
                     return false;
                 }
                 for (int i=0;i<3;i++) {
@@ -129,7 +129,7 @@ public class SummerEventViewModel extends AndroidViewModel {
                 final String accessToken = webHandler.getSaliensToken();
                 if (accessToken == null) {
                     // Probably means the session cookies have expired
-                    refreshEvent.call();
+                    refreshEvent.postCall();
                     return false;
                 }
                 while (!finished) {
