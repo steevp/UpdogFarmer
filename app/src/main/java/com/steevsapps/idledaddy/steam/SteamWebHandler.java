@@ -456,20 +456,21 @@ public class SteamWebHandler {
                 leaveGame(playerInfo.getString("active_planet"), accessToken);
             }
             // Find an uncaptured planet and join it
-            JSONObject planet = getUncapturedPlanet();
-            if (planet == null) {
-                return false;
-            }
-            Log.i(TAG, "Joining planet: " + planet.getString("id"));
-            int eresult = joinPlanet(planet.getString("id"), accessToken);
-            if (eresult != 1) {
-                Log.w(TAG, "Trying a different planet");
+            JSONObject planet = null;
+            for (int i=0;i<5;i++) {
                 planet = getUncapturedPlanet();
                 if (planet == null) {
-                    return false;
+                    continue;
                 }
                 Log.i(TAG, "Joining planet: " + planet.getString("id"));
-                joinPlanet(planet.getString("id"), accessToken);
+                int eresult = joinPlanet(planet.getString("id"), accessToken);
+                if (eresult == 1) {
+                    break;
+                }
+                Log.w(TAG, "Trying a different planet");
+            }
+            if (planet == null) {
+                return false;
             }
 
             // Find an uncaptured zone and join it
@@ -509,20 +510,21 @@ public class SteamWebHandler {
                 leaveGame(playerInfo.getString("active_planet"), accessToken);
             }
             // Find an uncaptured planet and join it
-            JSONObject planet = getUncapturedPlanet();
-            if (planet == null) {
-                return false;
-            }
-            Log.i(TAG, "Joining planet: " + planet.getString("id"));
-            int eresult = joinPlanet(planet.getString("id"), accessToken);
-            if (eresult != 1) {
-                Log.w(TAG, "Trying a different planet");
+            JSONObject planet = null;
+            for (int i=0;i<5;i++) {
                 planet = getUncapturedPlanet();
                 if (planet == null) {
-                    return false;
+                    continue;
                 }
                 Log.i(TAG, "Joining planet: " + planet.getString("id"));
-                joinPlanet(planet.getString("id"), accessToken);
+                int eresult = joinPlanet(planet.getString("id"), accessToken);
+                if (eresult == 1) {
+                    break;
+                }
+                Log.w(TAG, "Trying a different planet");
+            }
+            if (planet == null) {
+                return false;
             }
 
             // Find an uncaptured zone and join it
