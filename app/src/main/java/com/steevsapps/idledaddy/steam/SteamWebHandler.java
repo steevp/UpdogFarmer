@@ -439,6 +439,9 @@ public class SteamWebHandler {
         return false;
     }
 
+    // Planets we failed to join
+    private final Map<String, Long> badPlanets = new HashMap<>();
+
     /**
      * Play Saliens just to get the card drop
      */
@@ -453,12 +456,21 @@ public class SteamWebHandler {
                 leaveGame(playerInfo.getString("active_planet"), accessToken);
             }
             // Find an uncaptured planet and join it
-            final JSONObject planet = getUncapturedPlanet();
+            JSONObject planet = getUncapturedPlanet();
             if (planet == null) {
                 return false;
             }
             Log.i(TAG, "Joining planet: " + planet.getString("id"));
-            joinPlanet(planet.getString("id"), accessToken);
+            int eresult = joinPlanet(planet.getString("id"), accessToken);
+            if (eresult != 1) {
+                Log.w(TAG, "Trying a different planet");
+                planet = getUncapturedPlanet();
+                if (planet == null) {
+                    return false;
+                }
+                Log.i(TAG, "Joining planet: " + planet.getString("id"));
+                joinPlanet(planet.getString("id"), accessToken);
+            }
 
             // Find an uncaptured zone and join it
             final JSONObject zone = getUncapturedZone(planet);
@@ -497,12 +509,21 @@ public class SteamWebHandler {
                 leaveGame(playerInfo.getString("active_planet"), accessToken);
             }
             // Find an uncaptured planet and join it
-            final JSONObject planet = getUncapturedPlanet();
+            JSONObject planet = getUncapturedPlanet();
             if (planet == null) {
                 return false;
             }
             Log.i(TAG, "Joining planet: " + planet.getString("id"));
-            joinPlanet(planet.getString("id"), accessToken);
+            int eresult = joinPlanet(planet.getString("id"), accessToken);
+            if (eresult != 1) {
+                Log.w(TAG, "Trying a different planet");
+                planet = getUncapturedPlanet();
+                if (planet == null) {
+                    return false;
+                }
+                Log.i(TAG, "Joining planet: " + planet.getString("id"));
+                joinPlanet(planet.getString("id"), accessToken);
+            }
 
             // Find an uncaptured zone and join it
             final JSONObject zone = getUncapturedZone(planet);
@@ -605,7 +626,8 @@ public class SteamWebHandler {
 
             final List<JSONObject> uncapturedPlanets = new ArrayList<>();
             for (int i=0; i < planets.length(); i++) {
-                final JSONObject planetInfo = getPlanet(planets.getJSONObject(i).getString("id"));
+                final String planetId = planets.getJSONObject(i).getString("id");
+                final JSONObject planetInfo = getPlanet(planetId);
                 if (planetInfo.getJSONObject("state").getBoolean("captured")) {
                     continue;
                 }
@@ -650,6 +672,20 @@ public class SteamWebHandler {
                     sortKey += ((int) Math.pow(10, 6)) * (99 - bossZones.length());
                 }
 
+                boolean goodPlanet = true;
+                if (badPlanets.containsKey(planetId)) {
+                    if ((System.currentTimeMillis() - badPlanets.get(planetId)) >= 900000) {
+                        // 15 minutes passed, mark planet as good to retry
+                        Log.i(TAG, "Removing bad tag from planet " + planetId);
+                        badPlanets.remove(planetId);
+                    } else {
+                        // Mark planet as bad
+                        goodPlanet = false;
+                    }
+                }
+
+                planetInfo.put("good", goodPlanet);
+
                 planetInfo.put("sort_key", sortKey);
 
                 planetInfo.put("easy_zones", easyZones)
@@ -680,6 +716,14 @@ public class SteamWebHandler {
                     }
                 }
             }));
+
+            for (JSONObject planet : uncapturedPlanets) {
+                if (planet.getBoolean("good")) {
+                    return planet;
+                }
+            }
+
+            Log.w(TAG, "Unable to find a good planet, returning a possibly bad one");
             return uncapturedPlanets.get(0);
         } catch (IOException|JSONException e) {
             e.printStackTrace();
@@ -735,6 +779,7 @@ public class SteamWebHandler {
                 .method(Connection.Method.GET)
                 .execute()
                 .body();
+
         return new JSONObject(json).getJSONObject("response").getJSONArray("planets");
     }
 
@@ -752,7 +797,7 @@ public class SteamWebHandler {
         return new JSONObject(json).getJSONObject("response").getJSONArray("planets").getJSONObject(0);
     }
 
-    private void joinPlanet(String planetId, String accessToken) throws IOException {
+    private int joinPlanet(String planetId, String accessToken) throws IOException {
         final Connection.Response response = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/JoinPlanet/v0001/")
                 .followRedirects(true)
                 .ignoreContentType(true)
@@ -760,8 +805,21 @@ public class SteamWebHandler {
                 .data("id", planetId)
                 .data("access_token", accessToken)
                 .execute();
-        Log.i(TAG, "JoinPlanet eresult: " + response.header("X-eresult"));
-        Log.i(TAG, "JoinPlanet error msg: " + response.header("X-error_message"));
+
+        int eresult;
+        try {
+            eresult = Integer.parseInt(response.header("X-eresult"));
+        } catch (NumberFormatException e) {
+            eresult = -1;
+        }
+        final String errorMsg = response.header("X-error_message");
+        if (eresult != 1) {
+            Log.w(TAG, "JoinPlanet eresult: " + eresult);
+            Log.w(TAG, "JoinPlanet error msg: " + errorMsg);
+            Log.w(TAG, "JoinPlanet marking planet " + planetId + " as BAD");
+            badPlanets.put(planetId, System.currentTimeMillis());
+        }
+        return eresult;
     }
 
     private void joinZone(String zoneId, String accessToken) throws IOException {
