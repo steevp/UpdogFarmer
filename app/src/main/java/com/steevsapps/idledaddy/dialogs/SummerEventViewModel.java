@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.steam.SteamService;
+import com.steevsapps.idledaddy.SingleLiveEvent;
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
 
 import org.json.JSONObject;
@@ -21,10 +21,9 @@ public class SummerEventViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> statusText = new MutableLiveData<>();
     private final MutableLiveData<String> countDownText = new MutableLiveData<>();
+    private final SingleLiveEvent<Void> refreshEvent = new SingleLiveEvent<>();
     private SteamWebHandler webHandler;
     private AsyncTask<Void,String,Boolean> task;
-    @SuppressLint("StaticFieldLeak")
-    private SteamService service;
 
     private volatile boolean finished = true;
 
@@ -47,11 +46,8 @@ public class SummerEventViewModel extends AndroidViewModel {
         super(application);
     }
 
-    void init(SteamWebHandler webHandler, SteamService service) {
+    void init(SteamWebHandler webHandler) {
         this.webHandler = webHandler;
-        if (service != null) {
-            this.service = service;
-        }
     }
 
     public boolean isFinished() {
@@ -66,6 +62,10 @@ public class SummerEventViewModel extends AndroidViewModel {
         return countDownText;
     }
 
+    public LiveData<Void> getRefreshEvent() {
+        return refreshEvent;
+    }
+
     @SuppressLint("StaticFieldLeak")
     void playSaliens() {
         finished = false;
@@ -76,7 +76,7 @@ public class SummerEventViewModel extends AndroidViewModel {
                 final String accessToken = webHandler.getSaliensToken();
                 if (accessToken == null) {
                     // Probably means the session cookies have expired
-                    service.refreshSession();
+                    refreshEvent.call();
                     return false;
                 }
                 for (int i=0;i<3;i++) {
@@ -129,7 +129,7 @@ public class SummerEventViewModel extends AndroidViewModel {
                 final String accessToken = webHandler.getSaliensToken();
                 if (accessToken == null) {
                     // Probably means the session cookies have expired
-                    service.refreshSession();
+                    refreshEvent.call();
                     return false;
                 }
                 while (!finished) {
