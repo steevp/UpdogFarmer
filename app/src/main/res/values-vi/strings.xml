@@ -149,7 +149,7 @@
     <string name="play_saliens_indefinitely">Chơi Saliens vô hạn</string>
     <string name="play_saliens_desc">Bạn có thể lấy được tới 3 trading cards mỗi ngày khi chơi Salien. Sự kiện kết thúc vào ngày 5 tháng 7.</string>
     <string name="playing_saliens">Chơi Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Chơi Saliens (Điểm: %s)</string>
+    <string name="playing_saliens_indefinitely">Chơi Saliens…\nĐiểm: %s/%s\nLvl: %s</string>
     <string name="success_check_inventory">Thành công! Kiểm tra kho đồ của bạn để xem những trading card mới.</string>
     <string name="play_saliens_failed">Không thể chơi Salien tự động. Thử lại sau.</string>
     <string name="shared_secret_desc">Nhập mã \'shared_secret\' từ Steam Mobile Authenticator. Chức năng này giúp Idle Daddy tự động đăng nhập lại khi key đăng nhập hết hạn.</string>
