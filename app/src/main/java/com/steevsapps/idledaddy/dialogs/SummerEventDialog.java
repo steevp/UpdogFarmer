@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.steevsapps.idledaddy.BaseActivity;
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
 
 public class SummerEventDialog extends DialogFragment implements View.OnClickListener {
@@ -56,7 +57,7 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
 
     private void setupViewModel(){
         viewModel = ViewModelProviders.of(this).get(SummerEventViewModel.class);
-        viewModel.init(SteamWebHandler.getInstance(), ((BaseActivity) getActivity()).getService());
+        viewModel.init(SteamWebHandler.getInstance());
         viewModel.getStatus().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -71,6 +72,16 @@ public class SummerEventDialog extends DialogFragment implements View.OnClickLis
             public void onChanged(@Nullable String s) {
                 countdownTv.setVisibility(View.VISIBLE);
                 countdownTv.setText(s);
+            }
+        });
+        viewModel.getRefreshEvent().observe(this, new Observer<Void>() {
+            @Override
+            public void onChanged(@Nullable Void aVoid) {
+                // Refresh Steam Session
+                final SteamService service = ((BaseActivity) getActivity()).getService();
+                if (service != null) {
+                    service.refreshSession();
+                }
             }
         });
     }
