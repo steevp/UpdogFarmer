@@ -205,6 +205,7 @@ public class SummerEventViewModel extends AndroidViewModel {
                         webHandler.joinZone(zone, accessToken);
 
                         if (zone.getInt("type") == 4) {
+                            countDown.cancel();
                             int bossFailsAllowed = 10;
                             long nextHeal = System.currentTimeMillis() + 120000;
                             countDownText.postValue(getApplication().getString(R.string.boss_hp, 0));
