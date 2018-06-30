@@ -112,6 +112,7 @@
     <string name="playing_saliens">Playing Saliens (%d/%d)…</string>
     <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
     <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="boss_hp">Boss HP: %d</string>
     <string name="reporting_score">Reporting score…</string>
     <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
     <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>

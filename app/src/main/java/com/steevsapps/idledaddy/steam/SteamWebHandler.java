@@ -498,115 +498,6 @@ public class SteamWebHandler {
         }
     }
 
-
-    /**
-     * Play a full round of Saliens
-     */
-    public boolean playSaliensRound(JSONObject playerInfo, String accessToken) {
-        try {
-            if (playerInfo.has("active_zone_game")) {
-                Log.i(TAG, "Leaving zone " + playerInfo.getString("active_zone_game"));
-                leaveGame(playerInfo.getString("active_zone_game"), accessToken);
-            }
-            if (playerInfo.has("active_planet")) {
-                Log.i(TAG, "Leaving planet " + playerInfo.getString("active_planet"));
-                leaveGame(playerInfo.getString("active_planet"), accessToken);
-            }
-            if (playerInfo.has("active_boss_game")) {
-                Log.i(TAG, "Leaving boss game: " + playerInfo.getString("active_boss_game"));
-                leaveGame(playerInfo.getString("active_boss_game"), accessToken);
-            }
-            // Find an uncaptured planet and join it
-            JSONObject planet = null;
-            for (int i=0;i<5;i++) {
-                planet = getUncapturedPlanet();
-                if (planet == null) {
-                    continue;
-                }
-                Log.i(TAG, "Joining planet: " + planet.getString("id"));
-                int eresult = joinPlanet(planet.getString("id"), accessToken);
-                if (eresult == 1) {
-                    break;
-                }
-                Log.w(TAG, "Trying a different planet");
-            }
-            if (planet == null) {
-                return false;
-            }
-
-            // Find an uncaptured zone and join it
-            final JSONObject zone = getUncapturedZone(planet);
-            if (zone == null) {
-                return false;
-            }
-
-            final String zoneId = zone.getString("zone_position");
-            if (zoneId == null) {
-                return false;
-            }
-
-            final int difficulty = zone.getInt("difficulty");
-            if (difficulty < 0) {
-                return false;
-            }
-
-            final int score = 120 * (5 * ((int) Math.pow(2, difficulty - 1)));
-
-            joinZone(zone, accessToken);
-
-            if (zone.getInt("type") == 4) {
-                int bossFailsAllowed = 10;
-                long nextHeal = System.currentTimeMillis() + 120000;
-                while (true) {
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        return false;
-                    }
-
-                    int useHeal = 0;
-                    int damageToBoss = 1;
-                    int damageTaken = 0;
-
-                    if (System.currentTimeMillis() >= nextHeal) {
-                        Log.i(TAG, "Using heal");
-                        useHeal = 1;
-                        nextHeal = System.currentTimeMillis() + 120000;
-                    }
-
-                    Log.i(TAG, "Attacking boss...");
-                    final JSONObject response = reportBossDamage(damageToBoss, damageTaken, useHeal, accessToken);
-
-                    if (response.getInt("eresult") != 1 && bossFailsAllowed-- < 1) {
-                        Log.i(TAG, "Boss errored too much, restarting...");
-                        return false;
-                    }
-
-                    if (response.getBoolean("game_over")) {
-                        Log.i(TAG, "Boss fight over");
-                        return true;
-                    }
-                }
-            } else {
-                Log.i(TAG, "sleeping for 2 minutes");
-                try {
-                    Thread.sleep(120000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-                Log.i(TAG, "Reporting score: " + score);
-                reportScore(String.valueOf(score), accessToken);
-            }
-
-            return true;
-        } catch (IOException|JSONException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
     public JSONObject getPlayerInfo(String accessToken) {
         try {
             final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/GetPlayerInfo/v0001/")
@@ -624,7 +515,7 @@ public class SteamWebHandler {
         }
     }
 
-    private void leaveGame(String gameId, String accessToken) throws IOException {
+    public void leaveGame(String gameId, String accessToken) throws IOException {
         Jsoup.connect("https://community.steam-api.com/IMiniGameService/LeaveGame/v0001/")
                 .followRedirects(true)
                 .ignoreContentType(true)
@@ -634,7 +525,7 @@ public class SteamWebHandler {
                 .post();
     }
 
-    private void reportScore(String score, String accessToken) throws IOException, JSONException {
+    public void reportScore(String score, String accessToken) throws IOException, JSONException {
         for (int i=0;i<3;i++) {
             final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/ReportScore/v0001/")
                     .followRedirects(true)
@@ -662,7 +553,7 @@ public class SteamWebHandler {
         }
     }
 
-    private JSONObject reportBossDamage(int damageToBoss, int damageTaken, int useHeal, String accessToken) throws IOException, JSONException {
+    public JSONObject reportBossDamage(int damageToBoss, int damageTaken, int useHeal, String accessToken) throws IOException, JSONException {
         final Connection.Response response = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/ReportBossDamage/v0001/")
                 .followRedirects(true)
                 .ignoreContentType(true)
@@ -687,7 +578,7 @@ public class SteamWebHandler {
         return json;
     }
 
-    private JSONObject getUncapturedPlanet() {
+    public JSONObject getUncapturedPlanet() {
         try {
             final JSONArray planets = getPlanets();
             if (planets.length() == 0) {
@@ -821,7 +712,7 @@ public class SteamWebHandler {
         }
     }
 
-    private JSONObject getUncapturedZone(JSONObject planet) throws JSONException {
+    public JSONObject getUncapturedZone(JSONObject planet) throws JSONException {
         JSONArray easyZones = planet.getJSONArray("easy_zones");
         JSONArray medZones = planet.getJSONArray("med_zones");
         JSONArray hardZones = planet.getJSONArray("hard_zones");
@@ -845,7 +736,7 @@ public class SteamWebHandler {
         return null;
     }
 
-    private JSONArray getPlanets() throws IOException, JSONException {
+    public JSONArray getPlanets() throws IOException, JSONException {
         final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/GetPlanets/v0001/?active_only=1&language=english")
                 .followRedirects(true)
                 .ignoreContentType(true)
@@ -857,7 +748,7 @@ public class SteamWebHandler {
         return new JSONObject(json).getJSONObject("response").getJSONArray("planets");
     }
 
-    private JSONObject getPlanet(String planetId) throws IOException, JSONException {
+    public JSONObject getPlanet(String planetId) throws IOException, JSONException {
         final String url = "https://community.steam-api.com/ITerritoryControlMinigameService/GetPlanet/v0001/?id=%s&language=english";
         final String json = Jsoup.connect(String.format(Locale.US, url, planetId))
                 .followRedirects(true)
@@ -871,7 +762,7 @@ public class SteamWebHandler {
         return new JSONObject(json).getJSONObject("response").getJSONArray("planets").getJSONObject(0);
     }
 
-    private int joinPlanet(String planetId, String accessToken) throws IOException {
+    public int joinPlanet(String planetId, String accessToken) throws IOException {
         final Connection.Response response = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/JoinPlanet/v0001/")
                 .followRedirects(true)
                 .ignoreContentType(true)
@@ -896,7 +787,7 @@ public class SteamWebHandler {
         return eresult;
     }
 
-    private void joinZone(JSONObject zone, String accessToken) throws IOException, JSONException {
+    public void joinZone(JSONObject zone, String accessToken) throws IOException, JSONException {
         final String zoneId = zone.getString("zone_position");
         String url = null;
         if (zone.getInt("type") == 4) {
