@@ -233,14 +233,14 @@ public class SummerEventViewModel extends AndroidViewModel {
                                     response = webHandler.reportBossDamage(damageToBoss, damageTaken, useHeal, accessToken);
                                 } catch (Exception e) {
                                     if (bossFailsAllowed-- < 1) {
-                                        return false;
+                                        break;
                                     }
                                     continue;
                                 }
 
                                 if (response.getInt("eresult") != 1 && bossFailsAllowed-- < 1) {
                                     Log.i(TAG, "Boss errored too much, restarting...");
-                                    return false;
+                                    break;
                                 }
 
                                 if (!response.has("boss_status")) {
@@ -253,7 +253,7 @@ public class SummerEventViewModel extends AndroidViewModel {
 
                                 if (response.getBoolean("game_over")) {
                                     Log.i(TAG, "Boss fight over");
-                                    return true;
+                                    break;
                                 }
                             }
                         } else {
@@ -270,7 +270,6 @@ public class SummerEventViewModel extends AndroidViewModel {
                         }
                     } catch (IOException |JSONException e) {
                         e.printStackTrace();
-                        return false;
                     }
 
                     if (isCancelled()) {
