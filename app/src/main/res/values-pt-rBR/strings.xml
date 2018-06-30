@@ -159,8 +159,9 @@
     <string name="device_not_rooted">Seu dispositivo deve ter root para usar essa opção.</string>
     <string name="your_shared_secret">Seu shared_secret: %s</string>
     <string name="import_shared_secret_failed">Falha ao importar shared_secret! Certifique-se de que você está usando o autenticador móvel do Steam.</string>
-    <!-- Untranslated strings: -->
     <string name="next_round_countdown">Next round: %02d:%02d</string>
     <string name="reporting_score">Reporting score…</string>
+    <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
     <!-- End untranslated strings -->
 </resources>

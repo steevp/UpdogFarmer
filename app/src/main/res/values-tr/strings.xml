@@ -161,4 +161,7 @@
     <string name="import_shared_secret_failed">shared_secret kodu alınamadı! Steam Mobil Kimlik Doğrulayıcı kullandığınızdan emin olun.</string>
     <string name="next_round_countdown">Bir sonraki raund: %02d:%02d</string>
     <string name="reporting_score">Skor hesaplanıyor…</string>
+    <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
+    <!-- End untranslated strings -->
 </resources>
