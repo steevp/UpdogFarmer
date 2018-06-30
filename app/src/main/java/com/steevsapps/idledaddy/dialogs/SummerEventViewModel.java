@@ -14,7 +14,10 @@ import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.SingleLiveEvent;
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
 
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 public class SummerEventViewModel extends AndroidViewModel {
     private final static String TAG = SummerEventViewModel.class.getSimpleName();
@@ -152,7 +155,122 @@ public class SummerEventViewModel extends AndroidViewModel {
                     publishProgress(getApplication().getString(R.string.playing_saliens_indefinitely, score, nextLevelScore, level));
                     countDown.cancel();
                     countDown.start();
-                    webHandler.playSaliensRound(playerInfo, accessToken);
+                    try {
+                        if (playerInfo.has("active_zone_game")) {
+                            Log.i(TAG, "Leaving zone " + playerInfo.getString("active_zone_game"));
+                            webHandler.leaveGame(playerInfo.getString("active_zone_game"), accessToken);
+                        }
+                        if (playerInfo.has("active_planet")) {
+                            Log.i(TAG, "Leaving planet " + playerInfo.getString("active_planet"));
+                            webHandler.leaveGame(playerInfo.getString("active_planet"), accessToken);
+                        }
+                        if (playerInfo.has("active_boss_game")) {
+                            Log.i(TAG, "Leaving boss game: " + playerInfo.getString("active_boss_game"));
+                            webHandler.leaveGame(playerInfo.getString("active_boss_game"), accessToken);
+                        }
+                        // Find an uncaptured planet and join it
+                        JSONObject planet = null;
+                        for (int i=0;i<5;i++) {
+                            planet = webHandler.getUncapturedPlanet();
+                            if (planet == null) {
+                                continue;
+                            }
+                            Log.i(TAG, "Joining planet: " + planet.getString("id"));
+                            int eresult = webHandler.joinPlanet(planet.getString("id"), accessToken);
+                            if (eresult == 1) {
+                                break;
+                            }
+                            Log.w(TAG, "Trying a different planet");
+                        }
+                        if (planet == null) {
+                            return false;
+                        }
+
+                        // Find an uncaptured zone and join it
+                        final JSONObject zone = webHandler.getUncapturedZone(planet);
+                        if (zone == null) {
+                            return false;
+                        }
+
+                        final String zoneId = zone.getString("zone_position");
+                        if (zoneId == null) {
+                            return false;
+                        }
+
+                        final int difficulty = zone.getInt("difficulty");
+                        if (difficulty < 0) {
+                            return false;
+                        }
+
+                        webHandler.joinZone(zone, accessToken);
+
+                        if (zone.getInt("type") == 4) {
+                            int bossFailsAllowed = 10;
+                            long nextHeal = System.currentTimeMillis() + 120000;
+                            countDownText.postValue(getApplication().getString(R.string.boss_hp, 0));
+                            while (true) {
+                                try {
+                                    Thread.sleep(5000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                    return false;
+                                }
+
+                                int useHeal = 0;
+                                int damageToBoss = 1;
+                                int damageTaken = 0;
+
+                                if (System.currentTimeMillis() >= nextHeal) {
+                                    Log.i(TAG, "Using heal");
+                                    useHeal = 1;
+                                    nextHeal = System.currentTimeMillis() + 120000;
+                                }
+
+                                Log.i(TAG, "Attacking boss...");
+                                JSONObject response = null;
+                                try {
+                                    response = webHandler.reportBossDamage(damageToBoss, damageTaken, useHeal, accessToken);
+                                } catch (Exception e) {
+                                    if (bossFailsAllowed-- < 1) {
+                                        return false;
+                                    }
+                                    continue;
+                                }
+
+                                if (response.getInt("eresult") != 1 && bossFailsAllowed-- < 1) {
+                                    Log.i(TAG, "Boss errored too much, restarting...");
+                                    return false;
+                                }
+
+                                if (!response.has("boss_status")) {
+                                    Log.i(TAG, "Waiting...");
+                                    continue;
+                                }
+
+                                Log.i(TAG, "Boss hp: " + response.getJSONObject("boss_status").getInt("boss_hp"));
+                                countDownText.postValue(getApplication().getString(R.string.boss_hp, response.getJSONObject("boss_status").getInt("boss_hp")));
+
+                                if (response.getBoolean("game_over")) {
+                                    Log.i(TAG, "Boss fight over");
+                                    return true;
+                                }
+                            }
+                        } else {
+                            Log.i(TAG, "sleeping for 2 minutes");
+                            try {
+                                Thread.sleep(120000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                                return false;
+                            }
+                            final int newScore = 120 * (5 * ((int) Math.pow(2, difficulty - 1)));
+                            Log.i(TAG, "Reporting score: " + newScore);
+                            webHandler.reportScore(String.valueOf(newScore), accessToken);
+                        }
+                    } catch (IOException |JSONException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
 
                     if (isCancelled()) {
                         return false;
@@ -169,7 +287,6 @@ public class SummerEventViewModel extends AndroidViewModel {
             @Override
             protected void onPostExecute(Boolean result) {
                 finished = true;
-                statusText.setValue(getApplication().getString(result ? R.string.success_check_inventory : R.string.play_saliens_failed));
             }
         }.execute();
     }
