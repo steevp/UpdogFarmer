@@ -331,7 +331,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
      */
     private void handleKeyIntent(Intent intent) {
         final String key = intent.getStringExtra(Intent.EXTRA_TEXT);
-        if (loggedIn && key != null) {
+        if (!PrefsManager.getLoginKey().isEmpty() && key != null) {
             steamService.redeemKey(key.trim());
         } else {
             Toast.makeText(getApplicationContext(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
