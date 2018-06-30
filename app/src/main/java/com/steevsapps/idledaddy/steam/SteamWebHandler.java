@@ -455,6 +455,10 @@ public class SteamWebHandler {
                 Log.i(TAG, "Leaving planet " + playerInfo.getString("active_planet"));
                 leaveGame(playerInfo.getString("active_planet"), accessToken);
             }
+            if (playerInfo.has("active_boss_game")) {
+                Log.i(TAG, "Leaving boss game: " + playerInfo.getString("active_boss_game"));
+                leaveGame(playerInfo.getString("active_boss_game"), accessToken);
+            }
             // Find an uncaptured planet and join it
             JSONObject planet = null;
             for (int i=0;i<5;i++) {
@@ -484,8 +488,7 @@ public class SteamWebHandler {
                 return false;
             }
 
-            Log.i(TAG, "Joining zone: " + zoneId);
-            joinZone(zoneId, accessToken);
+            joinZone(zone, accessToken);
 
             // That should be all we need to get the card
             return true;
@@ -508,6 +511,10 @@ public class SteamWebHandler {
             if (playerInfo.has("active_planet")) {
                 Log.i(TAG, "Leaving planet " + playerInfo.getString("active_planet"));
                 leaveGame(playerInfo.getString("active_planet"), accessToken);
+            }
+            if (playerInfo.has("active_boss_game")) {
+                Log.i(TAG, "Leaving boss game: " + playerInfo.getString("active_boss_game"));
+                leaveGame(playerInfo.getString("active_boss_game"), accessToken);
             }
             // Find an uncaptured planet and join it
             JSONObject planet = null;
@@ -545,18 +552,54 @@ public class SteamWebHandler {
 
             final int score = 120 * (5 * ((int) Math.pow(2, difficulty - 1)));
 
-            Log.i(TAG, "Joining zone: " + zoneId);
-            joinZone(zoneId, accessToken);
+            joinZone(zone, accessToken);
 
-            Log.i(TAG, "sleeping for 2 minutes");
-            try {
-                Thread.sleep(120000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (zone.getInt("type") == 4) {
+                int bossFailsAllowed = 10;
+                long nextHeal = System.currentTimeMillis() + 120000;
+                while (true) {
+                    try {
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+
+                    int useHeal = 0;
+                    int damageToBoss = 1;
+                    int damageTaken = 0;
+
+                    if (System.currentTimeMillis() >= nextHeal) {
+                        Log.i(TAG, "Using heal");
+                        useHeal = 1;
+                        nextHeal = System.currentTimeMillis() + 120000;
+                    }
+
+                    Log.i(TAG, "Attacking boss...");
+                    final JSONObject response = reportBossDamage(damageToBoss, damageTaken, useHeal, accessToken);
+
+                    if (response.getInt("eresult") != 1 && bossFailsAllowed-- < 1) {
+                        Log.i(TAG, "Boss errored too much, restarting...");
+                        return false;
+                    }
+
+                    if (response.getBoolean("game_over")) {
+                        Log.i(TAG, "Boss fight over");
+                        return true;
+                    }
+                }
+            } else {
+                Log.i(TAG, "sleeping for 2 minutes");
+                try {
+                    Thread.sleep(120000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+                Log.i(TAG, "Reporting score: " + score);
+                reportScore(String.valueOf(score), accessToken);
             }
 
-            Log.i(TAG, "Reporting score: " + score);
-            reportScore(String.valueOf(score), accessToken);
             return true;
         } catch (IOException|JSONException e) {
             e.printStackTrace();
@@ -619,6 +662,31 @@ public class SteamWebHandler {
         }
     }
 
+    private JSONObject reportBossDamage(int damageToBoss, int damageTaken, int useHeal, String accessToken) throws IOException, JSONException {
+        final Connection.Response response = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/ReportBossDamage/v0001/")
+                .followRedirects(true)
+                .ignoreContentType(true)
+                .referrer("https://steamcommunity.com/saliengame/play/")
+                .method(Connection.Method.POST)
+                .data("access_token", accessToken)
+                .data("use_heal_ability", String.valueOf(useHeal))
+                .data("damage_to_boss", String.valueOf(damageToBoss))
+                .data("damage_taken", String.valueOf(damageTaken))
+                .execute();
+        final JSONObject json = new JSONObject(response.body()).getJSONObject("response");
+
+        int eresult;
+        try {
+            eresult = Integer.parseInt(response.header("X-eresult"));
+        } catch (NumberFormatException e) {
+            eresult = -1;
+        }
+        Log.i(TAG, "ReportBossDamage eresult: " + eresult);
+        Log.i(TAG, "ReportBossDamage error_message " + response.header("X-error_message"));
+        json.put("eresult", eresult);
+        return json;
+    }
+
     private JSONObject getUncapturedPlanet() {
         try {
             final JSONArray planets = getPlanets();
@@ -643,6 +711,10 @@ public class SteamWebHandler {
                 for (int j=0; j < zones.length(); j++) {
                     final JSONObject zone = zones.getJSONObject(j);
                     if (zone.getBoolean("captured")) {
+                        continue;
+                    }
+                    if (zone.getInt("zone_position") == 0 && zone.optDouble("capture_progress", 0.0) < 5) {
+                        Log.i(TAG, "Skipping locked zone: 0");
                         continue;
                     }
                     int difficulty = zone.getInt("difficulty");
@@ -824,8 +896,17 @@ public class SteamWebHandler {
         return eresult;
     }
 
-    private void joinZone(String zoneId, String accessToken) throws IOException {
-        final Connection.Response response = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/JoinZone/v0001/")
+    private void joinZone(JSONObject zone, String accessToken) throws IOException, JSONException {
+        final String zoneId = zone.getString("zone_position");
+        String url = null;
+        if (zone.getInt("type") == 4) {
+            Log.i(TAG, "Joining boss zone: " + zoneId);
+            url = "https://community.steam-api.com/ITerritoryControlMinigameService/JoinBossZone/v0001/";
+        } else {
+            Log.i(TAG, "Joining zone: " + zoneId);
+            url = "https://community.steam-api.com/ITerritoryControlMinigameService/JoinZone/v0001/";
+        }
+        final Connection.Response response = Jsoup.connect(url)
                 .followRedirects(true)
                 .ignoreContentType(true)
                 .method(Connection.Method.POST)
