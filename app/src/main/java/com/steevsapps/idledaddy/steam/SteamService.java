@@ -152,6 +152,7 @@ public class SteamService extends Service {
     private ScheduledFuture<?> farmHandle;
     private ScheduledFuture<?> waitHandle;
 
+    private String keyToRedeem = null;
     private final LinkedList<Integer> pendingFreeLicenses = new LinkedList<>();
 
     private File sentryFolder;
@@ -798,6 +799,8 @@ public class SteamService extends Service {
         steamId = 0;
         logOnDetails = null;
         currentGames.clear();
+        keyToRedeem = null;
+        pendingFreeLicenses.clear();
         stopFarming();
         executor.execute(() -> {
             steamUser.logOff();
@@ -810,23 +813,43 @@ public class SteamService extends Service {
     /**
      * Redeem Steam key or activate free license
      */
-    public void redeemKey(final String key) {
+    public void redeemKey(String key) {
+        if (!loggedIn && !PrefsManager.getLoginKey().isEmpty()) {
+            Log.i(TAG, "Will redeem key at login");
+            keyToRedeem = key;
+            return;
+        }
+        Log.i(TAG, "Redeeming key...");
         if (key.matches("\\d+")) {
             // Request a free license
             try {
-                final int freeLicense = Integer.parseInt(key);
-                pendingFreeLicenses.add(freeLicense);
-                executor.execute(() -> steamApps.requestFreeLicense(freeLicense));
+                int freeLicense = Integer.parseInt(key);
+                addFreeLicense(freeLicense);
             } catch (NumberFormatException e) {
                 showToast(getString(R.string.invalid_key));
             }
         } else {
             // Register product key
-            final ClientMsgProtobuf<SteammessagesClientserver2.CMsgClientRegisterKey.Builder> registerKey;
-            registerKey = new ClientMsgProtobuf<>(SteammessagesClientserver2.CMsgClientRegisterKey.class, EMsg.ClientRegisterKey);
-            registerKey.getBody().setKey(key);
-            executor.execute(() -> steamClient.send(registerKey));
+            registerProductKey(key);
         }
+    }
+
+    /**
+     * Request a free license
+     */
+    private void addFreeLicense(int freeLicense) {
+        pendingFreeLicenses.add(freeLicense);
+        executor.execute(() -> steamApps.requestFreeLicense(freeLicense));
+    }
+
+    /**
+     * Register a product key
+     */
+    private void registerProductKey(String productKey) {
+        final ClientMsgProtobuf<SteammessagesClientserver2.CMsgClientRegisterKey.Builder> registerKey;
+        registerKey = new ClientMsgProtobuf<>(SteammessagesClientserver2.CMsgClientRegisterKey.class, EMsg.ClientRegisterKey);
+        registerKey.getBody().setKey(productKey);
+        executor.execute(() -> steamClient.send(registerKey));
     }
 
     public void autoVote() {
@@ -994,14 +1017,20 @@ public class SteamService extends Service {
                     steamUser.requestWebAPIUserNonce();
                 }
             });
+            if (keyToRedeem != null) {
+                redeemKey(keyToRedeem);
+                keyToRedeem = null;
+            }
         } else if (result == EResult.InvalidPassword && !PrefsManager.getLoginKey().isEmpty()) {
             // Probably no longer valid
             Log.i(TAG, "Login key expired");
             PrefsManager.writeLoginKey("");
             updateNotification(getString(R.string.login_key_expired));
+            keyToRedeem = null;
             steamClient.disconnect();
         } else {
             Log.i(TAG, "LogOn result: " + result.toString());
+            keyToRedeem = null;
             steamClient.disconnect();
         }
 
