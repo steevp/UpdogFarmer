@@ -161,4 +161,7 @@
     <string name="import_shared_secret_failed">Не успях да въведа shared_secret! Увери се ,че използваш мобилния индетификатор.</string>
     <string name="next_round_countdown">Следващ рунд: %02d:%02d</string>
     <string name="reporting_score">Запазване на резултата…</string>
+    <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
+    <!-- End untranslated strings -->
 </resources>

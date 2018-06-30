@@ -159,8 +159,9 @@
     <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
     <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
     <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
-    <!-- Untranslated strings: -->
     <string name="next_round_countdown">Next round: %02d:%02d</string>
     <string name="reporting_score">Reporting score…</string>
+    <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
     <!-- End untranslated strings -->
 </resources>

@@ -164,5 +164,6 @@
     <string name="your_shared_secret">Twój kod shared_secret: %s</string>
     <string name="import_shared_secret_failed">Błąd podczas importowania kodu shared_secret! Upewnij się, że używasz mobilnego tokenu uwierzytelniającego Steam.</string>
     <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
     <!-- End untranslated strings -->
 </resources>
