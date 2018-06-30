@@ -604,10 +604,6 @@ public class SteamWebHandler {
                     if (zone.getBoolean("captured")) {
                         continue;
                     }
-                    if (zone.getInt("zone_position") == 0 && zone.optDouble("capture_progress", 0.0) < 5) {
-                        Log.i(TAG, "Skipping locked zone: 0");
-                        continue;
-                    }
                     int difficulty = zone.getInt("difficulty");
                     if (difficulty == 1) {
                         easyZones.put(zone);
