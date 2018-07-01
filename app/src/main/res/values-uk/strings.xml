@@ -104,7 +104,18 @@
     <string name="discovery_error">Не вдалося проглянути Чергу Знахідок у цей час. Спробуйте ще раз пізніше</string>
     <string name="auto_vote">Авто Голос (Нагороди Steam)</string>
     <string name="vote_successful">Успішне голосування!</string>
-    <string name="vote_failed">Не вдалося проголосувати!</string>
+    <string name="vote_failed">Не вдалося проголосувати!</string>    
+    <string name="summer_event">Гра Saliens</string>
+    <string name="play_saliens">Грати Saliens заради карток</string>
+    <string name="play_saliens_indefinitely">Грати Saliens Нескінченно</string>
+    <string name="play_saliens_desc">Ви можете заробити до 3 торгових карток кожну добу, граючи в літню гру Saliens. Ця гра дійсна до 5 липня.</string>
+    <string name="playing_saliens">Отримання карток у Saliens (%d/%d)…</string>
+    <string name="playing_saliens_indefinitely">Грає Saliens…\nРахунок: %s/%s\nРівень: %s</string>
+    <string name="next_round_countdown">Наступний раунд: %02d:%02d</string>
+    <string name="boss_hp">Життя Боса: %d</string>
+    <string name="reporting_score">Фінальний рахунок…</string>
+    <string name="success_check_inventory">Успіх! Перевірте нові картки в інвентарі.</string>
+    <string name="play_saliens_failed">Не вдається зіграти зараз у Saliens. Спробуйте пізніше.</string>    
     <string name="apikey_access_denied">Заборонено доступ ключу Steam API, використання вбудованого ключа.</string>
     <string name="apikey_register_failed">Не вдалося зареєструвати API ключ, використання вбудованого ключа.</string>
     <string name="english">Англійська</string>
@@ -151,17 +162,4 @@
     <string name="device_not_rooted">Ваш пристрій повинен мати рут-права для використання цієї опції.</string>
     <string name="your_shared_secret">Ваш shared_secret: %s</string>
     <string name="import_shared_secret_failed">Не вдалося імпортувати shared_secret! Переконайтесь, що ви використовуєте мобільний аутентифікатор Steam.</string>
-    <string name="summer_event">Summer Event</string>
-    <string name="play_saliens">Play Saliens (Just get trading cards)</string>
-    <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
-    <string name="play_saliens_desc">You can earn up to 3 trading cards each day by playing the Summer Salien game. This event ends on July 5th.</string>
-    <string name="playing_saliens">Playing Saliens (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
-    <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
-    <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
-    <string name="next_round_countdown">Next round: %02d:%02d</string>
-    <string name="reporting_score">Reporting score…</string>
-    <!-- Untranslated strings: -->
-    <string name="boss_hp">Boss HP: %d</string>
-    <!-- End untranslated strings -->
 </resources>
