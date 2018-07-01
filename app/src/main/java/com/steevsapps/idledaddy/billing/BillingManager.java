@@ -95,10 +95,12 @@ public class BillingManager implements PurchasesUpdatedListener {
             for (Purchase purchase : purchases) {
                 handlePurchase(purchase);
             }
+            Log.i(TAG, "Purchases updated.");
             listener.onPurchasesUpdated(purchases);
         } else if (responseCode == BillingClient.BillingResponse.USER_CANCELED) {
             // Handle an error caused by a user canceling the purchase flow.
-            Log.i(TAG, "User canceled.");
+            Log.i(TAG, "Purchase canceled.");
+            listener.onPurchaseCanceled();
         } else {
             // Handle any other error codes.
             Log.i(TAG, "Unknown error. Response code: " + responseCode);

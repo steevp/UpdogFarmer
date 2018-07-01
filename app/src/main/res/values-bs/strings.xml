@@ -12,7 +12,7 @@
     <string name="desc_start">Idlaj igre dok sve kartice ne dropaju.</string>
     <string name="stop_idling">Zaustavi uslugu</string>
     <string name="desc_stop">Zaustavite uslugu i napustite aplikaciju.</string>
-    <string name="idling_finished">Nema više igara za idljanje.</string>
+    <string name="idling_finished">Nema više igara za idlanje.</string>
     <string name="search">Traži</string>
     <string name="settings">Postavke</string>
     <string name="logout">Odjavite se</string>
@@ -37,6 +37,9 @@
     <string name="sum_include_free_games">Po defaultu, besplatne igre kao Team Fortress 2 nisu prikazane (zato što tehnički, svako ih posjeduje). Ako je ova opcija omogućena, bit će prikazane sve igre koje ste ikada igrali.</string>
     <string name="pref_language">Jezik</string>
     <string name="sum_language">Promijenite jezik aplikacije (zahtijeva ponovno pokretanje).</string>
+    <string name="pref_gdpr_consent">Opoziv GDPR-a</string>
+    <string name="sum_gdpr_consent">Prema EU-ovoj Uredbi o zaštiti podataka (GDPR), potrebna je saglasnost korisnika prije prikazivanja oglasa. Kliknite ovde da biste opozvali vašu saglasnost.</string>
+    <string name="gdpr_consent_not_needed">Nije potrebno. Idle Daddy Premium ne prikazuje oglase.</string>
     <string name="blacklist_hint">Unesite appid i kliknite +</string>
     <string name="add_to_blacklist">Dodajte igru na Crnu Listu</string>
     <string name="added_to_blacklist">Igra dodana na Crnu Listu</string>
@@ -44,12 +47,12 @@
     <string name="removed_from_blacklist">Igra uklonjena sa Crne Liste</string>
     <string name="open_drawer">Otvori ladicu</string>
     <string name="close_drawer">Zatvori ladicu</string>
-    <string name="home">Početna</string>
+    <string name="home">Pocetna</string>
     <string name="games">Igre</string>
-    <string name="no_games_found">Nije moguće dohvatiti popis igara.</string>
+    <string name="no_games_found">Nije moguce dohvatiti popis igara.</string>
     <string name="now_playing">Sada igram</string>
     <string name="error_not_logged_in">Morate biti prijavljeni na Steam</string>
-    <string name="invalid_password">Netačna lozinka</string>
+    <string name="invalid_password">Netacna lozinka</string>
     <string name="steamguard_required">Potreban je Steam Guard kod</string>
     <string name="invalid_code">Netačan kod</string>
     <string name="timeout_error">Veza je istekla. Molimo pokušajte ponovo</string>
@@ -133,4 +136,32 @@
     <string name="non_steam_game">Ime igre</string>
     <string name="playing_unknown_app">Nepoznata aplikacija: %d</string>
     <string name="playing_non_steam_game">Igra koja nije na Steamu: %s</string>
+    <string name="spring_cleaning_title">Proljetno cišcenje (2018)</string>
+    <string name="spring_cleaning_desc">Završi zadatke da biste unaprijedili vašu znacku proljetnog cišcenja. Ovaj dogadaj se završava 28. maja.</string>
+    <string name="complete_daily_tasks">Završi dnevne zadatke</string>
+    <string name="complete_projects">Završi zadatke projekta</string>
+    <string name="daily_tasks_completed">Dnevni zadaci završeni. Vratite se ponovo sutra.</string>
+    <string name="project_tasks_completed">Završeni zadaci projekta. Ovo trebate uraditi samo jednom.</string>
+    <string name="pref_use_custom_loginid">Use Custom Login ID</string>
+    <string name="sum_use_custom_loginid">Enabling this option will allow you to run other SteamKit apps (such as Ice Client) at the same time as Idle Daddy. If unsure, leave this off. (Requires restart)</string>
+    <string name="summer_event">Summer Event</string>
+    <string name="play_saliens">Play Saliens (Just get trading cards)</string>
+    <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
+    <string name="play_saliens_desc">You can earn up to 3 trading cards each day by playing the Summer Salien game. This event ends on July 5th.</string>
+    <string name="playing_saliens">Playing Saliens (%d/%d)…</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
+    <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
+    <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
+    <string name="shared_secret_desc">Import the \'shared_secret\' code from your mobile authenticator. This allows Idle Daddy to automatically log in again when the login key expires.</string>
+    <string name="import_shared_secret">Import shared_secret</string>
+    <string name="enter_manually">Enter manually</string>
+    <string name="enter_shared_secret">Enter your shared_secret:</string>
+    <string name="device_not_rooted">Your device must be rooted to use this option.</string>
+    <string name="your_shared_secret">Your shared_secret: %s</string>
+    <string name="import_shared_secret_failed">Failed to import shared_secret! Make sure you\'re using the Steam mobile authenticator.</string>
+    <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="reporting_score">Reporting score…</string>
+    <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
+    <!-- End untranslated strings -->
 </resources>

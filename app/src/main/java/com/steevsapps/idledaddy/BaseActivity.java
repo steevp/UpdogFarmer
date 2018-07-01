@@ -42,7 +42,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * Get the Steam Service
      */
-    protected SteamService getService() {
+    public SteamService getService() {
         return service;
     }
 

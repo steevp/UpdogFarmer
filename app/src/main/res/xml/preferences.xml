@@ -21,6 +21,12 @@
             android:summary="@string/sum_include_free_games"
             android:defaultValue="true" />
 
+        <SwitchPreference
+            android:key="use_custom_loginid"
+            android:title="@string/pref_use_custom_loginid"
+            android:summary="@string/sum_use_custom_loginid"
+            android:defaultValue="false" />
+
         <EditTextPreference
             android:key="parental_pin"
             android:title="@string/pref_parental_pin"
@@ -32,6 +38,11 @@
             android:summary="@string/sum_language"
             android:entries="@array/language_options"
             android:entryValues="@array/language_option_values" />
+
+        <Preference
+            android:key="gdpr_consent"
+            android:title="@string/pref_gdpr_consent"
+            android:summary="@string/sum_gdpr_consent" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/cat_idle">

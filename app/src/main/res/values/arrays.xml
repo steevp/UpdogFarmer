@@ -37,6 +37,7 @@
         <item>@string/serbian</item>
     </string-array>
 
+    <!--suppress MissingTranslation -->
     <string-array name="language_option_values">
         <item>en</item>
         <item>de</item>

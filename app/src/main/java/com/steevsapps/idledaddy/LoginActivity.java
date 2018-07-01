@@ -1,25 +1,26 @@
 package com.steevsapps.idledaddy;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.steevsapps.idledaddy.fragments.TimeoutFragment;
-import com.steevsapps.idledaddy.listeners.TimeoutListener;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.steam.SteamGuard;
 import com.steevsapps.idledaddy.steam.SteamService;
+import com.steevsapps.idledaddy.steam.SteamWebHandler;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import in.dragonbra.javasteam.enums.EOSType;
@@ -28,7 +29,7 @@ import in.dragonbra.javasteam.steam.handlers.steamuser.LogOnDetails;
 
 import static com.steevsapps.idledaddy.steam.SteamService.LOGIN_EVENT;
 
-public class LoginActivity extends BaseActivity implements TimeoutListener {
+public class LoginActivity extends BaseActivity {
     private final static String TAG = LoginActivity.class.getSimpleName();
 
     private final static String LOGIN_IN_PROGRESS = "LOGIN_IN_PROGRESS";
@@ -36,6 +37,9 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
 
     private boolean loginInProgress;
     private boolean twoFactorRequired;
+    private Integer timeDifference = null;
+
+    private LoginViewModel viewModel;
 
     // Views
     private CoordinatorLayout coordinatorLayout;
@@ -66,6 +70,10 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
                         passwordInput.setError(getString(R.string.invalid_password));
                     } else if (result == EResult.AccountLoginDeniedNeedTwoFactor || result == EResult.AccountLogonDenied || result == EResult.AccountLogonDeniedNoMail || result == EResult.AccountLogonDeniedVerifiedEmailRequired) {
                         twoFactorRequired = result == EResult.AccountLoginDeniedNeedTwoFactor;
+                        if (twoFactorRequired && timeDifference != null) {
+                            // Fill in the SteamGuard code
+                            twoFactorEditText.setText(SteamGuard.generateSteamGuardCodeForTime(Utils.getCurrentUnixTime() + timeDifference));
+                        }
                         twoFactorInput.setVisibility(View.VISIBLE);
                         twoFactorInput.setError(getString(R.string.steamguard_required));
                         twoFactorEditText.requestFocus();
@@ -75,7 +83,9 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
                 } else {
                     // Save username
                     final String username = Utils.removeSpecialChars(usernameEditText.getText().toString()).trim();
+                    final String password = Utils.removeSpecialChars(passwordEditText.getText().toString().trim());
                     PrefsManager.writeUsername(username);
+                    PrefsManager.writePassword(LoginActivity.this, password);
                     finish();
                 }
             }
@@ -86,27 +96,16 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
      * Start timeout handler in case the server doesn't respond
      */
     private void startTimeout() {
-        Log.i(TAG, "Starting timeout handler");
         loginInProgress = true;
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(TimeoutFragment.newInstance(), TimeoutFragment.TAG)
-                .commit();
+        viewModel.startTimeout();
     }
 
     /**
      * Stop the timeout handler
      */
     private void stopTimeout() {
-        Log.i(TAG, "Stopping timeout handler");
         loginInProgress = false;
-        final Fragment timeout = getSupportFragmentManager().findFragmentByTag(TimeoutFragment.TAG);
-        if (timeout != null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .remove(timeout)
-                    .commitAllowingStateLoss();
-        }
+        viewModel.stopTimeout();
     }
 
     public static Intent createIntent(Context c) {
@@ -137,7 +136,10 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
         } else {
             // Restore saved username if any
             usernameEditText.setText(PrefsManager.getUsername());
+            passwordEditText.setText(PrefsManager.getPassword(this));
         }
+
+        setupViewModel();
     }
 
     @Override
@@ -151,10 +153,6 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
     protected void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
-
-        if (isFinishing()) {
-            stopTimeout();
-        }
     }
 
     @Override
@@ -186,11 +184,23 @@ public class LoginActivity extends BaseActivity implements TimeoutListener {
         }
     }
 
-    @Override
-    public void onTimeout() {
-        stopTimeout();
-        loginButton.setEnabled(true);
-        progress.setVisibility(View.GONE);
-        Snackbar.make(coordinatorLayout, R.string.timeout_error, Snackbar.LENGTH_LONG).show();
+    private void setupViewModel() {
+        viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+        viewModel.init(SteamWebHandler.getInstance());
+        viewModel.getTimeDifference().observe(this, new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer value) {
+                timeDifference = value;
+            }
+        });
+        viewModel.getTimeout().observe(this, new Observer<Void>() {
+            @Override
+            public void onChanged(@Nullable Void aVoid) {
+                loginInProgress = false;
+                loginButton.setEnabled(true);
+                progress.setVisibility(View.GONE);
+                Snackbar.make(coordinatorLayout, R.string.timeout_error, Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 }

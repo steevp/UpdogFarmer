@@ -35,16 +35,22 @@ import android.widget.Toast;
 
 import com.android.billingclient.api.Purchase;
 import com.bumptech.glide.Glide;
+import com.google.ads.consent.ConsentStatus;
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.steevsapps.idledaddy.billing.BillingManager;
 import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
+import com.steevsapps.idledaddy.consent.ConsentListener;
+import com.steevsapps.idledaddy.consent.ConsentManager;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.AutoDiscoverDialog;
 import com.steevsapps.idledaddy.dialogs.CustomAppDialog;
 import com.steevsapps.idledaddy.dialogs.GameOptionsDialog;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
+import com.steevsapps.idledaddy.dialogs.SharedSecretDialog;
+import com.steevsapps.idledaddy.dialogs.SummerEventDialog;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
 import com.steevsapps.idledaddy.fragments.HomeFragment;
 import com.steevsapps.idledaddy.fragments.SettingsFragment;
@@ -63,7 +69,7 @@ import java.util.Locale;
 
 import in.dragonbra.javasteam.enums.EPersonaState;
 
-public class MainActivity extends BaseActivity implements BillingUpdatesListener, DialogListener,
+public class MainActivity extends BaseActivity implements BillingUpdatesListener, ConsentListener, DialogListener,
         GamePickedListener, SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String DRAWER_ITEM = "DRAWER_ITEM";
@@ -88,6 +94,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     private AdView adView;
 
     private BillingManager billingManager;
+    private ConsentManager consentManager;
 
     private boolean logoutExpanded = false;
     private int drawerItemId;
@@ -188,8 +195,9 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
 
         mainContainer = findViewById(R.id.main_container);
 
-        // Setup Billing Manager
+        // Setup Billing Manager & Consent Manager
         billingManager = new BillingManager(this);
+        consentManager = new ConsentManager(this);
 
         // Setup the navigation spinner (Games fragment only)
         spinnerNav = findViewById(R.id.spinner_nav);
@@ -323,7 +331,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
      */
     private void handleKeyIntent(Intent intent) {
         final String key = intent.getStringExtra(Intent.EXTRA_TEXT);
-        if (loggedIn && key != null) {
+        if (!PrefsManager.getLoginKey().isEmpty() && key != null) {
             steamService.redeemKey(key.trim());
         } else {
             Toast.makeText(getApplicationContext(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
@@ -444,6 +452,8 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         drawerView.getHeaderView(0).setClickable(loggedIn);
         menu.findItem(R.id.auto_discovery).setVisible(loggedIn);
         menu.findItem(R.id.custom_app).setVisible(loggedIn);
+        menu.findItem(R.id.summer_event).setVisible(loggedIn);
+        menu.findItem(R.id.import_shared_secret).setVisible(loggedIn);
         //menu.findItem(R.id.auto_vote).setVisible(loggedIn);
         menu.findItem(R.id.search).setVisible(drawerItemId == R.id.games);
         return super.onPrepareOptionsMenu(menu);
@@ -481,6 +491,12 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                 return true;
             case R.id.custom_app:
                 CustomAppDialog.newInstance().show(getSupportFragmentManager(), CustomAppDialog.TAG);
+                return true;
+            case R.id.summer_event:
+                SummerEventDialog.newInstance().show(getSupportFragmentManager(), SummerEventDialog.TAG);
+                return true;
+            case R.id.import_shared_secret:
+                SharedSecretDialog.newInstance(steamService.getSteamId()).show(getSupportFragmentManager(), SharedSecretDialog.TAG);
                 return true;
             //case R.id.auto_vote:
             //    steamService.autoVote();
@@ -658,7 +674,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     @Override
     public void onBillingClientSetupFinished() {
         if (billingManager.shouldDisplayAds()) {
-            loadAds();
+            consentManager.requestConsentInfo();
             drawerView.getMenu().findItem(R.id.remove_ads).setVisible(true);
         }
     }
@@ -671,15 +687,47 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         }
     }
 
+    @Override
+    public void onPurchaseCanceled() {
+        if (billingManager.shouldDisplayAds()) {
+            consentManager.requestConsentInfo();
+        }
+    }
+
+    @Override
+    public void onConsentInfoUpdated(ConsentStatus consentStatus, boolean userPrefersAdFree) {
+        if (userPrefersAdFree) {
+            billingManager.launchPurchaseFlow();
+        } else {
+            final Bundle args = new Bundle();
+            if (consentStatus == ConsentStatus.NON_PERSONALIZED) {
+                args.putString("npa", "1");
+            }
+            loadAds(args);
+        }
+
+    }
+
+    @Override
+    public void onConsentRevoked() {
+        if (billingManager.shouldDisplayAds()) {
+            consentManager.revokeConsent();
+        } else {
+            // Consent not needed. No ads are shown in Idle Daddy Premium
+            Toast.makeText(this, R.string.gdpr_consent_not_needed, Toast.LENGTH_LONG).show();
+        }
+    }
+
     /**
      * Inflate adView and load the ad request
      */
-    private void loadAds() {
+    private void loadAds(Bundle args) {
         if (adView == null) {
             adView = (AdView) adInflater.inflate();
         }
         MobileAds.initialize(this, "ca-app-pub-6413501894389361~6190763130");
         final AdRequest adRequest = new AdRequest.Builder()
+                .addNetworkExtrasBundle(AdMobAdapter.class, args)
                 .build();
         adView.loadAd(adRequest);
     }

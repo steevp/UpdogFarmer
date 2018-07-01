@@ -1,5 +1,7 @@
 package com.steevsapps.idledaddy.utils;
 
+import com.steevsapps.idledaddy.ThrowingTask;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -8,12 +10,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 public class Utils {
+    private final static String SHA1_ALGORITHM = "SHA-1";
+    private final static String HMAC_SHA1_ALGORITHM = "HmacSHA1";
 
     /**
      * Convert byte array to hex string
@@ -89,7 +97,7 @@ public class Utils {
      */
     public static byte[] calculateSHA1(File file) throws IOException, NoSuchAlgorithmException {
         try (final InputStream fis = new FileInputStream(file)) {
-            final MessageDigest md = MessageDigest.getInstance("SHA-1");
+            final MessageDigest md = MessageDigest.getInstance(SHA1_ALGORITHM);
             final byte[] buffer = new byte[8192];
             int n;
             while ((n = fis.read(buffer)) != -1) {
@@ -99,4 +107,38 @@ public class Utils {
         }
     }
 
+    /**
+     * Get the current unix time
+     */
+    public static long getCurrentUnixTime() {
+        return System.currentTimeMillis() / 1000L;
+    }
+
+    /**
+     * Calculate HMAC SHA1
+     */
+    public static byte[] calculateRFC2104HMAC(byte[] data, byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
+        final SecretKeySpec secretKey = new SecretKeySpec(key, HMAC_SHA1_ALGORITHM);
+        final Mac mac = Mac.getInstance(HMAC_SHA1_ALGORITHM);
+        mac.init(secretKey);
+        return mac.doFinal(data);
+    }
+
+    /**
+     * Run a block of code a maximum of maxTries
+     */
+    public static void runWithRetries(int maxTries, ThrowingTask task) throws Exception {
+        int count = 0;
+        while (count < maxTries) {
+            try {
+                task.run();
+                return;
+            } catch (Exception e) {
+                if (++count >= maxTries) {
+                    throw e;
+                }
+                Thread.sleep(1000);
+            }
+        }
+    }
 }
