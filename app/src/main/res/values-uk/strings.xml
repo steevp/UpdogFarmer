@@ -108,7 +108,7 @@
     <string name="summer_event">Гра Saliens</string>
     <string name="play_saliens">Грати Saliens заради карток</string>
     <string name="play_saliens_indefinitely">Грати Saliens Нескінченно</string>
-    <string name="play_saliens_desc">Ви можете заробити до 3 торгових карток кожен день, граючи в літню гру Saliens. Ця гра дійсна до 5 липня.</string>
+    <string name="play_saliens_desc">Ви можете заробити до 3 торгових карток кожну добу, граючи в літню гру Saliens. Ця гра дійсна до 5 липня.</string>
     <string name="playing_saliens">Отримання карток у Saliens (%d/%d)…</string>
     <string name="playing_saliens_indefinitely">Грає Saliens…\nРахунок: %s/%s\nРівень: %s</string>
     <string name="next_round_countdown">Наступний раунд: %02d:%02d</string>
