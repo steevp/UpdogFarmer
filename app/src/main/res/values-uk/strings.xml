@@ -115,7 +115,7 @@
     <string name="boss_hp">Життя Боса: %d</string>
     <string name="reporting_score">Фінальний рахунок…</string>
     <string name="success_check_inventory">Успіх! Перевірте нові картки в інвентарі.</string>
-    <string name="play_saliens_failed">Не вдається зіграти в Saliens зараз. Спробуйте пізніше.</string>    
+    <string name="play_saliens_failed">Не вдається зіграти зараз у Saliens. Спробуйте пізніше.</string>    
     <string name="apikey_access_denied">Заборонено доступ ключу Steam API, використання вбудованого ключа.</string>
     <string name="apikey_register_failed">Не вдалося зареєструвати API ключ, використання вбудованого ключа.</string>
     <string name="english">Англійська</string>
