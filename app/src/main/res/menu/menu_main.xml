@@ -24,6 +24,20 @@
         android:visible="false"
         android:orderInCategory="101" />
 
+    <item
+        android:id="@+id/summer_event"
+        android:title="@string/summer_event"
+        app:showAsAction="never"
+        android:visible="false"
+        android:orderInCategory="102" />
+
+    <item
+        android:id="@+id/import_shared_secret"
+        android:title="@string/import_shared_secret"
+        app:showAsAction="never"
+        android:visible="false"
+        android:orderInCategory="103" />
+
     <!--
     <item
         android:id="@+id/auto_vote"
@@ -37,6 +51,6 @@
         android:id="@+id/logcat"
         android:title="@string/logcat"
         app:showAsAction="never"
-        android:orderInCategory="102" />
+        android:orderInCategory="103" />
 
 </menu>

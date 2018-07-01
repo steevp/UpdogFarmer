@@ -37,11 +37,16 @@
     <string name="sum_include_free_games">Standardowo gry, takie jak Team Fortress 2 są wykluczone z symulacji (z technicznego punktu widzenia wszyscy je posiadają). Jeśli ta opcja jest włączona darmowe gry będą pokazywane na liście aktywności, jeśli wcześniej były uruchomione.</string>
     <string name="pref_language">Język aplikacji</string>
     <string name="sum_language">Zmiana języka interfejsu aplikacji (wymaga ponownego uruchomienia).</string>
+    <string name="pref_gdpr_consent">Unieważnij zgodę GDPR</string>
+    <string name="sum_gdpr_consent">Zgodnie z rozporządzeniem Unii Europejskiej o ochronie danych osobowych (GDPR) do wyświetlania reklam wymagana jest zgoda użytkownika. Kliknij tutaj, aby wycofać swoją zgodę.</string>
+    <string name="gdpr_consent_not_needed">Zgoda nie jest wymagana. Wersja premium Idle Daddy nie wyświetla reklam.</string>
     <string name="blacklist_hint">Wpisz AppID i naciśnij +</string>
     <string name="add_to_blacklist">Dodaj grę do listy wykluczonych</string>
     <string name="added_to_blacklist">Gra dodana do listy wykluczonch</string>
     <string name="remove_from_blacklist">Usuń grę z listy wykluczonych</string>
     <string name="removed_from_blacklist">Gra usunięta z listy wykluczonych</string>
+    <string name="pref_use_custom_loginid">Użyj niestandardowego ID logowania</string>
+    <string name="sum_use_custom_loginid">Włączenie opcji pozwala uruchamiać inne aplikacje korzystające z biblioteki SteamKit równocześnie z Idle Daddy (np. Ice Client). W razie wątpliwości zostaw opcję wyłączoną (wymaga ponownego uruchomienia).</string>
     <string name="open_drawer">Otwórz menu</string>
     <string name="close_drawer">Zamknij menu</string>
     <string name="home">Strona główna</string>
@@ -59,14 +64,14 @@
     <string name="invalid_key">Nieprawidłowy klucz</string>
     <string name="activation_failed">Aktywacja zakończona niepowodzeniem</string>
     <plurals name="games_left">
-	<item quantity="one">Pozostała %d gra do symulacji</item>
-	<item quantity="few">Pozostały %d gry do symulacji</item>
-    	<item quantity="other">Pozostało %d gier do symulacji</item>
+        <item quantity="one">Pozostała %d gra do symulacji</item>
+        <item quantity="few">Pozostały %d gry do symulacji</item>
+        <item quantity="other">Pozostało %d gier do symulacji</item>
     </plurals>
     <plurals name="card_drops_remaining">
-	<item quantity="one">%d karta do uzyskania</item>
-	<item quantity="few">%d karty do uzyskania</item>
-    	<item quantity="other">%d kart do uzyskania</item>
+        <item quantity="one">%d karta do uzyskania</item>
+        <item quantity="few">%d karty do uzyskania</item>
+        <item quantity="other">%d kart do uzyskania</item>
     </plurals>
     <plurals name="hours_on_record">
         <item quantity="one">%.1f godz. łącznie</item>
@@ -87,7 +92,7 @@
     <string name="activated">Aktywowano: %s</string>
     <string name="refresh">Odśwież</string>
     <string name="last_session">Ostatnia sesja</string>
-    <string name="play_all">Uruchom wszystkie</string>	
+    <string name="play_all">Uruchom wszystkie</string>
     <string name="remove_ads">Usunięcie reklam</string>
     <string name="logcat">Wyślij logi</string>
     <string name="sort">Sortuj</string>
@@ -102,6 +107,16 @@
     <string name="auto_vote">Zagłosuj automatycznie (Nagrody Steam)</string>
     <string name="vote_successful">Zagłosowano pomyślnie!</string>
     <string name="vote_failed">Głosowanie nieudane!</string>
+    <string name="summer_event">Letnie wydarzenie (Saliens)</string>
+    <string name="play_saliens">Graj w Saliens (tylko dla kart)</string>
+    <string name="play_saliens_indefinitely">Graj w Saliens (symulacja bez końca)</string>
+    <string name="play_saliens_desc">Możesz uzyskać 3 karty maksymalnie dziennie grając w Saliens. Wydarzenie kończy się 4 lipca.</string>
+    <string name="playing_saliens">Gram w Saliens (%d/%d)…</string>
+    <string name="playing_saliens_indefinitely">Gram w Saliens…\nWynik: %s/%s\nPoziom: %s</string>
+    <string name="next_round_countdown">Następna runda: %02d:%02d</string>
+    <string name="reporting_score">Raportowany wynik…</string>
+    <string name="success_check_inventory">Udało się! Karty powinny pojawić się w twoim ekwipunku Steam.</string>
+    <string name="play_saliens_failed">Automatyczna symulacja gry Saliens jest aktualnie niemożliwa. Spróbuj później.</string>
     <string name="apikey_access_denied">Odmowa dostępu do klucza Steam API, zastosuję klucz wbudowany.</string>
     <string name="apikey_register_failed">Nie udało się zarejestrować klucza API, zastosuję klucz wbudowany.</string>
     <string name="english">Angielski</string>
@@ -135,4 +150,20 @@
     <string name="non_steam_game">Gra spoza Steam</string>
     <string name="playing_unknown_app">Nieznana aplikacja: %d</string>
     <string name="playing_non_steam_game">Gra spoza Steam: %s</string>
+    <string name="spring_cleaning_title">Wiosenne Porządki (2018)</string>
+    <string name="spring_cleaning_desc">Podczas trwania wydarzenia wykonaj określone zadania i projekty, aby zwiększyć poziom odznaki w profilu. Wydarzenie kończy się 28 maja.</string>
+    <string name="complete_daily_tasks">Wykonaj codzienne zadania</string>
+    <string name="complete_projects">Wykonaj projekty</string>
+    <string name="daily_tasks_completed">Codzienne zadania wykonane. Wróc jutro, by ukończyć nową listę zadań.</string>
+    <string name="project_tasks_completed">Projekty zostały wykonane. Wystarczyło je ukończyć tylko raz.</string>
+    <string name="shared_secret_desc">Importuje kod \'shared_secret\' z mobilnego tokenu uwierzytelniającego Steam. Opcja pozwala Idle Daddy automatyczne zalogowanie na konto, kiedy twój klucz logowania wygaśnie.</string>
+    <string name="import_shared_secret">Importuj kod shared_secret</string>
+    <string name="enter_manually">Wpisz kod ręcznie</string>
+    <string name="enter_shared_secret">Wpisz kod shared_secret:</string>
+    <string name="device_not_rooted">Twoje urządzenie potrzebuje dostępu do root\'a, aby używać tej funkcji.</string>
+    <string name="your_shared_secret">Twój kod shared_secret: %s</string>
+    <string name="import_shared_secret_failed">Błąd podczas importowania kodu shared_secret! Upewnij się, że używasz mobilnego tokenu uwierzytelniającego Steam.</string>
+    <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
+    <!-- End untranslated strings -->
 </resources>

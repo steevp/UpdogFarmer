@@ -1,61 +1,71 @@
 package com.steevsapps.idledaddy.dialogs;
 
 import android.annotation.SuppressLint;
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
+import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
+import com.steevsapps.idledaddy.utils.Utils;
 
 import org.json.JSONArray;
 
-public class AutoDiscoverViewModel extends ViewModel {
+import java.util.ArrayDeque;
 
-    class QueueItem {
-        String appId;
-        int number;
-        int count;
+public class AutoDiscoverViewModel extends AndroidViewModel {
 
-        private QueueItem(String appId, int number, int count) {
-            this.appId = appId;
-            this.number = number;
-            this.count = count;
-        }
+    private final MutableLiveData<String> statusText = new MutableLiveData<>();
+    private SteamWebHandler webHandler;
+    private boolean finished = true;
+
+    private final ArrayDeque<String> discoveryQueue = new ArrayDeque<>();
+
+    public AutoDiscoverViewModel(@NonNull Application application) {
+        super(application);
     }
 
-    private MutableLiveData<QueueItem> queueItem;
-    private SteamWebHandler webHandler;
-    private Boolean result = false;
+    public boolean isFinished() {
+        return finished;
+    }
 
     void init(SteamWebHandler webHandler) {
         this.webHandler = webHandler;
     }
 
-    LiveData<QueueItem> getQueueItem() {
-        if (queueItem == null) {
-            queueItem = new MutableLiveData<>();
-            loadData();
-        }
-
-        return queueItem;
-    }
-
-    boolean getResult() {
-        return result;
+    LiveData<String> getStatus() {
+        return statusText;
     }
 
     @SuppressLint("StaticFieldLeak")
-    private void loadData() {
-        new AsyncTask<Void,QueueItem,Boolean>() {
+    public void autodiscover() {
+        finished = false;
+        new AsyncTask<Void,String,Boolean>() {
             @Override
             protected Boolean doInBackground(Void... voids) {
                 try {
-                    final JSONArray discoveryQueue = webHandler.generateNewDiscoveryQueue();
-                    for (int i=0, count=discoveryQueue.length();i<count;i++) {
-                        final String appId = discoveryQueue.getString(i);
-                        publishProgress(new QueueItem(appId, i + 1, count));
-                        webHandler.clearFromQueue(appId);
+                    if (discoveryQueue.isEmpty()) {
+                        // Generate new discovery queue
+                        publishProgress(getApplication().getString(R.string.generating_discovery));
+
+                        Utils.runWithRetries(3, () -> {
+                            final JSONArray newQueue = webHandler.generateNewDiscoveryQueue();
+                            for (int i=0, count=newQueue.length();i<count;i++) {
+                                discoveryQueue.add(newQueue.getString(i));
+                            }
+                        });
+                    }
+
+                    for (int i=0, count=discoveryQueue.size();i<count;i++) {
+                        final String appId = discoveryQueue.getFirst();
+                        publishProgress(getApplication().getString(R.string.discovering, appId, i + 1, count));
+                        Utils.runWithRetries(3, () -> {
+                            webHandler.clearFromQueue(appId);
+                            discoveryQueue.pop();
+                        });
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -65,14 +75,14 @@ public class AutoDiscoverViewModel extends ViewModel {
             }
 
             @Override
-            protected void onProgressUpdate(QueueItem... values) {
-                queueItem.setValue(values[0]);
+            protected void onProgressUpdate(String... values) {
+                statusText.setValue(values[0]);
             }
 
             @Override
             protected void onPostExecute(Boolean result) {
-                AutoDiscoverViewModel.this.result = result;
-                queueItem.setValue(null);
+                finished = true;
+                statusText.setValue(getApplication().getString(result ? R.string.discovery_finished : R.string.discovery_error));
             }
         }.execute();
     }

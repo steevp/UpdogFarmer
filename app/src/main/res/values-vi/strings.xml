@@ -37,6 +37,9 @@
     <string name="sum_include_free_games">Theo mặc định, game miễn phí như Team Fortress 2 sẽ bị loại (vì hầu hết mọi người đều có game). Nếu như cài đặt này được bật, game sẽ được liệt kê nếu người chơi đã chơi tại một thời điểm nào đó.</string>
     <string name="pref_language">Ngôn ngữ</string>
     <string name="sum_language">Thay đổi ngôn ngữ của ứng dụng (Yêu cầu khởi động lại).</string>
+    <string name="pref_gdpr_consent">Bỏ qua kiến nghị GDPR</string>
+    <string name="sum_gdpr_consent">Dưới kiến nghị mới của EU - General Data Protection Regulation (GDPR), người dùng phải đồng ý trước khi hiển thị quảng cáo. Ấn vào đây để huỷ bỏ kiến nghị.</string>
+    <string name="gdpr_consent_not_needed">Không cần thiết vì Idle Daddy Premium không hiển thị quảng cáo.</string>
     <string name="blacklist_hint">Nhập appid và ấn +</string>
     <string name="add_to_blacklist">Thêm game vào danh sách đen</string>
     <string name="added_to_blacklist">Game đã được thêm vào danh sách đen</string>
@@ -122,6 +125,8 @@
     <string name="arabic">Tiếng Ả Rập</string>
     <string name="hebrew">Tiếng Hebrew</string>
     <string name="indonesian">Tiếng Indonesian</string>
+    <string name="bosnian_croatian">Tiếng Bosnian/Croatian</string>
+    <string name="serbian">Tiếng Serbian</string>
     <string name="language_changed">Bạn phải khởi động lại ứng dụng để ngôn ngữ có thể được đổi.</string>
     <string name="service_started">Đã khởi động dịch vụ Steam</string>
     <string name="idle_custom_app">Đang treo game ẩn/non-Steam game</string>
@@ -131,4 +136,32 @@
     <string name="playing_non_steam_game">Non-Steam game: %s</string>
     <string name="vietnamese">Tiếng Việt</string>
     <string name="persian">Tiếng Ba Tư</string>
+    <string name="spring_cleaning_title">Sự kiện dọn dẹp Mùa Xuân (2018)</string>
+    <string name="spring_cleaning_desc">Hoàn thành các nhiệm vụ để lên cấp cho huy hiệu Dọn dẹp Mùa Xuân. Sự kiện kết thúc vào ngày 25 tháng 5.</string>
+    <string name="complete_daily_tasks">Hoàn thành nhiệm vụ hàng ngày</string>
+    <string name="complete_projects">Hoàn thành nhiệm vụ kế hoạch</string>
+    <string name="daily_tasks_completed">Nhiệm vụ hàng ngày đã hoàn thành. Hãy quay lại vào ngày mai.</string>
+    <string name="project_tasks_completed">Nhiệm vụ kế hoạch đã hoàn thành. Bạn chỉ cần làm một lần.</string>
+    <string name="pref_use_custom_loginid">Dùng ID đăng nhập tự chọn</string>
+    <string name="sum_use_custom_loginid">Bật chức năng này sẽ giúp bạn chạy những ứng dụng SteamKit khác (như Ice Client) cũng thời điểm với Idle Daddy. Nếu không chắc, hãy tắt chức năng này. (Cần khởi động lại)</string>
+    <string name="summer_event">Sự kiện Mùa Hè</string>
+    <string name="play_saliens">Chơi Saliens (Chỉ để lấy trading card)</string>
+    <string name="play_saliens_indefinitely">Chơi Saliens vô hạn</string>
+    <string name="play_saliens_desc">Bạn có thể lấy được tới 3 trading cards mỗi ngày khi chơi Salien. Sự kiện kết thúc vào ngày 5 tháng 7.</string>
+    <string name="playing_saliens">Chơi Saliens (%d/%d)…</string>
+    <string name="playing_saliens_indefinitely">Chơi Saliens…\nĐiểm: %s/%s\nLvl: %s</string>
+    <string name="success_check_inventory">Thành công! Kiểm tra kho đồ của bạn để xem những trading card mới.</string>
+    <string name="play_saliens_failed">Không thể chơi Salien tự động. Thử lại sau.</string>
+    <string name="shared_secret_desc">Nhập mã \'shared_secret\' từ Steam Mobile Authenticator. Chức năng này giúp Idle Daddy tự động đăng nhập lại khi key đăng nhập hết hạn.</string>
+    <string name="import_shared_secret">Nhập shared_secret</string>
+    <string name="enter_manually">Nhập thủ công</string>
+    <string name="enter_shared_secret">Nhập shared_secret:</string>
+    <string name="device_not_rooted">Thiết bị của bạn phải được root để sử dụng chức năng này.</string>
+    <string name="your_shared_secret">shared_secret của bạn: %s</string>
+    <string name="import_shared_secret_failed">Nhập shared_secret không thành công! Hãy đảm bảo bạn có sử dụng Steam Mobile Authenticator.</string>
+    <string name="next_round_countdown">Màn tiếp theo: %02d:%02d</string>
+    <string name="reporting_score">Đang báo điểm…</string>
+    <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
+    <!-- End untranslated strings -->
 </resources>

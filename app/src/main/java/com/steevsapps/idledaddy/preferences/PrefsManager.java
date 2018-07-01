@@ -7,6 +7,7 @@ import android.preference.PreferenceManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.steevsapps.idledaddy.steam.model.Game;
+import com.steevsapps.idledaddy.utils.CryptHelper;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.lang.reflect.Type;
@@ -21,8 +22,10 @@ public class PrefsManager {
     private final static int CURRENT_VERSION = 2;
 
     private final static String USERNAME = "username";
+    private final static String PASSWORD = "password";
     private final static String LOGIN_KEY = "login_key";
     private final static String SENTRY_HASH = "sentry_hash";
+    private final static String SHARED_SECRET = "shared_secret";
     private final static String OFFLINE = "offline";
     private final static String STAY_AWAKE = "stay_awake";
     private final static String MINIMIZE_DATA = "minimize_data";
@@ -31,6 +34,7 @@ public class PrefsManager {
     private final static String LAST_SESSION = "last_session";
     private final static String HOURS_UNTIL_DROPS = "hours_until_drops";
     private final static String INCLUDE_FREE_GAMES = "include_free_games";
+    private final static String USE_CUSTOM_LOGINID = "use_custom_loginid";
     private final static String PERSONA_NAME = "persona_name";
     private final static String AVATAR_HASH = "avatar_hash";
     private final static String API_KEY = "api_key";
@@ -66,6 +70,7 @@ public class PrefsManager {
     public static void clearUser() {
         prefs.edit()
                 .putString(USERNAME, "")
+                .putString(PASSWORD, "")
                 .putString(LOGIN_KEY, "")
                 .putString(SENTRY_HASH, "")
                 .putString(BLACKLIST, "")
@@ -85,12 +90,20 @@ public class PrefsManager {
         writePref(USERNAME, username);
     }
 
+    public static void writePassword(Context context, String password) {
+        writePref(PASSWORD, CryptHelper.encryptString(context, password));
+    }
+
     public static void writeLoginKey(String loginKey) {
         writePref(LOGIN_KEY, loginKey);
     }
 
     public static void writeSentryHash(String sentryHash) {
         writePref(SENTRY_HASH, sentryHash);
+    }
+
+    public static void writeSharedSecret(String sharedSecret) {
+        writePref(SHARED_SECRET, sharedSecret);
     }
 
     public static void writeBlacklist(List<String> blacklist) {
@@ -126,12 +139,20 @@ public class PrefsManager {
         return prefs.getString(USERNAME, "");
     }
 
+    public static String getPassword(Context context) {
+        return CryptHelper.decryptString(context, prefs.getString(PASSWORD, ""));
+    }
+
     public static String getLoginKey() {
         return prefs.getString(LOGIN_KEY, "");
     }
 
     public static String getSentryHash() {
         return prefs.getString(SENTRY_HASH, "");
+    }
+
+    public static String getSharedSecret() {
+        return prefs.getString(SHARED_SECRET, "");
     }
 
     public static boolean getOffline() {
@@ -177,6 +198,10 @@ public class PrefsManager {
 
     public static boolean includeFreeGames() {
         return prefs.getBoolean(INCLUDE_FREE_GAMES, false);
+    }
+
+    public static boolean useCustomLoginId() {
+        return prefs.getBoolean(USE_CUSTOM_LOGINID, false);
     }
 
     public static String getApiKey() {

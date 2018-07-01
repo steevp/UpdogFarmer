@@ -31,6 +31,7 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.steevsapps.idledaddy.BuildConfig;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
+import com.steevsapps.idledaddy.Secrets;
 import com.steevsapps.idledaddy.handlers.PurchaseResponse;
 import com.steevsapps.idledaddy.handlers.callbacks.PurchaseResponseCallback;
 import com.steevsapps.idledaddy.listeners.AndroidLogListener;
@@ -90,6 +91,7 @@ import in.dragonbra.javasteam.steam.steamclient.callbacks.DisconnectedCallback;
 import in.dragonbra.javasteam.steam.steamclient.configuration.SteamConfiguration;
 import in.dragonbra.javasteam.types.GameID;
 import in.dragonbra.javasteam.types.KeyValue;
+import in.dragonbra.javasteam.util.NetHelpers;
 import in.dragonbra.javasteam.util.log.LogManager;
 
 public class SteamService extends Service {
@@ -150,6 +152,7 @@ public class SteamService extends Service {
     private ScheduledFuture<?> farmHandle;
     private ScheduledFuture<?> waitHandle;
 
+    private String keyToRedeem = null;
     private final LinkedList<Integer> pendingFreeLicenses = new LinkedList<>();
 
     private File sentryFolder;
@@ -796,6 +799,8 @@ public class SteamService extends Service {
         steamId = 0;
         logOnDetails = null;
         currentGames.clear();
+        keyToRedeem = null;
+        pendingFreeLicenses.clear();
         stopFarming();
         executor.execute(() -> {
             steamUser.logOff();
@@ -808,23 +813,43 @@ public class SteamService extends Service {
     /**
      * Redeem Steam key or activate free license
      */
-    public void redeemKey(final String key) {
+    public void redeemKey(String key) {
+        if (!loggedIn && !PrefsManager.getLoginKey().isEmpty()) {
+            Log.i(TAG, "Will redeem key at login");
+            keyToRedeem = key;
+            return;
+        }
+        Log.i(TAG, "Redeeming key...");
         if (key.matches("\\d+")) {
             // Request a free license
             try {
-                final int freeLicense = Integer.parseInt(key);
-                pendingFreeLicenses.add(freeLicense);
-                executor.execute(() -> steamApps.requestFreeLicense(freeLicense));
+                int freeLicense = Integer.parseInt(key);
+                addFreeLicense(freeLicense);
             } catch (NumberFormatException e) {
                 showToast(getString(R.string.invalid_key));
             }
         } else {
             // Register product key
-            final ClientMsgProtobuf<SteammessagesClientserver2.CMsgClientRegisterKey.Builder> registerKey;
-            registerKey = new ClientMsgProtobuf<>(SteammessagesClientserver2.CMsgClientRegisterKey.class, EMsg.ClientRegisterKey);
-            registerKey.getBody().setKey(key);
-            executor.execute(() -> steamClient.send(registerKey));
+            registerProductKey(key);
         }
+    }
+
+    /**
+     * Request a free license
+     */
+    private void addFreeLicense(int freeLicense) {
+        pendingFreeLicenses.add(freeLicense);
+        executor.execute(() -> steamApps.requestFreeLicense(freeLicense));
+    }
+
+    /**
+     * Register a product key
+     */
+    private void registerProductKey(String productKey) {
+        final ClientMsgProtobuf<SteammessagesClientserver2.CMsgClientRegisterKey.Builder> registerKey;
+        registerKey = new ClientMsgProtobuf<>(SteammessagesClientserver2.CMsgClientRegisterKey.class, EMsg.ClientRegisterKey);
+        registerKey.getBody().setKey(productKey);
+        executor.execute(() -> steamClient.send(registerKey));
     }
 
     public void autoVote() {
@@ -838,6 +863,10 @@ public class SteamService extends Service {
      * Perform log in. Needs to happen as soon as we connect or else we'll get an error
      */
     private void doLogin() {
+        if (PrefsManager.useCustomLoginId()) {
+            final int localIp = NetHelpers.getIPAddress(steamClient.getLocalIP());
+            logOnDetails.setLoginID(localIp ^ Secrets.CUSTOM_OBFUSCATION_MASK);
+        }
         steamUser.logOn(logOnDetails);
         logOnDetails = null; // No longer need this
     }
@@ -856,6 +885,10 @@ public class SteamService extends Service {
         details.setUsername(username);
         details.setLoginKey(loginKey);
         details.setClientOSType(EOSType.LinuxUnknown);
+        if (PrefsManager.useCustomLoginId()) {
+            final int localIp = NetHelpers.getIPAddress(steamClient.getLocalIP());
+            details.setLoginID(localIp ^ Secrets.CUSTOM_OBFUSCATION_MASK);
+        }
         try {
             final File sentryFile = new File(sentryFolder, username + ".sentry");
             details.setSentryFileHash(Utils.calculateSHA1(sentryFile));
@@ -984,14 +1017,20 @@ public class SteamService extends Service {
                     steamUser.requestWebAPIUserNonce();
                 }
             });
+            if (keyToRedeem != null) {
+                redeemKey(keyToRedeem);
+                keyToRedeem = null;
+            }
         } else if (result == EResult.InvalidPassword && !PrefsManager.getLoginKey().isEmpty()) {
             // Probably no longer valid
             Log.i(TAG, "Login key expired");
             PrefsManager.writeLoginKey("");
             updateNotification(getString(R.string.login_key_expired));
+            keyToRedeem = null;
             steamClient.disconnect();
         } else {
             Log.i(TAG, "LogOn result: " + result.toString());
+            keyToRedeem = null;
             steamClient.disconnect();
         }
 
@@ -1177,5 +1216,41 @@ public class SteamService extends Service {
         executor.execute(() -> steamClient.send(stopGame));
         // Tell the activity
         LocalBroadcastManager.getInstance(SteamService.this).sendBroadcast(new Intent(NOW_PLAYING_EVENT));
+    }
+
+    /**
+     * Register and idle a game for a few seconds to complete the Spring Cleaning daily tasks
+     */
+    public void registerAndIdle(String game) {
+        try {
+            final int appId = Integer.parseInt(game);
+
+            // Register the game
+            steamApps.requestFreeLicense(appId);
+            Thread.sleep(1000);
+
+            // Play it for a few seconds
+            final ClientMsgProtobuf<SteammessagesClientserver.CMsgClientGamesPlayed.Builder> playGame;
+            playGame = new ClientMsgProtobuf<>(SteammessagesClientserver.CMsgClientGamesPlayed.class, EMsg.ClientGamesPlayed);
+            playGame.getBody().addGamesPlayedBuilder().setGameId(appId);
+            steamClient.send(playGame);
+            Thread.sleep(3000);
+
+            // Stop playing
+            playGame.getBody().clearGamesPlayed().addGamesPlayedBuilder().setGameId(0);
+            steamClient.send(playGame);
+            Thread.sleep(1000);
+        } catch (NumberFormatException|InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void refreshSession() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                steamUser.requestWebAPIUserNonce();
+            }
+        });
     }
 }

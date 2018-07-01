@@ -36,14 +36,17 @@
     <string name="pref_include_free_games">Прикажи бесплатне игре које сте играли</string>
     <string name="sum_include_free_games">По дефаулту, бесплатне игре као Теам Фортресс 2 нису приказане (зато што технички, свако их посједује). Ако је ова опција омогућена, бит ће приказане све игре које сте икада играли.</string>
     <string name="pref_language">Језик</string>
-    <string name="sum_language">Промијените језик апликације (захтијева поновно покретање).</string>
+    <string name="sum_language">Промените језик апликације (захтева поновно покретање).</string>
+    <string name="pref_gdpr_consent">Опозив ГДПР-а</string>
+    <string name="sum_gdpr_consent">Према ЕУ-овој Уредби о заштити података (ГДПР), потребна је сагласност корисника пре приказивања огласа. Кликните овде да бисте опозвали вашу сагласност.</string>
+    <string name="gdpr_consent_not_needed">Није потребно. Идле Даддy Премиум не приказује огласе.</string>
     <string name="blacklist_hint">Унесите аппид и кликните +</string>
     <string name="add_to_blacklist">Додајте игру на Црну Листу</string>
     <string name="added_to_blacklist">Игра додана на Црну Листу</string>
     <string name="remove_from_blacklist">Уклоните игру са Црне Листе</string>
     <string name="removed_from_blacklist">Игра уклоњена са Црне Листе</string>
-    <string name="open_drawer">Отвори ладицу</string>
-    <string name="close_drawer">Затвори ладицу</string>
+    <string name="open_drawer">Отвори латицу</string>
+    <string name="close_drawer">Затвори латицу</string>
     <string name="home">Почетна</string>
     <string name="games">Игре</string>
     <string name="no_games_found">Није могуће дохватити попис игара.</string>
@@ -55,7 +58,7 @@
     <string name="timeout_error">Веза је истекла. Молимо покушајте поново</string>
     <string name="channel_name">Идле Даддy обавештења</string>
     <string name="now_playing2">Сада играм %s</string>
-    <string name="product_already_owned">Већ посједујете овај производ</string>
+    <string name="product_already_owned">Већ поседујете овај производ</string>
     <string name="invalid_key">Нетачан код</string>
     <string name="activation_failed">Активација није успела</string>
     <plurals name="games_left">
@@ -67,11 +70,11 @@
         <item quantity="other">%d картица преостало</item>
     </plurals>
     <plurals name="hours_on_record">
-        <item quantity="one">%.1f сат забиљежен</item>
-        <item quantity="other">%.1f сати забиљежено</item>
+        <item quantity="one">%.1f сат забележен</item>
+        <item quantity="other">%.1f сати забележено</item>
     </plurals>
     <string name="logged_in_elsewhere">Стеам у употреби. Наставит ће се када буде могуће.</string>
-    <string name="web_login_failed">Пријава на Стеам wеб сајт није успјела!</string>
+    <string name="web_login_failed">Пријава на Стеам wеб сајт није успела!</string>
     <string name="login_key_expired">Код за пријаву је истекао!</string>
     <string name="stopped">Заустављено</string>
     <string name="paused">Паузирано</string>
@@ -83,7 +86,7 @@
     <string name="pause">Паузирај</string>
     <string name="resume">Настави</string>
     <string name="activated">Активиран: %s</string>
-    <string name="refresh">Освјежи</string>
+    <string name="refresh">Освежи</string>
     <string name="last_session">Претходно играно</string>
     <string name="play_all">Играј све</string>
     <string name="remove_ads">Уклони рекламе</string>
@@ -92,16 +95,16 @@
     <string name="sort_alphabetically">По абецеди</string>
     <string name="sort_hours_played">По броју сати</string>
     <string name="auto_discovery_title">Аутоматски прегледај листу препоручених игара</string>
-    <string name="auto_discovery">Ово ће аутоматски прегледати листу препоручених игара. Тјеком Љетне и Зимске распродаје можете добити до 3 традинг картице сваки дан када прегледате препоручене игре.</string>
+    <string name="auto_discovery">Ово ће аутоматски прегледати листу препоручених игара. Тјеком Летне и Зимске распродаје можете добити до 3 традинг картице сваки дан када прегледате препоручене игре.</string>
     <string name="generating_discovery">Генерирање листе препоручених игара...</string>
     <string name="discovering">Прегледавање %s (%d/%d)</string>
     <string name="discovery_finished">Прегледавање завршено</string>
     <string name="discovery_error">Тренутно није могуће довршити прегледавање листе игара. Покушајте поновно касније</string>
     <string name="auto_vote">Аутоматско гласање (Стеам Аwардс)</string>
-    <string name="vote_successful">Гласање успјешно!</string>
-    <string name="vote_failed">Гласање није успјело!</string>
+    <string name="vote_successful">Гласање успешно!</string>
+    <string name="vote_failed">Гласање није успело!</string>
     <string name="apikey_access_denied">Одбијен приступ Стеам АПИ кода, користим уграђени код</string>
-    <string name="apikey_register_failed">Регистрирање АПИ кода није успјело, користим уграђени код.</string>
+    <string name="apikey_register_failed">Регистрирање АПИ кода није успело, користим уграђени код.</string>
     <string name="english">Енглески</string>
     <string name="german">Немачки</string>
     <string name="russian">Руски</string>
@@ -133,4 +136,32 @@
     <string name="non_steam_game">Име игре</string>
     <string name="playing_unknown_app">Непозната апликација: %d</string>
     <string name="playing_non_steam_game">Игра која није на Стеаму: %s</string>
+    <string name="spring_cleaning_title">Пролетно цишцење (2018)</string>
+    <string name="spring_cleaning_desc">Заврши задатке да бисте унапредили вашу значку пролетног цишцења. Овај догадај се завршава 28. маја.</string>
+    <string name="complete_daily_tasks">Заврши дневне задатке</string>
+    <string name="complete_projects">Заврши задатке пројекта</string>
+    <string name="daily_tasks_completed">Дневни задаци завршени. Вратите се поново сутра.</string>
+    <string name="project_tasks_completed">Завршени задаци пројекта. Ово требате урадити само једном.</string>
+    <string name="pref_use_custom_loginid">Use Custom Login ID</string>
+    <string name="sum_use_custom_loginid">Enabling this option will allow you to run other SteamKit apps (such as Ice Client) at the same time as Idle Daddy. If unsure, leave this off. (Requires restart)</string>
+    <string name="summer_event">Summer Event</string>
+    <string name="play_saliens">Play Saliens (Just get trading cards)</string>
+    <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
+    <string name="play_saliens_desc">You can earn up to 3 trading cards each day by playing the Summer Salien game. This event ends on July 5th.</string>
+    <string name="playing_saliens">Playing Saliens (%d/%d)…</string>
+    <string name="playing_saliens_indefinitely">Playing Saliens…\nScore: %s/%s\nLevel: %s</string>
+    <string name="success_check_inventory">Success! Check your inventory for new trading cards.</string>
+    <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
+    <string name="shared_secret_desc">Import the \'shared_secret\' code from your mobile authenticator. This allows Idle Daddy to automatically log in again when the login key expires.</string>
+    <string name="import_shared_secret">Import shared_secret</string>
+    <string name="enter_manually">Enter manually</string>
+    <string name="enter_shared_secret">Enter your shared_secret:</string>
+    <string name="device_not_rooted">Your device must be rooted to use this option.</string>
+    <string name="your_shared_secret">Your shared_secret: %s</string>
+    <string name="import_shared_secret_failed">Failed to import shared_secret! Make sure you\'re using the Steam mobile authenticator.</string>
+    <string name="next_round_countdown">Next round: %02d:%02d</string>
+    <string name="reporting_score">Reporting score…</string>
+    <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
+    <!-- End untranslated strings -->
 </resources>

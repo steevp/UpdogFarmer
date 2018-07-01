@@ -131,4 +131,37 @@
     <string name="non_steam_game">Игра извън Steam</string>
     <string name="playing_unknown_app">Непозната игра: %d</string>
     <string name="playing_non_steam_game">Игра извън Steam: %s</string>
+    <string name="spring_cleaning_desc">Правете задачи за да вдигнете нивото на вашата значка за събитието \'\'Sprint Cleaning (2018)\'\'. Събитието приключва на 28 май.</string>
+    <string name="spring_cleaning_title">"Spring Cleaning Event (2018) "</string>
+    <string name="complete_daily_tasks">"Завършете Ежедневните Задачи "</string>
+    <string name="complete_projects">Завършете Проектни Задачи</string>
+    <string name="pref_gdpr_consent">Отхвърли GDPR съгласието</string>
+    <string name="sum_gdpr_consent">Съгласно общия регламент за защита на данните на ЕС (GDPR) е необходимо съгласието на потребителя, преди да се показват реклами. Кликнете тук, за да отмените вашето съгласие.</string>
+    <string name="pref_use_custom_loginid">Използвай собствено ID при вход</string>
+    <string name="sum_use_custom_loginid">Активирането на тази опция ще ви позволи да стартирате други приложения използващи SteamKit (като Ice Client) едновременно с Idle Daddy. Ако не сте сигурни, оставете това изключено. (Изисква рестартиране)</string>
+    <string name="gdpr_consent_not_needed">Не е нужно. Idle Daddy Premium не показва реклами.</string>
+    <string name="summer_event">Лятна разпродажба</string>
+    <string name="play_saliens">Играй Saliens (само вземи картите)</string>
+    <string name="play_saliens_indefinitely">Играй Saliens постоянно</string>
+    <string name="play_saliens_desc">Можеш да получиш до 3 карти всеки ден като играеш Saliens. Събитието приключва на 5ти юли.</string>
+    <string name="playing_saliens">Играем Saliens (%d/%d)…</string>
+    <string name="playing_saliens_indefinitely">Играем Saliens…\nРезултат: %s/%s\nНиво: %s</string>
+    <string name="success_check_inventory">Успех! Провери инвентара си за нови карти за размяна.</string>
+    <string name="play_saliens_failed">В момента не може да играем Saliens. Опитай по-късно.</string>
+    <string name="bosnian_croatian">Хърватски</string>
+    <string name="serbian">Сръбски</string>
+    <string name="daily_tasks_completed">Дневните задачи са изпълнени. Върни се отново утре.</string>
+    <string name="project_tasks_completed">Задачите за изпълнени. Това действие се прави само веднъж.</string>
+    <string name="shared_secret_desc">Въведи \'shared_secret\' код от мобилния ти идентификатор. Това позволява на Idle Daddy да се впише автоматично щом изтече стария ключ.</string>
+    <string name="import_shared_secret">Въведи shared_secret</string>
+    <string name="enter_manually">Въведи ръчно</string>
+    <string name="enter_shared_secret">Въведи своя shared_secret:</string>
+    <string name="device_not_rooted">Устройството ти трябва да е руутнато, за да използваш тази опция.</string>
+    <string name="your_shared_secret">Твоя shared_secret: %s</string>
+    <string name="import_shared_secret_failed">Не успях да въведа shared_secret! Увери се ,че използваш мобилния индетификатор.</string>
+    <string name="next_round_countdown">Следващ рунд: %02d:%02d</string>
+    <string name="reporting_score">Запазване на резултата…</string>
+    <!-- Untranslated strings: -->
+    <string name="boss_hp">Boss HP: %d</string>
+    <!-- End untranslated strings -->
 </resources>
