@@ -50,7 +50,6 @@ import com.steevsapps.idledaddy.dialogs.CustomAppDialog;
 import com.steevsapps.idledaddy.dialogs.GameOptionsDialog;
 import com.steevsapps.idledaddy.dialogs.RedeemDialog;
 import com.steevsapps.idledaddy.dialogs.SharedSecretDialog;
-import com.steevsapps.idledaddy.dialogs.SummerEventDialog;
 import com.steevsapps.idledaddy.fragments.GamesFragment;
 import com.steevsapps.idledaddy.fragments.HomeFragment;
 import com.steevsapps.idledaddy.fragments.SettingsFragment;
@@ -452,7 +451,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         drawerView.getHeaderView(0).setClickable(loggedIn);
         menu.findItem(R.id.auto_discovery).setVisible(loggedIn);
         menu.findItem(R.id.custom_app).setVisible(loggedIn);
-        menu.findItem(R.id.summer_event).setVisible(loggedIn);
         menu.findItem(R.id.import_shared_secret).setVisible(loggedIn);
         //menu.findItem(R.id.auto_vote).setVisible(loggedIn);
         menu.findItem(R.id.search).setVisible(drawerItemId == R.id.games);
@@ -491,9 +489,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                 return true;
             case R.id.custom_app:
                 CustomAppDialog.newInstance().show(getSupportFragmentManager(), CustomAppDialog.TAG);
-                return true;
-            case R.id.summer_event:
-                SummerEventDialog.newInstance().show(getSupportFragmentManager(), SummerEventDialog.TAG);
                 return true;
             case R.id.import_shared_secret:
                 SharedSecretDialog.newInstance(steamService.getSteamId()).show(getSupportFragmentManager(), SharedSecretDialog.TAG);
