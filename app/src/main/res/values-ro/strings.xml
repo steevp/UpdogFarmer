@@ -135,11 +135,11 @@ Seteaza starea ta ca "Offline", astfel incat prietenii tai sa nu vada ca esti in
     <string name="non_steam_game"> Jocuri Non-Steam </string>
     <string name="playing_unknown_app">Aplicatie necunoscuta: %d</string>
     <string name="playing_non_steam_game">Joc Non-Steam: %s</string>
-    <string name="pref_gdpr_consent">Revoke GDPR Consent</string>
-    <string name="sum_gdpr_consent">Under the EU\'s General Data Protection Regulation (GDPR), a user\'s consent is required before displaying ads. Click here to revoke your consent.</string>
+    <string name="pref_gdpr_consent">Revocă comsimțământul GDPR</string>
+    <string name="sum_gdpr_consent">Sub articolul EU\'s General Data Protection Regulation (GDPR), comsimțământul utilizatorului este necesar înainte de a afișa reclame. Apasă aici să revoci comsimțământul.</string>
     <string name="pref_use_custom_loginid">Use Custom Login ID</string>
     <string name="sum_use_custom_loginid">Enabling this option will allow you to run other SteamKit apps (such as Ice Client) at the same time as Idle Daddy. If unsure, leave this off. (Requires restart)</string>
-    <string name="gdpr_consent_not_needed">Not needed. Idle Daddy Premium doesn\'t display ads.</string>
+    <string name="gdpr_consent_not_needed">Nu este nevoie. Idle Daddy Premium nu afișează reclame.</string>
     <string name="summer_event">Summer Event</string>
     <string name="play_saliens">Play Saliens (Just get trading cards)</string>
     <string name="play_saliens_indefinitely">Play Saliens Indefinitely</string>
@@ -165,7 +165,5 @@ Seteaza starea ta ca "Offline", astfel incat prietenii tai sa nu vada ca esti in
     <string name="import_shared_secret_failed">Failed to import shared_secret! Make sure you\'re using the Steam mobile authenticator.</string>
     <string name="next_round_countdown">Next round: %02d:%02d</string>
     <string name="reporting_score">Reporting score…</string>
-    <!-- Untranslated strings: -->
     <string name="boss_hp">Boss HP: %d</string>
-    <!-- End untranslated strings -->
 </resources>
