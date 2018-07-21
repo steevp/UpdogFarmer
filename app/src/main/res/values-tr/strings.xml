@@ -96,7 +96,7 @@
     <string name="sort">Sırala</string>
     <string name="sort_alphabetically">Alfabetik</string>
     <string name="sort_hours_played">Oyun süresine göre</string>
-    <string name="auto_discovery_title">Otomatik Keşif Kuruğu</string>
+    <string name="auto_discovery_title">Otomatik Keşif Kuyruğu</string>
     <string name="auto_discovery">Keşif Kuyruğunu otomatik olarak yapar. Yaz ve Kış indirimlerinde, her gün Keşif Kuyruğunu tamamlayarak 3 takas kartı kazanabilirsin.</string>
     <string name="generating_discovery">Yeni keşif kuyruğu oluşturuluyor</string>
     <string name="discovering">Keşfediliyor %s (%d/%d)</string>
@@ -109,8 +109,8 @@
     <string name="play_saliens">İndirin Canavarları (Saliens) oyna (Yalnızca takas kartlarını almak için)</string>
     <string name="play_saliens_indefinitely">Saliens oyna (Puan kazanıp seviye atlamak için)</string>
     <string name="play_saliens_desc">Her gün Saliens oynayarak 3 takas kartı kazanabilirsin. Bu etkinlik 5 Temmuz\'da bitecek.</string>
-    <string name="playing_saliens">Saliens oynanıyor (%d/%d)…</string>
-    <string name="playing_saliens_indefinitely">Saliens oynanıyor…\nPuan: %s/%s\nSeviye: %s</string>
+    <string name="playing_saliens">Saliens oynanıyor (%d/%d)</string>
+    <string name="playing_saliens_indefinitely">Saliens oynanıyor\nPuan: %s/%s\nSeviye: %s</string>
     <string name="success_check_inventory">Başarılı! Yeni takas kartlarını Envanterinden kontrol et.</string>
     <string name="play_saliens_failed">Şu anda Saliens oynanamadı. Daha sonra tekrar dene.</string>
     <string name="apikey_access_denied">Steam API kodu erişimi engellendi, using a built-in key.</string>
@@ -160,8 +160,6 @@
     <string name="your_shared_secret">shared_secret Kodunuz: %s</string>
     <string name="import_shared_secret_failed">shared_secret kodu alınamadı! Steam Mobil Kimlik Doğrulayıcı kullandığınızdan emin olun.</string>
     <string name="next_round_countdown">Bir sonraki raund: %02d:%02d</string>
-    <string name="reporting_score">Skor hesaplanıyor…</string>
-    <!-- Untranslated strings: -->
-    <string name="boss_hp">Boss HP: %d</string>
-    <!-- End untranslated strings -->
+    <string name="reporting_score">Skor hesaplanıyor</string>
+    <string name="boss_hp">Boss\'un canı: %d</string>
 </resources>
