@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.steam.SteamWebHandler;
+import com.steevsapps.idledaddy.steam.SteamWeb;
 
 public class AutoDiscoverDialog extends DialogFragment implements View.OnClickListener {
     public final static String TAG = AutoDiscoverDialog.class.getSimpleName();
@@ -48,7 +48,7 @@ public class AutoDiscoverDialog extends DialogFragment implements View.OnClickLi
 
     private void setupViewModel() {
         viewModel = ViewModelProviders.of(this).get(AutoDiscoverViewModel.class);
-        viewModel.init(SteamWebHandler.getInstance());
+        viewModel.init(SteamWeb.getInstance());
         viewModel.getStatus().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {

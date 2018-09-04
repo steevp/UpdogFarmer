@@ -15,7 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.preferences.Prefs;
 
 public class SharedSecretDialog extends DialogFragment implements View.OnClickListener {
     public final static String TAG = SharedSecretDialog.class.getSimpleName();
@@ -85,7 +85,7 @@ public class SharedSecretDialog extends DialogFragment implements View.OnClickLi
     private void showManualDialog() {
         final View view = LayoutInflater.from(getActivity()).inflate(R.layout.enter_shared_secret_dialog, null);
         final EditText editText = view.findViewById(R.id.shared_secret_input);
-        editText.setText(PrefsManager.getSharedSecret());
+        editText.setText(Prefs.getSharedSecret());
         new AlertDialog.Builder(getActivity())
                 .setTitle(R.string.enter_shared_secret)
                 .setView(view)
@@ -93,7 +93,7 @@ public class SharedSecretDialog extends DialogFragment implements View.OnClickLi
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         final String text = editText.getText().toString().trim();
-                        PrefsManager.writeSharedSecret(text);
+                        Prefs.setSharedSecret(text);
                         viewModel.setValue(getString(R.string.your_shared_secret, text));
                     }
                 })

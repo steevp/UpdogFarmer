@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.steam.SteamWebHandler;
+import com.steevsapps.idledaddy.steam.SteamWeb;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import org.json.JSONArray;
@@ -19,7 +19,7 @@ import java.util.ArrayDeque;
 public class AutoDiscoverViewModel extends AndroidViewModel {
 
     private final MutableLiveData<String> statusText = new MutableLiveData<>();
-    private SteamWebHandler webHandler;
+    private SteamWeb webHandler;
     private boolean finished = true;
 
     private final ArrayDeque<String> discoveryQueue = new ArrayDeque<>();
@@ -32,7 +32,7 @@ public class AutoDiscoverViewModel extends AndroidViewModel {
         return finished;
     }
 
-    void init(SteamWebHandler webHandler) {
+    void init(SteamWeb webHandler) {
         this.webHandler = webHandler;
     }
 

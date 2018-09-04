@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.steam.model.Game;
-import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.preferences.Prefs;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class GameOptionsDialog extends DialogFragment {
         final Bundle args = getArguments();
         title = args.getString(TITLE);
         appId = args.getString(APPID);
-        blacklisted = PrefsManager.getBlacklist().contains(appId);
+        blacklisted = Prefs.getBlacklist().contains(appId);
     }
 
     @NonNull
@@ -68,13 +68,13 @@ public class GameOptionsDialog extends DialogFragment {
 
     private void addRemoveBlacklist() {
         final String msg;
-        final List<String> blacklist = PrefsManager.getBlacklist();
+        final List<String> blacklist = Prefs.getBlacklist();
         if (blacklisted) {
             blacklist.remove(appId);
         } else {
             blacklist.add(0, appId);
         }
-        PrefsManager.writeBlacklist(blacklist);
+        Prefs.setBlacklist(blacklist);
         Toast.makeText(getActivity(), blacklisted ? R.string.removed_from_blacklist : R.string.added_to_blacklist, Toast.LENGTH_LONG).show();
     }
 }

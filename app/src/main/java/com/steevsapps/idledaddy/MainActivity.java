@@ -1,5 +1,7 @@
 package com.steevsapps.idledaddy;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -43,6 +45,7 @@ import com.steevsapps.idledaddy.billing.BillingManager;
 import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
 import com.steevsapps.idledaddy.consent.ConsentListener;
 import com.steevsapps.idledaddy.consent.ConsentManager;
+import com.steevsapps.idledaddy.db.entity.User;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.AutoDiscoverDialog;
 import com.steevsapps.idledaddy.dialogs.CustomAppDialog;
@@ -55,7 +58,7 @@ import com.steevsapps.idledaddy.fragments.SettingsFragment;
 import com.steevsapps.idledaddy.listeners.DialogListener;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.listeners.SpinnerInteractionListener;
-import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.preferences.Prefs;
 import com.steevsapps.idledaddy.steam.SteamService;
 import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.utils.Utils;
@@ -91,6 +94,9 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     private ViewStub adInflater;
     private AdView adView;
 
+    private User currentUser;
+    private UserViewModel viewModel;
+
     private BillingManager billingManager;
     private ConsentManager consentManager;
 
@@ -109,13 +115,13 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                 case SteamService.LOGIN_EVENT:
                 case SteamService.DISCONNECT_EVENT:
                 case SteamService.STOP_EVENT:
-                    updateStatus();
+                    updateUI();
                     break;
                 case SteamService.FARM_EVENT:
                     showDropInfo(intent);
                     break;
                 case SteamService.PERSONA_EVENT:
-                    updateDrawerHeader(intent);
+                    //updateDrawerHeader(intent);
                     break;
                 case SteamService.NOW_PLAYING_EVENT:
                     showNowPlaying();
@@ -134,31 +140,19 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         drawerView.getMenu().setGroupVisible(R.id.logout_group, false);
         loggedIn = false;
         farming = false;
-        updateStatus();
+        updateUI();
     }
 
     /**
      * Update drawer header with avatar and username
      */
-    private void updateDrawerHeader(@Nullable Intent intent) {
-        final String personaName;
-        final String avatarHash;
+    private void updateDrawerHeader() {
+        final String personaName = currentUser.getPersonaName();
+        final String avatarHash = currentUser.getAvatarHash();
 
-        if (intent != null) {
-            personaName = intent.getStringExtra(SteamService.PERSONA_NAME);
-            avatarHash = intent.getStringExtra(SteamService.AVATAR_HASH);
-            PrefsManager.writePersonaName(personaName);
-            PrefsManager.writeAvatarHash(avatarHash);
-        } else {
-            personaName = PrefsManager.getPersonaName();
-            avatarHash = PrefsManager.getAvatarHash();
-        }
+        usernameView.setText(personaName);
 
-        if (!personaName.isEmpty()) {
-            usernameView.setText(personaName);
-        }
-
-        if (!PrefsManager.minimizeData() && !avatarHash.isEmpty() && !avatarHash.equals("0000000000000000000000000000000000000000")) {
+        if (!Prefs.minimizeData() && !avatarHash.isEmpty() && !avatarHash.equals("0000000000000000000000000000000000000000")) {
             final String avatar = String.format(Locale.US,
                     "http://cdn.akamai.steamstatic.com/steamcommunity/public/images/avatars/%s/%s_full.jpg",
                     avatarHash.substring(0, 2),
@@ -173,8 +167,19 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         steamService = getService();
         loggedIn = steamService.isLoggedIn();
         farming = steamService.isFarming();
-        updateStatus();
-        updateDrawerHeader(null);
+        updateUI();
+
+        viewModel = ViewModelProviders.of(this).get(UserViewModel.class);
+        viewModel.getCurrentUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                if (user != null) {
+                    currentUser = user;
+                    updateDrawerHeader();
+                    steamService.addUser(currentUser);
+                }
+            }
+        });
 
         // Check if a Steam key was sent to us from another app
         final Intent intent = getIntent();
@@ -279,7 +284,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             public void onBackStackChanged() {
                 loggedIn = steamService.isLoggedIn();
                 farming = steamService.isFarming();
-                updateStatus();
+                updateUI();
             }
         });
 
@@ -327,7 +332,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
      */
     private void handleKeyIntent(Intent intent) {
         final String key = intent.getStringExtra(Intent.EXTRA_TEXT);
-        if (!PrefsManager.getLoginKey().isEmpty() && key != null) {
+        if (currentUser.canLogOn() && key != null) {
             steamService.redeemKey(key.trim());
         } else {
             Toast.makeText(getApplicationContext(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
@@ -415,7 +420,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         filter.addAction(SteamService.NOW_PLAYING_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         // Listen for preference changes
-        prefs = PrefsManager.getPrefs();
+        prefs = Prefs.getPrefs();
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -481,9 +486,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             case R.id.import_shared_secret:
                 SharedSecretDialog.newInstance(steamService.getSteamId()).show(getSupportFragmentManager(), SharedSecretDialog.TAG);
                 return true;
-            //case R.id.auto_vote:
-            //    steamService.autoVote();
-            //    return true;
         }
         return false;
     }
@@ -546,9 +548,9 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     }
 
     /**
-     * Update the fragments
+     * Update the UI
      */
-    private void updateStatus() {
+    private void updateUI() {
         invalidateOptionsMenu();
         final Fragment fragment = getCurrentFragment();
         if (fragment instanceof HomeFragment) {
@@ -586,7 +588,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                 final int cardCount = intent.getIntExtra(SteamService.CARD_COUNT, 0);
                 homeFragment.showDropInfo(gameCount, cardCount);
             } else if (farming) {
-                // Called by updateStatus(), only show drop info if we're farming
+                // Called by updateUI(), only show drop info if we're farming
                 homeFragment.showDropInfo(steamService.getGameCount(), steamService.getCardCount());
             } else {
                 // Hide drop info
@@ -637,7 +639,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals("stay_awake")) {
-            if (PrefsManager.stayAwake()) {
+            if (Prefs.stayAwake()) {
                 // Keep device awake
                 steamService.acquireWakeLock();
             } else {
@@ -646,7 +648,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             }
         } else if (key.equals("offline")) {
             // Change status
-            steamService.changeStatus(PrefsManager.getOffline() ? EPersonaState.Offline : EPersonaState.Online);
+            steamService.changeStatus(Prefs.getOffline() ? EPersonaState.Offline : EPersonaState.Online);
         } else if (key.equals("language")) {
             Toast.makeText(this, R.string.language_changed, Toast.LENGTH_LONG).show();
         }

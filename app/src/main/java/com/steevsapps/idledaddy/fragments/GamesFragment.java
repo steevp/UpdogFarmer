@@ -22,8 +22,8 @@ import android.widget.Toast;
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
 import com.steevsapps.idledaddy.listeners.GamesListUpdateListener;
-import com.steevsapps.idledaddy.preferences.PrefsManager;
-import com.steevsapps.idledaddy.steam.SteamWebHandler;
+import com.steevsapps.idledaddy.preferences.Prefs;
+import com.steevsapps.idledaddy.steam.SteamWeb;
 import com.steevsapps.idledaddy.steam.model.Game;
 
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class GamesFragment extends Fragment
         super.onCreate(savedInstanceState);
         steamId = getArguments().getLong(STEAM_ID);
         viewModel = ViewModelProviders.of(this).get(GamesViewModel.class);
-        viewModel.init(SteamWebHandler.getInstance(), steamId);
+        viewModel.init(SteamWeb.getInstance(), steamId);
         if (savedInstanceState != null) {
             currentGames = savedInstanceState.getParcelableArrayList(CURRENT_GAMES);
             currentTab = savedInstanceState.getInt(CURRENT_TAB);
@@ -92,7 +92,7 @@ public class GamesFragment extends Fragment
     public void onPause() {
         if (!currentGames.isEmpty()) {
             // Save idling session
-            PrefsManager.writeLastSession(currentGames);
+            //Prefs.setLastSession(currentGames);
         }
         super.onPause();
     }
@@ -228,8 +228,8 @@ public class GamesFragment extends Fragment
     private void fetchGames() {
         if (currentTab == TAB_LAST) {
             // Load last idling session
-            final List<Game> games = !currentGames.isEmpty() ? currentGames : PrefsManager.getLastSession();
-            viewModel.setGames(games);
+            //final List<Game> games = !currentGames.isEmpty() ? currentGames : Prefs.getLastSession();
+            //viewModel.setGames(games);
         } else {
             // Fetch games from Steam
             refreshLayout.setRefreshing(true);
@@ -244,7 +244,7 @@ public class GamesFragment extends Fragment
     private void setGames(List<Game> games) {
         if (currentTab == TAB_BLACKLIST) {
             // Only list blacklisted games
-            final List<String> blacklist = PrefsManager.getBlacklist();
+            final List<String> blacklist = Prefs.getBlacklist();
             final List<Game> blacklistGames = new ArrayList<>();
             for (Game game : games) {
                 if (blacklist.contains(String.valueOf(game.appId))) {

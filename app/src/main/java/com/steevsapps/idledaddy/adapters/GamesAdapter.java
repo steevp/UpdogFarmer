@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide;
 import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.listeners.GamesListUpdateListener;
-import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.preferences.Prefs;
 import com.steevsapps.idledaddy.steam.model.Game;
 
 import java.util.ArrayDeque;
@@ -165,7 +165,7 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             final int quantity = game.hoursPlayed < 1 ? 0 : (int) Math.ceil(game.hoursPlayed);
             item.hours.setText(context.getResources()
                     .getQuantityString(R.plurals.hours_on_record, quantity, game.hoursPlayed));
-            if (!PrefsManager.minimizeData()) {
+            if (!Prefs.minimizeData()) {
                 Glide.with(context)
                         .load(game.iconUrl)
                         .into(item.logo);

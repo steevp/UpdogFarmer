@@ -6,7 +6,7 @@ import android.content.res.Resources;
 import android.os.Build;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.preferences.Prefs;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +22,8 @@ public class LocaleManager {
      */
     public static Context setLocale(Context context) {
         final String language;
-        if (!PrefsManager.getLanguage().isEmpty()) {
-            language = PrefsManager.getLanguage();
+        if (!Prefs.getLanguage().isEmpty()) {
+            language = Prefs.getLanguage();
         } else {
             language = setInitialValue(context.getResources());
         }
@@ -42,7 +42,7 @@ public class LocaleManager {
         } else {
             language = "en";
         }
-        PrefsManager.writeLanguage(language);
+        Prefs.setLanguage(language);
         return language;
     }
 

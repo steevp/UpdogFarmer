@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import android.os.Handler;
 import android.util.Log;
 
-import com.steevsapps.idledaddy.steam.SteamWebHandler;
+import com.steevsapps.idledaddy.steam.SteamWeb;
 import com.steevsapps.idledaddy.steam.model.TimeQuery;
 import com.steevsapps.idledaddy.utils.Utils;
 
@@ -18,7 +18,7 @@ public class LoginViewModel extends ViewModel {
     private final static String TAG = LoginViewModel.class.getSimpleName();
     private final static int TIMEOUT_MILLIS = 30000;
 
-    private SteamWebHandler webHandler;
+    private SteamWeb webHandler;
     private final Handler timeoutHandler = new Handler();
     private final MutableLiveData<Integer> timeDifference = new MutableLiveData<>();
 
@@ -33,7 +33,7 @@ public class LoginViewModel extends ViewModel {
 
     private boolean timeAligned = false;
 
-    void init(SteamWebHandler webHandler) {
+    void init(SteamWeb webHandler) {
         this.webHandler = webHandler;
     }
 

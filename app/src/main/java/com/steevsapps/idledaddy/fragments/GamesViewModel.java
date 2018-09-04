@@ -5,8 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
-import com.steevsapps.idledaddy.preferences.PrefsManager;
-import com.steevsapps.idledaddy.steam.SteamWebHandler;
+import com.steevsapps.idledaddy.steam.SteamWeb;
 import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.steam.model.GamesOwnedResponse;
 
@@ -29,12 +28,12 @@ public class GamesViewModel extends ViewModel {
     public final static int SORT_HOURS_PLAYED = 1;
     public final static int SORT_HOURS_PLAYED_REVERSED = 2;
 
-    private SteamWebHandler webHandler;
+    private SteamWeb webHandler;
     private long steamId;
     private MutableLiveData<List<Game>> games;
     private int sortId = SORT_ALPHABETICALLY;
 
-    void init(SteamWebHandler webHandler, long steamId) {
+    void init(SteamWeb webHandler, long steamId) {
         this.webHandler = webHandler;
         this.steamId = steamId;
         this.sortId = PrefsManager.getSortValue();

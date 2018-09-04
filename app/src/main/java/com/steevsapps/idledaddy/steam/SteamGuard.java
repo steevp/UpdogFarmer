@@ -4,7 +4,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
-import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.preferences.Prefs;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import java.nio.charset.Charset;
@@ -21,7 +21,7 @@ public class SteamGuard {
     }
 
     public static String generateSteamGuardCodeForTime(long time) {
-        final String sharedSecret = PrefsManager.getSharedSecret();
+        final String sharedSecret = Prefs.getSharedSecret();
         if (TextUtils.isEmpty(sharedSecret)) {
             Log.w(TAG, "shared_secret is empty!");
             return "";

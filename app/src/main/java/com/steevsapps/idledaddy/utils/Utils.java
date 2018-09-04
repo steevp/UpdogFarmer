@@ -89,7 +89,7 @@ public class Utils {
      * Check if API key is valid
      */
     public static boolean isValidKey(String key) {
-        return key.matches("^[0-9A-Fa-f]+$");
+        return key != null && key.matches("^[0-9A-Fa-f]+$");
     }
 
     /**

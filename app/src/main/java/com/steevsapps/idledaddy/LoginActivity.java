@@ -17,10 +17,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
-import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.SteamGuard;
 import com.steevsapps.idledaddy.steam.SteamService;
-import com.steevsapps.idledaddy.steam.SteamWebHandler;
+import com.steevsapps.idledaddy.steam.SteamWeb;
 import com.steevsapps.idledaddy.utils.Utils;
 
 import in.dragonbra.javasteam.enums.EOSType;
@@ -81,11 +80,6 @@ public class LoginActivity extends BaseActivity {
                         twoFactorInput.setError(getString(R.string.invalid_code));
                     }
                 } else {
-                    // Save username
-                    final String username = Utils.removeSpecialChars(usernameEditText.getText().toString()).trim();
-                    final String password = Utils.removeSpecialChars(passwordEditText.getText().toString().trim());
-                    PrefsManager.writeUsername(username);
-                    PrefsManager.writePassword(LoginActivity.this, password);
                     finish();
                 }
             }
@@ -135,8 +129,8 @@ public class LoginActivity extends BaseActivity {
             progress.setVisibility(loginInProgress ? View.VISIBLE : View.GONE);
         } else {
             // Restore saved username if any
-            usernameEditText.setText(PrefsManager.getUsername());
-            passwordEditText.setText(PrefsManager.getPassword(this));
+            //usernameEditText.setText(Prefs.getUsername());
+            //passwordEditText.setText(Prefs.getPassword(this));
         }
 
         setupViewModel();
@@ -186,7 +180,7 @@ public class LoginActivity extends BaseActivity {
 
     private void setupViewModel() {
         viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
-        viewModel.init(SteamWebHandler.getInstance());
+        viewModel.init(SteamWeb.getInstance());
         viewModel.getTimeDifference().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer value) {

@@ -10,7 +10,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.preferences.PrefsManager;
+import com.steevsapps.idledaddy.preferences.Prefs;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -83,7 +83,7 @@ public class SharedSecretViewModel extends AndroidViewModel {
                             .optString("shared_secret");
                     if (!sharedSecret.isEmpty()) {
                         Log.i(TAG, "shared_secret import successful");
-                        PrefsManager.writeSharedSecret(sharedSecret);
+                        Prefs.setSharedSecret(sharedSecret);
                         statusText.setValue(getApplication().getString(R.string.your_shared_secret, sharedSecret));
                         return;
                     }
