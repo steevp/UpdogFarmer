@@ -33,8 +33,8 @@ public class GamesViewModel extends ViewModel {
     private MutableLiveData<List<Game>> games;
     private int sortId = SORT_ALPHABETICALLY;
 
-    void init(SteamWeb webHandler, long steamId) {
-        this.webHandler = webHandler;
+    void init(String username, long steamId) {
+        this.webHandler = SteamWeb.getInstance(username);
         this.steamId = steamId;
         this.sortId = PrefsManager.getSortValue();
     }

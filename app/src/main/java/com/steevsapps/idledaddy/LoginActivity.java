@@ -17,16 +17,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
+import com.steevsapps.idledaddy.steam.SteamBot;
 import com.steevsapps.idledaddy.steam.SteamGuard;
-import com.steevsapps.idledaddy.steam.SteamService;
-import com.steevsapps.idledaddy.steam.SteamWeb;
 import com.steevsapps.idledaddy.utils.Utils;
 
-import in.dragonbra.javasteam.enums.EOSType;
 import in.dragonbra.javasteam.enums.EResult;
 import in.dragonbra.javasteam.steam.handlers.steamuser.LogOnDetails;
-
-import static com.steevsapps.idledaddy.steam.SteamService.LOGIN_EVENT;
 
 public class LoginActivity extends BaseActivity {
     private final static String TAG = LoginActivity.class.getSimpleName();
@@ -55,10 +51,10 @@ public class LoginActivity extends BaseActivity {
     private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (SteamService.LOGIN_EVENT.equals(intent.getAction())) {
+            if (SteamBot.LOGIN_EVENT.equals(intent.getAction())) {
                 stopTimeout();
                 progress.setVisibility(View.GONE);
-                final EResult result = (EResult) intent.getSerializableExtra(SteamService.RESULT);
+                final EResult result = (EResult) intent.getSerializableExtra(SteamBot.LOGIN_RESULT);
                 if (result != EResult.OK) {
                     loginButton.setEnabled(true);
                     usernameInput.setErrorEnabled(false);
@@ -152,7 +148,7 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        final IntentFilter filter = new IntentFilter(LOGIN_EVENT);
+        final IntentFilter filter = new IntentFilter(SteamBot.LOGIN_EVENT);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
     }
 
@@ -166,13 +162,11 @@ public class LoginActivity extends BaseActivity {
             final LogOnDetails details = new LogOnDetails();
             details.setUsername(username);
             details.setPassword(password);
-            details.setClientOSType(EOSType.LinuxUnknown);
             if (twoFactorRequired) {
                 details.setTwoFactorCode(twoFactorEditText.getText().toString().trim());
             } else {
                 details.setAuthCode(twoFactorEditText.getText().toString().trim());
             }
-            details.setShouldRememberPassword(true);
             getService().login(details);
             startTimeout();
         }
@@ -180,7 +174,6 @@ public class LoginActivity extends BaseActivity {
 
     private void setupViewModel() {
         viewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
-        viewModel.init(SteamWeb.getInstance());
         viewModel.getTimeDifference().observe(this, new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer value) {

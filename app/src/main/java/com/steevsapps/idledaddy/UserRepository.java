@@ -66,6 +66,14 @@ public class UserRepository {
         });
     }
 
+    public boolean hasUser(String name) {
+        return db.userDao().hasUser(name);
+    }
+
+    public User findByNameSync(String name) {
+        return db.userDao().findByName(name);
+    }
+
     public LiveData<List<User>> getAll() {
         return db.userDao().getAll();
     }
@@ -74,7 +82,4 @@ public class UserRepository {
         return db.userDao().getCurrentUser();
     }
 
-    public User getCurrentUserSync() {
-        return db.userDao().getCurrentUserSync();
-    }
 }

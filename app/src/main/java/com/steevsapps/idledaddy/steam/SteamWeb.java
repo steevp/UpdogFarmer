@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,6 +54,8 @@ public class SteamWeb {
 
     private final static int TIMEOUT_SECS = 30;
 
+    private final static ConcurrentMap<String, SteamWeb> INSTANCES = new ConcurrentHashMap<>();
+
     private final static String STEAM_STORE = "https://store.steampowered.com/";
     private final static String STEAM_COMMUNITY = "https://steamcommunity.com/";
     private final static String STEAM_API = "https://api.steampowered.com/";
@@ -62,8 +66,6 @@ public class SteamWeb {
     private final static Pattern dropPattern = Pattern.compile("^(\\d+) card drops? remaining$");
     // Pattern to match play time
     private final static Pattern timePattern = Pattern.compile("([0-9\\.]+) hrs on record");
-
-    private final static SteamWeb ourInstance = new SteamWeb();
 
     private boolean authenticated;
     private long steamId;
@@ -76,7 +78,20 @@ public class SteamWeb {
 
     private final SteamAPI api;
 
-    private SteamWeb() {
+    public static SteamWeb getInstance(String username) {
+        SteamWeb instance = INSTANCES.get(username);
+        if (instance == null) {
+            final SteamWeb s = new SteamWeb();
+            instance = INSTANCES.putIfAbsent(username, s);
+
+            if (instance == null) {
+                instance = s;
+            }
+        }
+        return instance;
+    }
+
+    public SteamWeb() {
         final Gson gson = new GsonBuilder()
                 .registerTypeAdapter(GamesOwnedResponse.class, new GamesOwnedResponseDeserializer())
                 .create();
@@ -96,24 +111,17 @@ public class SteamWeb {
 
         api = retrofit.create(SteamAPI.class);
     }
-
-    public static SteamWeb getInstance() {
-        return ourInstance;
-    }
-
     /**
      * Authenticate on the Steam website
      *
-     * @param client the Steam client
-     * @param webApiUserNonce the WebAPI User Nonce returned by LoggedOnCallback
-     * @return true if authenticated
      */
-    boolean authenticate(SteamClient client, User steamUser, String webApiUserNonce) {
+    boolean authenticate(SteamClient client, User userEntity, String webApiUserNonce) {
         authenticated = false;
         final SteamID clientSteamId = client.getSteamID();
         if (clientSteamId == null) {
             return false;
         }
+
         steamId = clientSteamId.convertToUInt64();
         sessionId = Utils.bytesToHex(CryptoHelper.generateRandomBlock(4));
 
@@ -163,11 +171,11 @@ public class SteamWeb {
         token = authResult.get("token").asString();
         tokenSecure = authResult.get("tokenSecure").asString();
 
-        sentryHash = steamUser.getSentryHash();
+        sentryHash = userEntity.getSentryHash();
 
-        if (!TextUtils.isEmpty(steamUser.getParentalPin())) {
+        if (!TextUtils.isEmpty(userEntity.getParentalPin())) {
             // Unlock family view
-            steamParental = unlockParental(steamUser.getParentalPin());
+            steamParental = unlockParental(userEntity.getParentalPin());
         }
 
         authenticated = true;
@@ -338,7 +346,7 @@ public class SteamWeb {
     /**
      * Check if user is currently NOT in-game, so we can resume farming.
      */
-    Boolean checkIfNotInGame() {
+    Boolean checkIfBusy() {
         final String url = STEAM_COMMUNITY + "my/profile?l=english";
         Document doc;
         try {
@@ -357,7 +365,7 @@ public class SteamWeb {
             return null;
         }
 
-        return doc.select("div.profile_in_game_name").first() == null;
+        return doc.select("div.profile_in_game_name").first() != null;
     }
 
     /**

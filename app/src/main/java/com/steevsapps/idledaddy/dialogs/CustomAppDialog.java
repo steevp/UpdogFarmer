@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,18 +18,28 @@ import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.listeners.GamePickedListener;
 import com.steevsapps.idledaddy.steam.model.Game;
 
+import java.util.ArrayList;
+
 public class CustomAppDialog extends DialogFragment {
     public final static String TAG = CustomAppDialog.class.getSimpleName();
 
+    private final static String GAMES_IDLING = "GAMES_IDLING";
+
     private final static int TYPE_APPID = 0;
     private final static int TYPE_CUSTOM = 1;
+
+    private ArrayList<Game> gamesIdling;
 
     private EditText customApp;
 
     private GamePickedListener callback;
 
-    public static CustomAppDialog newInstance() {
-        return new CustomAppDialog();
+    public static CustomAppDialog newInstance(ArrayList<Game> gamesIdling) {
+        final CustomAppDialog fragment = new CustomAppDialog();
+        final Bundle args = new Bundle();
+        args.putParcelableArrayList(GAMES_IDLING, gamesIdling);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -45,6 +56,12 @@ public class CustomAppDialog extends DialogFragment {
     public void onDetach() {
         super.onDetach();
         callback = null;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        gamesIdling = getArguments().getParcelableArrayList(GAMES_IDLING);
     }
 
     @Override
@@ -90,8 +107,11 @@ public class CustomAppDialog extends DialogFragment {
         try {
             final int appId = Integer.parseInt(text);
             final Game game = new Game(appId, getString(R.string.playing_unknown_app, appId), 0, 0);
-            if (callback != null) {
-                callback.onGamePicked(game);
+            if (!gamesIdling.contains(game) && gamesIdling.size() < 32) {
+                gamesIdling.add(game);
+                if (callback != null) {
+                    callback.onGamesPicked(gamesIdling);
+                }
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
@@ -104,8 +124,11 @@ public class CustomAppDialog extends DialogFragment {
             return;
         }
         final Game game = new Game(0, text, 0, 0);
-        if (callback != null) {
-            callback.onGamePicked(game);
+        if (!gamesIdling.contains(game) && gamesIdling.size() < 32) {
+            gamesIdling.add(game);
+            if (callback != null) {
+                callback.onGamesPicked(gamesIdling);
+            }
         }
     }
 }

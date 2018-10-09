@@ -5,8 +5,8 @@ import com.steevsapps.idledaddy.steam.model.Game;
 import java.util.List;
 
 public interface GamePickedListener {
-    void onGamePicked(Game game);
+    //void onGamePicked(Game game);
     void onGamesPicked(List<Game> games);
-    void onGameRemoved(Game game);
+    //void onGameRemoved(Game game);
     void onGameLongPressed(Game game);
 }

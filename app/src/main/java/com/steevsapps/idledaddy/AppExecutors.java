@@ -9,14 +9,24 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+/**
+ * Global executor pools for the application
+ */
 public class AppExecutors {
-    private final ExecutorService diskIO = Executors.newSingleThreadExecutor();
+    private ExecutorService diskIO;
 
-    private final ExecutorService networkIO = Executors.newCachedThreadPool();
+    private ExecutorService networkIO;
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
+    private ScheduledExecutorService scheduler;
 
-    private final Executor mainThread = new MainThreadExecutor();
+    private final Executor mainThread;
+
+    public AppExecutors() {
+        diskIO = Executors.newSingleThreadExecutor();
+        networkIO = Executors.newCachedThreadPool();
+        scheduler = Executors.newScheduledThreadPool(8);
+        mainThread = new MainThreadExecutor();
+    }
 
     public ExecutorService diskIO() {
         return diskIO;
@@ -32,6 +42,14 @@ public class AppExecutors {
 
     public Executor mainThread() {
         return mainThread;
+    }
+
+    public void shutdownNow() {
+        networkIO.shutdownNow();
+        scheduler.shutdownNow();
+        // Recreate for when the app is relaunched
+        networkIO = Executors.newCachedThreadPool();
+        scheduler = Executors.newScheduledThreadPool(8);
     }
 
     private static class MainThreadExecutor implements Executor {

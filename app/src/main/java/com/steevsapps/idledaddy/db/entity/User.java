@@ -19,9 +19,6 @@ public class User {
     @ColumnInfo(name = "password")
     private String password = "";
 
-    @ColumnInfo(name = "steamid")
-    private long steamId;
-
     @ColumnInfo(name = "api_key")
     private String apiKey = "";
 
@@ -58,14 +55,6 @@ public class User {
 
     public String getPassword() {
         return password;
-    }
-
-    public void setSteamId(long steamId) {
-        this.steamId = steamId;
-    }
-
-    public long getSteamId() {
-        return steamId;
     }
 
     public void setApiKey(String apiKey) {

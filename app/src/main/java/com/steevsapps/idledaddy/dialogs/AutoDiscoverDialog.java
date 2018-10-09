@@ -14,16 +14,30 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.steam.SteamWeb;
 
 public class AutoDiscoverDialog extends DialogFragment implements View.OnClickListener {
     public final static String TAG = AutoDiscoverDialog.class.getSimpleName();
+
+    private final static String USERNAME = "USERNAME";
+
+    private String username;
+
     private AutoDiscoverViewModel viewModel;
     private TextView statusTv;
     private Button autoDiscoverBtn;
 
-    public static AutoDiscoverDialog newInstance() {
-        return new AutoDiscoverDialog();
+    public static AutoDiscoverDialog newInstance(String username) {
+        final AutoDiscoverDialog fragment = new AutoDiscoverDialog();
+        final Bundle args = new Bundle();
+        args.putString(USERNAME, username);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        username = getArguments().getString(USERNAME);
     }
 
     @NonNull
@@ -48,7 +62,7 @@ public class AutoDiscoverDialog extends DialogFragment implements View.OnClickLi
 
     private void setupViewModel() {
         viewModel = ViewModelProviders.of(this).get(AutoDiscoverViewModel.class);
-        viewModel.init(SteamWeb.getInstance());
+        viewModel.init(username);
         viewModel.getStatus().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {

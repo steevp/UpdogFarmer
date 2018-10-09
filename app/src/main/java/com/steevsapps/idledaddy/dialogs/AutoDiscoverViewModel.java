@@ -32,8 +32,8 @@ public class AutoDiscoverViewModel extends AndroidViewModel {
         return finished;
     }
 
-    void init(SteamWeb webHandler) {
-        this.webHandler = webHandler;
+    void init(String username) {
+        this.webHandler = SteamWeb.getInstance(username);
     }
 
     LiveData<String> getStatus() {

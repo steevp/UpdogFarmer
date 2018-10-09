@@ -224,12 +224,11 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             if (!currentGames.contains(game) && currentGames.size() < 32) {
                 currentGames.add(game);
                 itemView.setActivated(true);
-                gamePickedListener.onGamePicked(game);
             } else {
                 currentGames.remove(game);
                 itemView.setActivated(false);
-                gamePickedListener.onGameRemoved(game);
             }
+            gamePickedListener.onGamesPicked(currentGames);
         }
 
         @Override

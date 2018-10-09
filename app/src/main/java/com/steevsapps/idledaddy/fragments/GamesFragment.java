@@ -23,7 +23,6 @@ import com.steevsapps.idledaddy.R;
 import com.steevsapps.idledaddy.adapters.GamesAdapter;
 import com.steevsapps.idledaddy.listeners.GamesListUpdateListener;
 import com.steevsapps.idledaddy.preferences.Prefs;
-import com.steevsapps.idledaddy.steam.SteamWeb;
 import com.steevsapps.idledaddy.steam.model.Game;
 
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import java.util.List;
 public class GamesFragment extends Fragment
         implements SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener, GamesListUpdateListener {
     private final static String TAG = GamesFragment.class.getSimpleName();
+    private final static String USERNAME = "USERNAME";
     private final static String STEAM_ID = "STEAM_ID";
     private final static String CURRENT_GAMES = "CURRENT_GAMES";
     private final static String CURRENT_TAB = "CURRENT_TAB";
@@ -54,9 +54,10 @@ public class GamesFragment extends Fragment
     public final static int TAB_BLACKLIST = 2;
     private int currentTab = TAB_GAMES;
 
-    public static GamesFragment newInstance(long steamId, ArrayList<Game> currentGames, int position) {
+    public static GamesFragment newInstance(String username, long steamId, ArrayList<Game> currentGames, int position) {
         final GamesFragment fragment = new GamesFragment();
         final Bundle args = new Bundle();
+        args.putString(USERNAME, username);
         args.putLong(STEAM_ID, steamId);
         args.putParcelableArrayList(CURRENT_GAMES, currentGames);
         args.putInt(CURRENT_TAB, position);
@@ -72,9 +73,10 @@ public class GamesFragment extends Fragment
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final String username = getArguments().getString(USERNAME);
         steamId = getArguments().getLong(STEAM_ID);
         viewModel = ViewModelProviders.of(this).get(GamesViewModel.class);
-        viewModel.init(SteamWeb.getInstance(), steamId);
+        viewModel.init(username, steamId);
         if (savedInstanceState != null) {
             currentGames = savedInstanceState.getParcelableArrayList(CURRENT_GAMES);
             currentTab = savedInstanceState.getInt(CURRENT_TAB);

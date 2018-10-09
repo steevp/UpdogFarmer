@@ -17,6 +17,9 @@ public interface UserDao {
     @Query("SELECT * FROM user ORDER BY username ASC")
     LiveData<List<User>> getAll();
 
+    @Query("SELECT EXISTS(SELECT 1 FROM user WHERE username = :name)")
+    boolean hasUser(String name);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertUser(User user);
 
@@ -25,6 +28,11 @@ public interface UserDao {
 
     @Delete
     void deleteUser(User user);
+
+    @Query("SELECT * FROM user " +
+            "WHERE username = :name " +
+            "LIMIT 1")
+    User findByName(String name);
 
     @Query("SELECT user.* FROM user " +
             "INNER JOIN user_settings " +

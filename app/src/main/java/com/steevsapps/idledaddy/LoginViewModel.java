@@ -18,7 +18,7 @@ public class LoginViewModel extends ViewModel {
     private final static String TAG = LoginViewModel.class.getSimpleName();
     private final static int TIMEOUT_MILLIS = 30000;
 
-    private SteamWeb webHandler;
+    private final SteamWeb steamWeb = new SteamWeb();
     private final Handler timeoutHandler = new Handler();
     private final MutableLiveData<Integer> timeDifference = new MutableLiveData<>();
 
@@ -32,10 +32,6 @@ public class LoginViewModel extends ViewModel {
     };
 
     private boolean timeAligned = false;
-
-    void init(SteamWeb webHandler) {
-        this.webHandler = webHandler;
-    }
 
     LiveData<Integer> getTimeDifference() {
         if (!timeAligned) {
@@ -60,7 +56,7 @@ public class LoginViewModel extends ViewModel {
 
     private void alignTime() {
         final long currentTime = Utils.getCurrentUnixTime();
-        webHandler.queryServerTime().enqueue(new Callback<TimeQuery>() {
+        steamWeb.queryServerTime().enqueue(new Callback<TimeQuery>() {
             @Override
             public void onResponse(Call<TimeQuery> call, Response<TimeQuery> response) {
                 if (response.isSuccessful()) {
