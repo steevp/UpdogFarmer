@@ -161,7 +161,8 @@
     <string name="import_shared_secret_failed">ייבוא של shared_secret נכשל! ודא שאתה משתמש באימות של Steam.</string>
     <string name="next_round_countdown">סיבוב הבא: %02d:%02d</string>
     <string name="reporting_score">מדווח על ניקוד...</string>
-    <!-- Untranslated strings: -->
     <string name="boss_hp">חיים של בוס: %d</string>
+    <!-- Untranslated strings: -->
+    <string name="sort_hours_played_reversed">Hours Played (reversed)</string>
     <!-- End untranslated strings -->
 </resources>

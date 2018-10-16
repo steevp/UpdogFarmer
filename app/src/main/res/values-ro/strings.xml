@@ -166,4 +166,7 @@ Seteaza starea ta ca "Offline", astfel incat prietenii tai sa nu vada ca esti in
     <string name="next_round_countdown">Next round: %02d:%02d</string>
     <string name="reporting_score">Reporting score…</string>
     <string name="boss_hp">Boss HP: %d</string>
+    <!-- Untranslated strings: -->
+    <string name="sort_hours_played_reversed">Hours Played (reversed)</string>
+    <!-- End untranslated strings -->
 </resources>

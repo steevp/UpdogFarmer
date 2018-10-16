@@ -161,7 +161,8 @@
     <string name="import_shared_secret_failed">無法導入shared_secret！確保您正在使用Steam移動令牌。</string>
     <string name="next_round_countdown">下一輪: %02d:%02d</string>
     <string name="reporting_score">報告得分…</string>
-    <!-- Untranslated strings: -->
     <string name="boss_hp">Boss HP: %d</string>
+    <!-- Untranslated strings: -->
+    <string name="sort_hours_played_reversed">已遊玩小時數 (reversed)</string>
     <!-- End untranslated strings -->
 </resources>

@@ -104,7 +104,7 @@
     <string name="discovery_error">Не удалось просмотреть Список Рекомендаций в данный момент. Повторите попытку ещё раз</string>
     <string name="auto_vote">Авто Голос (Премия Steam)</string>
     <string name="vote_successful">Успешное голосование!</string>
-    <string name="vote_failed">Проголосовать не удалось!</string>    
+    <string name="vote_failed">Проголосовать не удалось!</string>
     <string name="summer_event">Стимопланетяне</string>
     <string name="play_saliens">Играть в Стимопланетянина ради карточек</string>
     <string name="play_saliens_indefinitely">Играть в Стимопланетянина Неограниченно</string>
@@ -115,7 +115,7 @@
     <string name="boss_hp">Здоровье Босса: %d</string>
     <string name="reporting_score">Итоговый счёт…</string>
     <string name="success_check_inventory">Успех! Проверьте карточки в инвентаре.</string>
-    <string name="play_saliens_failed">Не удаётся запустить Стимопланетянина сейчас. Повторите попытку позже.</string>    
+    <string name="play_saliens_failed">Не удаётся запустить Стимопланетянина сейчас. Повторите попытку позже.</string>
     <string name="apikey_access_denied">Запрещен доступ ключу Steam API, использование встроенного ключа.</string>
     <string name="apikey_register_failed">Не удалось зарегистрировать API ключ, использование встроенного ключа.</string>
     <string name="english">Английский</string>
@@ -162,4 +162,7 @@
     <string name="device_not_rooted">Устройство должно иметь рут-права, чтобы использовать эту опцию.</string>
     <string name="your_shared_secret">Ваш shared_secret: %s</string>
     <string name="import_shared_secret_failed">Не удалось импортировать shared_secret! Убедитесь, что вы используете мобильный аутентификатор Steam.</string>
+    <!-- Untranslated strings: -->
+    <string name="sort_hours_played_reversed">Hours Played (reversed)</string>
+    <!-- End untranslated strings -->
 </resources>
