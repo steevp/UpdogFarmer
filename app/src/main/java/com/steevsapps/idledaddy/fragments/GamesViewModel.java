@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
+import com.steevsapps.idledaddy.preferences.Prefs;
 import com.steevsapps.idledaddy.steam.SteamWeb;
 import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.steam.model.GamesOwnedResponse;
@@ -24,9 +25,9 @@ import retrofit2.Response;
 public class GamesViewModel extends ViewModel {
     private final static String TAG = GamesViewModel.class.getSimpleName();
 
-    public final static int SORT_ALPHABETICALLY = 0;
-    public final static int SORT_HOURS_PLAYED = 1;
-    public final static int SORT_HOURS_PLAYED_REVERSED = 2;
+    private final static int SORT_ALPHABETICALLY = 0;
+    private final static int SORT_HOURS_PLAYED = 1;
+    private final static int SORT_HOURS_PLAYED_REVERSED = 2;
 
     private SteamWeb webHandler;
     private long steamId;
@@ -36,7 +37,7 @@ public class GamesViewModel extends ViewModel {
     void init(String username, long steamId) {
         this.webHandler = SteamWeb.getInstance(username);
         this.steamId = steamId;
-        this.sortId = PrefsManager.getSortValue();
+        this.sortId = Prefs.getSortValue();
     }
 
     LiveData<List<Game>> getGames() {
@@ -73,7 +74,7 @@ public class GamesViewModel extends ViewModel {
             setGames(games);
         }
 
-        PrefsManager.writeSortValue(sortId);
+        Prefs.setSortValue(sortId);
     }
 
     void fetchGames() {

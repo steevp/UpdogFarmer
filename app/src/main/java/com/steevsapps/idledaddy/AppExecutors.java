@@ -7,26 +7,16 @@ import android.support.annotation.NonNull;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Global executor pools for the application
  */
 public class AppExecutors {
-    private ExecutorService diskIO;
+    private ExecutorService diskIO = Executors.newSingleThreadExecutor();
 
-    private ExecutorService networkIO;
+    private Executor mainThread = new MainThreadExecutor();
 
-    private ScheduledExecutorService scheduler;
-
-    private final Executor mainThread;
-
-    public AppExecutors() {
-        diskIO = Executors.newSingleThreadExecutor();
-        networkIO = Executors.newCachedThreadPool();
-        scheduler = Executors.newScheduledThreadPool(8);
-        mainThread = new MainThreadExecutor();
-    }
+    private ExecutorService networkIO = Executors.newCachedThreadPool();
 
     public ExecutorService diskIO() {
         return diskIO;
@@ -36,20 +26,14 @@ public class AppExecutors {
         return networkIO;
     }
 
-    public ScheduledExecutorService scheduler() {
-        return scheduler;
-    }
-
     public Executor mainThread() {
         return mainThread;
     }
 
     public void shutdownNow() {
         networkIO.shutdownNow();
-        scheduler.shutdownNow();
         // Recreate for when the app is relaunched
         networkIO = Executors.newCachedThreadPool();
-        scheduler = Executors.newScheduledThreadPool(8);
     }
 
     private static class MainThreadExecutor implements Executor {

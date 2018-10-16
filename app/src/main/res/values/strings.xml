@@ -96,7 +96,7 @@
     <string name="sort">Sort</string>
     <string name="sort_alphabetically">Alphabetically</string>
     <string name="sort_hours_played">Hours Played</string>
-    <string name="sort_hours_played_reversed">Hours Played (reversed)</string>
+    <string name="sort_hours_played_reversed">Hours Played (Reversed)</string>
     <string name="auto_discovery_title">Auto Discovery Queue</string>
     <string name="auto_discovery">This will automatically view the games in your Discovery Queue. During the Summer and Winter sales, you can get up to 3 trading cards per day by viewing your queue.</string>
     <string name="generating_discovery">Generating new Discovery Queue…</string>

@@ -68,6 +68,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'eu.chainfire:libsuperuser:1.0.0.+'
     implementation "android.arch.persistence.room:runtime:1.1.1"
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
     testImplementation 'junit:junit:4.12'
 }

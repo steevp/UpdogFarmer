@@ -16,25 +16,17 @@ import java.util.List;
 public class Prefs {
     private final static int CURRENT_VERSION = 2;
 
-    //private final static String USERNAME = "username";
-    //private final static String PASSWORD = "password";
-    //private final static String LOGIN_KEY = "login_key";
-    //private final static String SENTRY_HASH = "sentry_hash";
     private final static String SHARED_SECRET = "shared_secret";
     private final static String OFFLINE = "offline";
     private final static String STAY_AWAKE = "stay_awake";
     private final static String MINIMIZE_DATA = "minimize_data";
-    //private final static String PARENTAL_PIN = "parental_pin";
     private final static String BLACKLIST = "blacklist";
-    //private final static String LAST_SESSION = "last_session";
     private final static String HOURS_UNTIL_DROPS = "hours_until_drops";
     private final static String INCLUDE_FREE_GAMES = "include_free_games";
     private final static String USE_CUSTOM_LOGINID = "use_custom_loginid";
-    //private final static String PERSONA_NAME = "persona_name";
-    //private final static String AVATAR_HASH = "avatar_hash";
-    //private final static String API_KEY = "api_key";
     private final static String LANGUAGE = "language";
     private final static String VERSION = "version";
+    private final static String SORT_VALUE = "sort_value";
 
     private static SharedPreferences prefs;
 
@@ -58,24 +50,6 @@ public class Prefs {
         }
         setVersion(CURRENT_VERSION);
     }
-
-    /**
-     * Clear all preferences related to user
-     */
-    /*public static void clearUser() {
-        prefs.edit()
-                //.putString(USERNAME, "")
-                //.putString(PASSWORD, "")
-                //.putString(LOGIN_KEY, "")
-                //.putString(SENTRY_HASH, "")
-                .putString(BLACKLIST, "")
-                //.putString(LAST_SESSION, "")
-                //.putString(PARENTAL_PIN, "")
-                //.putString(PERSONA_NAME, "")
-                //.putString(AVATAR_HASH, "")
-                //.putString(API_KEY, "")
-                .apply();
-    }*/
 
     public static SharedPreferences getPrefs() {
         return prefs;
@@ -134,6 +108,14 @@ public class Prefs {
 
     public static int getVersion() {
         return prefs.getInt(VERSION, 1);
+    }
+
+    public static int getSortValue() {
+        return prefs.getInt(SORT_VALUE, 0);
+    }
+
+    public static void setSortValue(int sortValue) {
+        setPref(SORT_VALUE, sortValue);
     }
 
     private static void setPref(String key, String value) {

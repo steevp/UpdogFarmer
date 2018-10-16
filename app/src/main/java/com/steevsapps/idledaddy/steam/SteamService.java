@@ -222,6 +222,10 @@ public class SteamService extends Service implements NotificationListener {
         return activeBot != null ? activeBot.getGamesIdling() : new ArrayList<>();
     }
 
+    public ArrayList<Game> getLastSession() {
+        return activeBot != null ? activeBot.getLastSession() : new ArrayList<>();
+    }
+
     public int getGameCount() {
         return activeBot != null ? activeBot.getGameCount() : 0;
     }
@@ -298,6 +302,19 @@ public class SteamService extends Service implements NotificationListener {
     public void login(LogOnDetails logOnDetails) {
         activeBot = getBot(logOnDetails.getUsername());
         activeBot.login(logOnDetails);
+    }
+
+    public void logoff() {
+        if (activeBot == null) {
+            Log.w(TAG, "Called logoff() without an active bot!");
+            return;
+        }
+        executors.networkIO().execute(() -> {
+            activeBot.stop();
+            botMap.remove(activeBot.getUsername());
+            activeBot.delete();
+            activeBot = null;
+        });
     }
 
     private SteamBot getBot(String username) {
@@ -557,6 +574,10 @@ public class SteamService extends Service implements NotificationListener {
 
     @Override
     public void sendEvent(String tag, String event) {
+        if (activeBot == null) {
+            Log.w(TAG, "Called sendEvent without an active bot!");
+            return;
+        }
         if (tag.equals(activeBot.getUsername())) {
             EventBroadcaster.send(this, event);
         }
@@ -564,6 +585,10 @@ public class SteamService extends Service implements NotificationListener {
 
     @Override
     public void sendEvent(String tag, String event, Bundle args) {
+        if (activeBot == null) {
+            Log.w(TAG, "Called sendEvent without an active bot!");
+            return;
+        }
         if (tag.equals(activeBot.getUsername())) {
             EventBroadcaster.send(this, event, args);
         }

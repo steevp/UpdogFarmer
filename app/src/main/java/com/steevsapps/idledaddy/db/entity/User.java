@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 
 import com.steevsapps.idledaddy.steam.model.Game;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(tableName = "user")
@@ -110,7 +111,7 @@ public class User {
     }
 
     public List<Game> getLastSession() {
-        return lastSession;
+        return lastSession != null ? lastSession : new ArrayList<>();
     }
 
     public boolean canLogOn() {

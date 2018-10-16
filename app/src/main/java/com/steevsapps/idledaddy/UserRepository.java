@@ -31,39 +31,19 @@ public class UserRepository {
     }
 
     public void setCurrentUser(String name) {
-        executors.diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                db.userSettingsDao().setCurrentUser(name);
-            }
-        });
+        executors.diskIO().execute(() -> db.userSettingsDao().setCurrentUser(name));
     }
 
     public void insertUser(User user) {
-        executors.diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                db.userDao().insertUser(user);
-            }
-        });
+        executors.diskIO().execute(() -> db.userDao().insertUser(user));
     }
 
     public void updateUser(User user) {
-        executors.diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                db.userDao().updateUser(user);
-            }
-        });
+        executors.diskIO().execute(() -> db.userDao().updateUser(user));
     }
 
     public void deleteUser(User user) {
-        executors.diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                db.userDao().deleteUser(user);
-            }
-        });
+        executors.diskIO().execute(() -> db.userDao().deleteUser(user));
     }
 
     public boolean hasUser(String name) {
@@ -81,5 +61,4 @@ public class UserRepository {
     public LiveData<User> getCurrentUser() {
         return db.userDao().getCurrentUser();
     }
-
 }

@@ -31,9 +31,11 @@ import java.util.List;
 public class GamesFragment extends Fragment
         implements SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener, GamesListUpdateListener {
     private final static String TAG = GamesFragment.class.getSimpleName();
+
     private final static String USERNAME = "USERNAME";
     private final static String STEAM_ID = "STEAM_ID";
     private final static String CURRENT_GAMES = "CURRENT_GAMES";
+    private final static String LAST_SESSION = "LAST_SESSION";
     private final static String CURRENT_TAB = "CURRENT_TAB";
 
     private SwipeRefreshLayout refreshLayout;
@@ -47,6 +49,7 @@ public class GamesFragment extends Fragment
 
     private long steamId;
     private ArrayList<Game> currentGames;
+    private ArrayList<Game> lastSession;
 
     // Spinner nav items
     public final static int TAB_GAMES = 0;
@@ -54,12 +57,13 @@ public class GamesFragment extends Fragment
     public final static int TAB_BLACKLIST = 2;
     private int currentTab = TAB_GAMES;
 
-    public static GamesFragment newInstance(String username, long steamId, ArrayList<Game> currentGames, int position) {
+    public static GamesFragment newInstance(String username, long steamId, ArrayList<Game> currentGames, ArrayList<Game> lastSession, int position) {
         final GamesFragment fragment = new GamesFragment();
         final Bundle args = new Bundle();
         args.putString(USERNAME, username);
         args.putLong(STEAM_ID, steamId);
         args.putParcelableArrayList(CURRENT_GAMES, currentGames);
+        args.putParcelableArrayList(LAST_SESSION, lastSession);
         args.putInt(CURRENT_TAB, position);
         fragment.setArguments(args);
         return fragment;
@@ -79,9 +83,11 @@ public class GamesFragment extends Fragment
         viewModel.init(username, steamId);
         if (savedInstanceState != null) {
             currentGames = savedInstanceState.getParcelableArrayList(CURRENT_GAMES);
+            lastSession = savedInstanceState.getParcelableArrayList(LAST_SESSION);
             currentTab = savedInstanceState.getInt(CURRENT_TAB);
         } else {
             currentGames = getArguments().getParcelableArrayList(CURRENT_GAMES);
+            lastSession = getArguments().getParcelableArrayList(LAST_SESSION);
             currentTab = getArguments().getInt(CURRENT_TAB);
             if (steamId == 0) {
                 Toast.makeText(getActivity(), R.string.error_not_logged_in, Toast.LENGTH_LONG).show();
@@ -91,18 +97,10 @@ public class GamesFragment extends Fragment
     }
 
     @Override
-    public void onPause() {
-        if (!currentGames.isEmpty()) {
-            // Save idling session
-            //Prefs.setLastSession(currentGames);
-        }
-        super.onPause();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(CURRENT_GAMES, currentGames);
+        outState.putParcelableArrayList(LAST_SESSION, lastSession);
         outState.putInt(CURRENT_TAB, currentTab);
     }
 
@@ -180,6 +178,9 @@ public class GamesFragment extends Fragment
             case R.id.sort_hours_played_reversed:
                 viewModel.sort(GamesViewModel.SORT_HOURS_PLAYED_REVERSED);
                 return true;
+            case R.id.sort_hours_played_reversed:
+                viewModel.sortHoursPlayedReversed();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -230,8 +231,7 @@ public class GamesFragment extends Fragment
     private void fetchGames() {
         if (currentTab == TAB_LAST) {
             // Load last idling session
-            //final List<Game> games = !currentGames.isEmpty() ? currentGames : Prefs.getLastSession();
-            //viewModel.setGames(games);
+            viewModel.setGames(!currentGames.isEmpty() ? currentGames : lastSession);
         } else {
             // Fetch games from Steam
             refreshLayout.setRefreshing(true);

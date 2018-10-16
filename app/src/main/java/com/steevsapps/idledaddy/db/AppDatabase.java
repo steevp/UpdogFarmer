@@ -6,7 +6,10 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import com.steevsapps.idledaddy.AppExecutors;
 import com.steevsapps.idledaddy.db.converter.GamesConverter;
@@ -31,7 +34,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                 @Override
                                 public void onCreate(@NonNull SupportSQLiteDatabase db) {
                                     super.onCreate(db);
-                                    AppDatabase.populateDatabase(sInstance, executors);
+                                    AppDatabase.populateDatabase(context.getApplicationContext(), sInstance, executors);
                                 }
                             })
                             .build();
@@ -45,10 +48,27 @@ public abstract class AppDatabase extends RoomDatabase {
 
     public abstract UserSettingsDao userSettingsDao();
 
-    private static void populateDatabase(AppDatabase db, AppExecutors executors) {
+    private static void populateDatabase(Context context, AppDatabase db, AppExecutors executors) {
         executors.diskIO().execute(() -> {
-            // Populate the user_settings table
-            db.userSettingsDao().insert(new UserSettings(null));
+            final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+            final String username = prefs.getString("username", null);
+
+            if (!TextUtils.isEmpty(username)) {
+                // Migrate user info from SharedPreferences
+                final User userEntity = new User(username);
+                userEntity.setPassword(prefs.getString("password", ""));
+                userEntity.setLoginKey(prefs.getString("login_key", ""));
+                userEntity.setSentryHash(prefs.getString("sentry_hash", ""));
+                userEntity.setParentalPin(prefs.getString("parental_pin", ""));
+                userEntity.setPersonaName(prefs.getString("persona_name", ""));
+                userEntity.setAvatarHash(prefs.getString("avatar_hash", ""));
+                userEntity.setApiKey(prefs.getString("api_key", ""));
+                db.userDao().insertUser(userEntity);
+            }
+
+            // Set default user
+            db.userSettingsDao().insert(new UserSettings(username));
         });
     }
 }

@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.CRC32;
@@ -93,6 +95,7 @@ public class SteamBot {
     private final File filesDir;
     private final Context context;
 
+    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(8);
     // ScheduledFuture to check for cards
     private ScheduledFuture<?> farmHandle;
     // ScheduledFuture to check if account is still busy
@@ -235,17 +238,25 @@ public class SteamBot {
             attemptReconnect = false;
             stopFarming();
             unscheduleBusyTask();
+            scheduler.shutdownNow();
+            scheduler = Executors.newScheduledThreadPool(8);
             steamUser.logOff();
             steamClient.disconnect();
         }
     }
 
+    public void delete() {
+        userRepo.deleteUser(userEntity);
+    }
+
     public void login(LogOnDetails logOnDetails) {
-        userEntity = new User(logOnDetails.getUsername());
-        userEntity.setPassword(CryptHelper.encryptString(context, logOnDetails.getPassword()));
-        authCode = logOnDetails.getAuthCode();
-        twoFactorCode = logOnDetails.getTwoFactorCode();
-        executors.networkIO().execute(() -> steamClient.connect());
+        executors.networkIO().execute(() -> {
+            userEntity = new User(logOnDetails.getUsername());
+            userEntity.setPassword(CryptHelper.encryptString(context, logOnDetails.getPassword()));
+            authCode = logOnDetails.getAuthCode();
+            twoFactorCode = logOnDetails.getTwoFactorCode();
+            steamClient.connect();
+        });
     }
 
     public boolean isLoggedOn() {
@@ -281,6 +292,10 @@ public class SteamBot {
             return new ArrayList<>();
         }
         return new ArrayList<>(gamesIdling);
+    }
+
+    public ArrayList<Game> getLastSession() {
+        return new ArrayList<>(userEntity.getLastSession());
     }
 
     public void changeStatus(EPersonaState status) {
@@ -337,7 +352,7 @@ public class SteamBot {
     private void scheduleFarmTask() {
         if (farmHandle == null || farmHandle.isCancelled()) {
             Log.i(TAG, "Starting FarmTask...");
-            farmHandle = executors.scheduler().scheduleAtFixedRate(farmTask, 10, 10, TimeUnit.MINUTES);
+            farmHandle = scheduler.scheduleAtFixedRate(farmTask, 10, 10, TimeUnit.MINUTES);
         }
     }
 
@@ -351,7 +366,7 @@ public class SteamBot {
     private void scheduleBusyTask() {
         if (busyHandle == null || busyHandle.isCancelled()) {
             Log.i(TAG, "Starting BusyTask...");
-            busyHandle = executors.scheduler().scheduleAtFixedRate(busyTask, 0, 30, TimeUnit.SECONDS);
+            busyHandle = scheduler.scheduleAtFixedRate(busyTask, 0, 30, TimeUnit.SECONDS);
         }
     }
 
@@ -510,7 +525,7 @@ public class SteamBot {
         twoFactorCode = "";
         if (attemptReconnect) {
             // Schedule a reconnect in 5 seconds
-            executors.scheduler().schedule(() -> {
+            scheduler.schedule(() -> {
                 Log.i(TAG, "Reconnecting");
                 steamClient.connect();
             }, 5, TimeUnit.SECONDS);
@@ -805,6 +820,9 @@ public class SteamBot {
         executors.networkIO().execute(() -> steamClient.send(gamesPlayed));
         listener.sendEvent(username, NOW_PLAYING_EVENT);
         listener.showIdleNotification(username, gamesIdling, farming);
+        // Save last session
+        userEntity.setLastSession(gamesIdling);
+        updateUser();
     }
 
     /**

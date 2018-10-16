@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     };
 
     private void doLogout() {
-        //steamService.logoff();
+        steamService.logoff();
         closeDrawer();
         avatarView.setImageResource(R.color.transparent);
         usernameView.setText("");
@@ -350,7 +350,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                 break;
             case R.id.games:
                 fragment = GamesFragment.newInstance(steamService.getUsername(), steamService.getSteamId(),
-                        steamService.getGamesIdling(), spinnerNav.getSelectedItemPosition());
+                        steamService.getGamesIdling(), steamService.getLastSession(), spinnerNav.getSelectedItemPosition());
                 break;
             case R.id.settings:
                 fragment = SettingsFragment.newInstance();
@@ -440,7 +440,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         menu.findItem(R.id.auto_discovery).setVisible(loggedIn);
         menu.findItem(R.id.custom_app).setVisible(loggedIn);
         menu.findItem(R.id.import_shared_secret).setVisible(loggedIn);
-        //menu.findItem(R.id.auto_vote).setVisible(loggedOn);
         menu.findItem(R.id.search).setVisible(drawerItemId == R.id.games);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -612,24 +611,12 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
 
     @Override
     public void onGamesPicked(List<Game> games) {
-        steamService.playGames(games);
+        if (games.size() > 0) {
+            steamService.playGames(games);
+        } else {
+            steamService.stopGame();
+        }
     }
-
-    /*
-    @Override
-    public void onGamePicked(Game game) {
-        steamService.addGame(game);
-    }
-
-    @Override
-    public void onGamesPicked(List<Game> games) {
-        steamService.addGames(games);
-    }
-
-    @Override
-    public void onGameRemoved(Game game) {
-        steamService.removeGame(game);
-    }*/
 
     @Override
     public void onGameLongPressed(Game game) {

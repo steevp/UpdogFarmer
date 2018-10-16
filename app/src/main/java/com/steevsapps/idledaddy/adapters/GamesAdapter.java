@@ -170,7 +170,7 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         .load(game.iconUrl)
                         .into(item.logo);
             } else {
-                item.logo.setImageResource(R.drawable.ic_image_white_48dp);
+                //item.logo.setImageResource(R.drawable.ic_image_white_48dp);
             }
             item.itemView.setActivated(currentGames.contains(game));
         }

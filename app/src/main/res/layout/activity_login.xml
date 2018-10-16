@@ -22,6 +22,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/login_to_steam"
+                android:drawableStart="@mipmap/ic_daddy"
+                android:drawableLeft="@mipmap/ic_daddy"
                 android:textSize="@dimen/text_size_large" />
 
             <android.support.design.widget.TextInputLayout
