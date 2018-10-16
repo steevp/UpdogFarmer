@@ -852,13 +852,6 @@ public class SteamService extends Service {
         executor.execute(() -> steamClient.send(registerKey));
     }
 
-    public void autoVote() {
-        executor.execute(() -> {
-            final int msgId = webHandler.autoVote() ? R.string.vote_successful : R.string.vote_failed;
-            showToast(getString(msgId));
-        });
-    }
-
     /**
      * Perform log in. Needs to happen as soon as we connect or else we'll get an error
      */
