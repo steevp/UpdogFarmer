@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,6 +40,7 @@ import in.dragonbra.javasteam.util.KeyDictionary;
 import in.dragonbra.javasteam.util.crypto.CryptoException;
 import in.dragonbra.javasteam.util.crypto.CryptoHelper;
 import in.dragonbra.javasteam.util.crypto.RSACrypto;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -48,6 +50,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class SteamWebHandler {
     private final static String TAG = SteamWebHandler.class.getSimpleName();
+
+    private final static int TIMEOUT_SECS = 30;
 
     private final static String STEAM_STORE = "https://store.steampowered.com/";
     private final static String STEAM_COMMUNITY = "https://steamcommunity.com/";
@@ -77,10 +81,17 @@ public class SteamWebHandler {
                 .registerTypeAdapter(GamesOwnedResponse.class, new GamesOwnedResponseDeserializer())
                 .create();
 
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(TIMEOUT_SECS, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT_SECS, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT_SECS, TimeUnit.SECONDS)
+                .build();
+
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(STEAM_API)
                 .addConverterFactory(VdfConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(client)
                 .build();
 
         api = retrofit.create(SteamAPI.class);
