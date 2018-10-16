@@ -175,6 +175,9 @@ public class GamesFragment extends Fragment
             case R.id.sort_hours_played:
                 viewModel.sortHoursPlayed();
                 return true;
+            case R.id.sort_hours_played_reversed:
+                viewModel.sortHoursPlayedReversed();
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }

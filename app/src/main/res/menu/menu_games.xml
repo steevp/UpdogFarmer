@@ -11,6 +11,8 @@
                 android:title="@string/sort_alphabetically" />
             <item android:id="@+id/sort_hours_played"
                 android:title="@string/sort_hours_played" />
+            <item android:id="@+id/sort_hours_played_reversed"
+                android:title="@string/sort_hours_played_reversed" />
         </menu>
     </item>
     <item android:id="@+id/refresh"
