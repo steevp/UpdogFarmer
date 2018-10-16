@@ -40,6 +40,7 @@ public class PrefsManager {
     private final static String API_KEY = "api_key";
     private final static String LANGUAGE = "language";
     private final static String VERSION = "version";
+    private final static String SORT_VALUE = "sort_value";
 
     private static SharedPreferences prefs;
 
@@ -135,6 +136,10 @@ public class PrefsManager {
         writePref(VERSION, version);
     }
 
+    public static void writeSortValue(int sortValue) {
+        writePref(SORT_VALUE, sortValue);
+    }
+
     public static String getUsername() {
         return prefs.getString(USERNAME, "");
     }
@@ -214,6 +219,10 @@ public class PrefsManager {
 
     public static int getVersion() {
         return prefs.getInt(VERSION, 1);
+    }
+
+    public static int getSortValue() {
+        return prefs.getInt(SORT_VALUE, 0);
     }
 
     private static void writePref(String key, String value) {
