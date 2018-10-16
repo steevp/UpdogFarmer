@@ -25,7 +25,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -297,8 +296,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             logoutExpanded = false;
             selectItem(R.id.home, false);
         }
-
-        applySettings();
     }
 
     @Override
@@ -392,15 +389,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
      */
     private void hideSpinnerNav() {
         spinnerNav.setVisibility(View.GONE);
-    }
-
-    private void applySettings() {
-        if (PrefsManager.stayAwake()) {
-            // Don't let the screen turn off
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
     }
 
     @Override
@@ -651,11 +639,9 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         if (key.equals("stay_awake")) {
             if (PrefsManager.stayAwake()) {
                 // Keep device awake
-                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 steamService.acquireWakeLock();
             } else {
                 // Allow device to sleep
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 steamService.releaseWakeLock();
             }
         } else if (key.equals("offline")) {
