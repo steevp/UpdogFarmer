@@ -170,13 +170,13 @@ public class GamesFragment extends Fragment
                 fetchGames();
                 return true;
             case R.id.sort_alphabetically:
-                viewModel.sortAlphabetically();
+                viewModel.sort(GamesViewModel.SORT_ALPHABETICALLY);
                 return true;
             case R.id.sort_hours_played:
-                viewModel.sortHoursPlayed();
+                viewModel.sort(GamesViewModel.SORT_HOURS_PLAYED);
                 return true;
             case R.id.sort_hours_played_reversed:
-                viewModel.sortHoursPlayedReversed();
+                viewModel.sort(GamesViewModel.SORT_HOURS_PLAYED_REVERSED);
                 return true;
         }
         return super.onOptionsItemSelected(item);

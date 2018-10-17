@@ -25,9 +25,9 @@ import retrofit2.Response;
 public class GamesViewModel extends ViewModel {
     private final static String TAG = GamesViewModel.class.getSimpleName();
 
-    private final static int SORT_ALPHABETICALLY = 0;
-    private final static int SORT_HOURS_PLAYED = 1;
-    private final static int SORT_HOURS_PLAYED_REVERSED = 2;
+    public final static int SORT_ALPHABETICALLY = 0;
+    public final static int SORT_HOURS_PLAYED = 1;
+    public final static int SORT_HOURS_PLAYED_REVERSED = 2;
 
     private SteamWebHandler webHandler;
     private long steamId;
@@ -63,42 +63,14 @@ public class GamesViewModel extends ViewModel {
         this.games.setValue(games);
     }
 
-    void sortAlphabetically() {
-        if (sortId == SORT_ALPHABETICALLY) {
+    void sort(int sortId) {
+        if (this.sortId == sortId) {
             return;
         }
 
         final List<Game> games = this.games.getValue();
         if (games != null && !games.isEmpty()) {
-            sortId = SORT_ALPHABETICALLY;
-            setGames(games);
-        }
-
-        PrefsManager.writeSortValue(sortId);
-    }
-
-    void sortHoursPlayed() {
-        if (sortId == SORT_HOURS_PLAYED) {
-            return;
-        }
-
-        final List<Game> games = this.games.getValue();
-        if (games != null && !games.isEmpty()) {
-            sortId = SORT_HOURS_PLAYED;
-            setGames(games);
-        }
-
-        PrefsManager.writeSortValue(sortId);
-    }
-
-    void sortHoursPlayedReversed() {
-        if (sortId == SORT_HOURS_PLAYED) {
-            return;
-        }
-
-        final List<Game> games = this.games.getValue();
-        if (games != null && !games.isEmpty()) {
-            sortId = SORT_HOURS_PLAYED_REVERSED;
+            this.sortId = sortId;
             setGames(games);
         }
 
