@@ -25,9 +25,9 @@ import retrofit2.Response;
 public class GamesViewModel extends ViewModel {
     private final static String TAG = GamesViewModel.class.getSimpleName();
 
-    private final static int SORT_ALPHABETICALLY = 0;
-    private final static int SORT_HOURS_PLAYED = 1;
-    private final static int SORT_HOURS_PLAYED_REVERSED = 2;
+    public final static int SORT_ALPHABETICALLY = 0;
+    public final static int SORT_HOURS_PLAYED = 1;
+    public final static int SORT_HOURS_PLAYED_REVERSED = 2;
 
     private SteamWeb webHandler;
     private long steamId;
