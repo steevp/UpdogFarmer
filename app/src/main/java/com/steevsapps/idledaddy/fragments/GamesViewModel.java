@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 
+import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.SteamWebHandler;
 import com.steevsapps.idledaddy.steam.model.Game;
 import com.steevsapps.idledaddy.steam.model.GamesOwnedResponse;
@@ -24,8 +25,9 @@ import retrofit2.Response;
 public class GamesViewModel extends ViewModel {
     private final static String TAG = GamesViewModel.class.getSimpleName();
 
-    private final static int SORT_ALPHABETICALLY = 0;
-    private final static int SORT_HOURS_PLAYED = 1;
+    public final static int SORT_ALPHABETICALLY = 0;
+    public final static int SORT_HOURS_PLAYED = 1;
+    public final static int SORT_HOURS_PLAYED_REVERSED = 2;
 
     private SteamWebHandler webHandler;
     private long steamId;
@@ -35,6 +37,7 @@ public class GamesViewModel extends ViewModel {
     void init(SteamWebHandler webHandler, long steamId) {
         this.webHandler = webHandler;
         this.steamId = steamId;
+        this.sortId = PrefsManager.getSortValue();
     }
 
     LiveData<List<Game>> getGames() {
@@ -54,32 +57,24 @@ public class GamesViewModel extends ViewModel {
             });
         } else if (sortId == SORT_HOURS_PLAYED) {
             Collections.sort(games, Collections.reverseOrder());
+        } else if (sortId == SORT_HOURS_PLAYED_REVERSED) {
+            Collections.sort(games);
         }
         this.games.setValue(games);
     }
 
-    void sortAlphabetically() {
-        if (sortId == SORT_ALPHABETICALLY) {
+    void sort(int sortId) {
+        if (this.sortId == sortId) {
             return;
         }
 
         final List<Game> games = this.games.getValue();
         if (games != null && !games.isEmpty()) {
-            sortId = SORT_ALPHABETICALLY;
+            this.sortId = sortId;
             setGames(games);
         }
-    }
 
-    void sortHoursPlayed() {
-        if (sortId == SORT_HOURS_PLAYED) {
-            return;
-        }
-
-        final List<Game> games = this.games.getValue();
-        if (games != null && !games.isEmpty()) {
-            sortId = SORT_HOURS_PLAYED;
-            setGames(games);
-        }
+        PrefsManager.writeSortValue(sortId);
     }
 
     void fetchGames() {

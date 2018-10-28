@@ -157,7 +157,8 @@
     <string name="import_shared_secret_failed">Failed to import shared_secret! Make sure you\'re using the Steam mobile authenticator.</string>
     <string name="next_round_countdown">Next round: %02d:%02d</string>
     <string name="reporting_score">Reporting score…</string>
-    <!-- Untranslated strings: -->
     <string name="boss_hp">Boss HP: %d</string>
+    <!-- Untranslated strings: -->
+    <string name="sort_hours_played_reversed">Hours Played (reversed)</string>
     <!-- End untranslated strings -->
 </resources>

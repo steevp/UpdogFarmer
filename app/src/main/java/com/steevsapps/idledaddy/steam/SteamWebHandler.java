@@ -1,7 +1,6 @@
 package com.steevsapps.idledaddy.steam;
 
 import android.support.annotation.IntDef;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,7 +15,6 @@ import com.steevsapps.idledaddy.utils.Utils;
 import com.steevsapps.idledaddy.utils.WebHelpers;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -28,13 +26,10 @@ import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,6 +40,7 @@ import in.dragonbra.javasteam.util.KeyDictionary;
 import in.dragonbra.javasteam.util.crypto.CryptoException;
 import in.dragonbra.javasteam.util.crypto.CryptoHelper;
 import in.dragonbra.javasteam.util.crypto.RSACrypto;
+import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -54,6 +50,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class SteamWebHandler {
     private final static String TAG = SteamWebHandler.class.getSimpleName();
+
+    private final static int TIMEOUT_SECS = 30;
 
     private final static String STEAM_STORE = "https://store.steampowered.com/";
     private final static String STEAM_COMMUNITY = "https://steamcommunity.com/";
@@ -83,10 +81,17 @@ public class SteamWebHandler {
                 .registerTypeAdapter(GamesOwnedResponse.class, new GamesOwnedResponseDeserializer())
                 .create();
 
+        final OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(TIMEOUT_SECS, TimeUnit.SECONDS)
+                .readTimeout(TIMEOUT_SECS, TimeUnit.SECONDS)
+                .writeTimeout(TIMEOUT_SECS, TimeUnit.SECONDS)
+                .build();
+
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(STEAM_API)
                 .addConverterFactory(VdfConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(client)
                 .build();
 
         api = retrofit.create(SteamAPI.class);
@@ -404,496 +409,6 @@ public class SteamWebHandler {
                 .data("sessionid", sessionId)
                 .data("appid_to_clear_from_queue", appId)
                 .post();
-    }
-
-    public boolean autoVote() {
-        final String url = STEAM_STORE + "SteamAwards/?l=english";
-        try {
-            final Document doc = Jsoup.connect(url)
-                    .referrer(url)
-                    .followRedirects(true)
-                    .cookies(generateWebCookies())
-                    .get();
-            final Element container = doc.select("div.vote_nominations").first();
-            if (container == null) {
-                return false;
-            }
-            final String voteId = container.attr("data-voteid");
-            final Elements voteNominations = container.select("div.vote_nomination");
-            if (voteNominations.isEmpty()) {
-                return false;
-            }
-            final Element choice = voteNominations.get(new Random().nextInt(voteNominations.size()));
-            final String appId = choice.attr("data-vote-appid");
-            final Document doc2 = Jsoup.connect(STEAM_STORE + "salevote")
-                    .referrer(STEAM_STORE)
-                    .cookies(generateWebCookies())
-                    .data("sessionid", sessionId)
-                    .data("voteid", voteId)
-                    .data("appid", appId)
-                    .post();
-            return true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // Planets we failed to join
-    private final Map<String, Long> badPlanets = new HashMap<>();
-
-    /**
-     * Play Saliens just to get the card drop
-     */
-    public boolean playSaliens(JSONObject playerInfo, String accessToken) {
-        try {
-            if (playerInfo.has("active_zone_game")) {
-                Log.i(TAG, "Leaving zone " + playerInfo.getString("active_zone_game"));
-                leaveGame(playerInfo.getString("active_zone_game"), accessToken);
-            }
-            if (playerInfo.has("active_planet")) {
-                Log.i(TAG, "Leaving planet " + playerInfo.getString("active_planet"));
-                leaveGame(playerInfo.getString("active_planet"), accessToken);
-            }
-            if (playerInfo.has("active_boss_game")) {
-                Log.i(TAG, "Leaving boss game: " + playerInfo.getString("active_boss_game"));
-                leaveGame(playerInfo.getString("active_boss_game"), accessToken);
-            }
-            // Find an uncaptured planet and join it
-            JSONObject planet = null;
-            for (int i=0;i<5;i++) {
-                planet = getUncapturedPlanet();
-                if (planet == null) {
-                    continue;
-                }
-                Log.i(TAG, "Joining planet: " + planet.getString("id"));
-                int eresult = joinPlanet(planet.getString("id"), accessToken);
-                if (eresult == 1) {
-                    break;
-                }
-                Log.w(TAG, "Trying a different planet");
-            }
-            if (planet == null) {
-                return false;
-            }
-
-            // Find an uncaptured zone and join it
-            final JSONObject zone = getUncapturedZone(planet);
-            if (zone == null) {
-                return false;
-            }
-
-            final String zoneId = zone.getString("zone_position");
-            if (zoneId == null) {
-                return false;
-            }
-
-            joinZone(zone, accessToken);
-
-            // That should be all we need to get the card
-            return true;
-        } catch (IOException|JSONException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public JSONObject getPlayerInfo(String accessToken) {
-        try {
-            final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/GetPlayerInfo/v0001/")
-                    .followRedirects(true)
-                    .ignoreContentType(true)
-                    .referrer("https://steamcommunity.com/saliengame/play/")
-                    .method(Connection.Method.POST)
-                    .data("access_token", accessToken)
-                    .execute()
-                    .body();
-            return new JSONObject(json).getJSONObject("response");
-        } catch (IOException|JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public void leaveGame(String gameId, String accessToken) throws IOException {
-        Jsoup.connect("https://community.steam-api.com/IMiniGameService/LeaveGame/v0001/")
-                .followRedirects(true)
-                .ignoreContentType(true)
-                .referrer("https://steamcommunity.com/saliengame/play/")
-                .data("access_token", accessToken)
-                .data("gameid", gameId)
-                .post();
-    }
-
-    public void reportScore(String score, String accessToken) throws IOException, JSONException {
-        for (int i=0;i<3;i++) {
-            final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/ReportScore/v0001/")
-                    .followRedirects(true)
-                    .ignoreContentType(true)
-                    .referrer("https://steamcommunity.com/saliengame/play/")
-                    .method(Connection.Method.POST)
-                    .data("access_token", accessToken)
-                    .data("score", score)
-                    .data("language", "english")
-                    .execute()
-                    .body();
-            final JSONObject response = new JSONObject(json).getJSONObject("response");
-            if (response.has("new_score")) {
-                Log.i(TAG, "New score: " + response.getString("new_score"));
-                return;
-            }
-            if (i + 1 < 3) {
-                Log.i(TAG, "Trying again...");
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    public JSONObject reportBossDamage(int damageToBoss, int damageTaken, int useHeal, String accessToken) throws IOException, JSONException {
-        final Connection.Response response = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/ReportBossDamage/v0001/")
-                .followRedirects(true)
-                .ignoreContentType(true)
-                .referrer("https://steamcommunity.com/saliengame/play/")
-                .method(Connection.Method.POST)
-                .data("access_token", accessToken)
-                .data("use_heal_ability", String.valueOf(useHeal))
-                .data("damage_to_boss", String.valueOf(damageToBoss))
-                .data("damage_taken", String.valueOf(damageTaken))
-                .execute();
-        final JSONObject json = new JSONObject(response.body()).getJSONObject("response");
-
-        int eresult;
-        try {
-            eresult = Integer.parseInt(response.header("X-eresult"));
-        } catch (NumberFormatException e) {
-            eresult = -1;
-        }
-        Log.i(TAG, "ReportBossDamage eresult: " + eresult);
-        Log.i(TAG, "ReportBossDamage error_message " + response.header("X-error_message"));
-        json.put("eresult", eresult);
-        return json;
-    }
-
-    public JSONObject getUncapturedPlanet() {
-        try {
-            final JSONArray planets = getPlanets();
-            if (planets.length() == 0) {
-                return null;
-            }
-
-            final List<JSONObject> uncapturedPlanets = new ArrayList<>();
-            for (int i=0; i < planets.length(); i++) {
-                final String planetId = planets.getJSONObject(i).getString("id");
-                final JSONObject planetInfo = getPlanet(planetId);
-                if (planetInfo.getJSONObject("state").getBoolean("captured")) {
-                    continue;
-                }
-                final JSONArray zones = planetInfo.getJSONArray("zones");
-
-                JSONArray easyZones = new JSONArray();
-                JSONArray medZones = new JSONArray();
-                JSONArray hardZones = new JSONArray();
-                JSONArray bossZones = new JSONArray();
-
-                for (int j=0; j < zones.length(); j++) {
-                    final JSONObject zone = zones.getJSONObject(j);
-                    if (zone.getBoolean("captured")) {
-                        continue;
-                    }
-                    int difficulty = zone.getInt("difficulty");
-                    if (difficulty == 1) {
-                        easyZones.put(zone);
-                    }
-                    if (difficulty == 2) {
-                        medZones.put(zone);
-                    }
-                    if (difficulty == 3) {
-                        hardZones.put(zone);
-                    }
-                    if (zone.getInt("type") == 4) {
-                        bossZones.put(zone);
-                    }
-                }
-
-                int sortKey = 0;
-                if (easyZones.length() > 0) {
-                    sortKey += 99 - easyZones.length();
-                }
-                if (medZones.length() > 0) {
-                    sortKey += ((int) Math.pow(10, 2)) * (99 - medZones.length());
-                }
-                if (hardZones.length() > 0) {
-                    sortKey += ((int) Math.pow(10, 4)) * (99 - hardZones.length());
-                }
-                if (bossZones.length() > 0) {
-                    sortKey += ((int) Math.pow(10, 6)) * (99 - bossZones.length());
-                }
-
-                boolean goodPlanet = true;
-                if (badPlanets.containsKey(planetId)) {
-                    if ((System.currentTimeMillis() - badPlanets.get(planetId)) >= 900000) {
-                        // 15 minutes passed, mark planet as good to retry
-                        Log.i(TAG, "Removing bad tag from planet " + planetId);
-                        badPlanets.remove(planetId);
-                    } else {
-                        // Mark planet as bad
-                        goodPlanet = false;
-                    }
-                }
-
-                planetInfo.put("good", goodPlanet);
-
-                planetInfo.put("sort_key", sortKey);
-
-                planetInfo.put("easy_zones", easyZones)
-                        .put("med_zones", medZones)
-                        .put("hard_zones", hardZones)
-                        .put("boss_zones", bossZones);
-
-                uncapturedPlanets.add(planetInfo);
-            }
-
-            if (uncapturedPlanets.isEmpty()) {
-                return null;
-            }
-
-            Collections.sort(uncapturedPlanets, Collections.reverseOrder(new Comparator<JSONObject>() {
-                @Override
-                public int compare(JSONObject o1, JSONObject o2) {
-                    try {
-                        final int s1 = o1.getInt("sort_key");
-                        final int s2 = o2.getInt("sort_key");
-                        if (s1 == s2) {
-                            return 0;
-                        }
-                        return s1 > s2 ? 1 : -1;
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        return 0;
-                    }
-                }
-            }));
-
-            for (JSONObject planet : uncapturedPlanets) {
-                if (planet.getBoolean("good")) {
-                    return planet;
-                }
-            }
-
-            Log.w(TAG, "Unable to find a good planet, returning a possibly bad one");
-            return uncapturedPlanets.get(0);
-        } catch (IOException|JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public String getSaliensToken() {
-        try {
-            final String json = Jsoup.connect("https://steamcommunity.com/saliengame/gettoken")
-                    .followRedirects(true)
-                    .ignoreContentType(true)
-                    .cookies(generateWebCookies())
-                    .method(Connection.Method.GET)
-                    .execute()
-                    .body();
-            return new JSONObject(json).getString("token");
-        } catch (IOException|JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public JSONObject getUncapturedZone(JSONObject planet) throws JSONException {
-        JSONArray easyZones = planet.getJSONArray("easy_zones");
-        JSONArray medZones = planet.getJSONArray("med_zones");
-        JSONArray hardZones = planet.getJSONArray("hard_zones");
-        JSONArray bossZones = planet.getJSONArray("boss_zones");
-        if (bossZones.length() > 0) {
-            Log.i(TAG, "Choosing boss zone");
-            return bossZones.getJSONObject(0);
-        }
-        if (hardZones.length() > 0) {
-            Log.i(TAG, "Choosing hard zone");
-            return hardZones.getJSONObject(0);
-        }
-        if (medZones.length() > 0) {
-            Log.i(TAG, "Choosing med zone");
-            return medZones.getJSONObject(0);
-        }
-        if (easyZones.length() > 0) {
-            Log.i(TAG, "Choosing easy zone");
-            return easyZones.getJSONObject(0);
-        }
-        return null;
-    }
-
-    public JSONArray getPlanets() throws IOException, JSONException {
-        final String json = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/GetPlanets/v0001/?active_only=1&language=english")
-                .followRedirects(true)
-                .ignoreContentType(true)
-                .referrer("https://steamcommunity.com/saliengame/play/")
-                .method(Connection.Method.GET)
-                .execute()
-                .body();
-
-        return new JSONObject(json).getJSONObject("response").getJSONArray("planets");
-    }
-
-    public JSONObject getPlanet(String planetId) throws IOException, JSONException {
-        final String url = "https://community.steam-api.com/ITerritoryControlMinigameService/GetPlanet/v0001/?id=%s&language=english";
-        final String json = Jsoup.connect(String.format(Locale.US, url, planetId))
-                .followRedirects(true)
-                .ignoreContentType(true)
-                .cookies(generateWebCookies())
-                .referrer("https://steamcommunity.com/saliengame/play/")
-                .method(Connection.Method.GET)
-                .execute()
-                .body();
-
-        return new JSONObject(json).getJSONObject("response").getJSONArray("planets").getJSONObject(0);
-    }
-
-    public int joinPlanet(String planetId, String accessToken) throws IOException {
-        final Connection.Response response = Jsoup.connect("https://community.steam-api.com/ITerritoryControlMinigameService/JoinPlanet/v0001/")
-                .followRedirects(true)
-                .ignoreContentType(true)
-                .method(Connection.Method.POST)
-                .data("id", planetId)
-                .data("access_token", accessToken)
-                .execute();
-
-        int eresult;
-        try {
-            eresult = Integer.parseInt(response.header("X-eresult"));
-        } catch (NumberFormatException e) {
-            eresult = -1;
-        }
-        final String errorMsg = response.header("X-error_message");
-        if (eresult != 1) {
-            Log.w(TAG, "JoinPlanet eresult: " + eresult);
-            Log.w(TAG, "JoinPlanet error msg: " + errorMsg);
-            Log.w(TAG, "JoinPlanet marking planet " + planetId + " as BAD");
-            badPlanets.put(planetId, System.currentTimeMillis());
-        }
-        return eresult;
-    }
-
-    public void joinZone(JSONObject zone, String accessToken) throws IOException, JSONException {
-        final String zoneId = zone.getString("zone_position");
-        String url = null;
-        if (zone.getInt("type") == 4) {
-            Log.i(TAG, "Joining boss zone: " + zoneId);
-            url = "https://community.steam-api.com/ITerritoryControlMinigameService/JoinBossZone/v0001/";
-        } else {
-            Log.i(TAG, "Joining zone: " + zoneId);
-            url = "https://community.steam-api.com/ITerritoryControlMinigameService/JoinZone/v0001/";
-        }
-        final Connection.Response response = Jsoup.connect(url)
-                .followRedirects(true)
-                .ignoreContentType(true)
-                .method(Connection.Method.POST)
-                .data("zone_position", zoneId)
-                .data("access_token", accessToken)
-                .execute();
-        Log.i(TAG, "JoinZone eresult: " + response.header("X-eresult"));
-        Log.i(TAG, "JoinZone error_message: " + response.header("X-error_message"));
-    }
-
-    /**
-     * Get daily tasks for the Spring Cleaning Event 2018
-     */
-    public List<String> getDailyTaskAppIds() {
-        final String url = STEAM_STORE + "springcleaning?l=english";
-        try {
-            // Get list of task urls
-            final List<String> taskAppIds = new ArrayList<>();
-            final Document doc = Jsoup.connect(url)
-                    .referrer(STEAM_STORE)
-                    .followRedirects(true)
-                    .cookies(generateWebCookies())
-                    .get();
-
-            final Element stickyNotes = doc.select("div.spring_sticky_notes").first();
-            if (stickyNotes == null) {
-                return new ArrayList<>();
-            }
-            for (Element a : stickyNotes.select("a")) {
-                final String taskUrl = a.attr("href") + "?l=english";
-                if (taskUrl.startsWith("https://store.steampowered.com/springcleaning/task")) {
-                    final String taskAppId = getDailyTaskAppId(taskUrl);
-                    if (!taskAppId.isEmpty()) {
-                        taskAppIds.add(taskAppId);
-                    }
-                }
-            }
-            return taskAppIds;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }
-
-    public List<String> getProjectAppIds() {
-        final String url = STEAM_STORE + "springcleaning?l=english";
-        try {
-            // Get list of task urls
-            final List<String> taskAppIds = new ArrayList<>();
-            final Document doc = Jsoup.connect(url)
-                    .referrer(STEAM_STORE)
-                    .followRedirects(true)
-                    .cookies(generateWebCookies())
-                    .get();
-
-            final Elements trophies = doc.select("div.spring_trophy_desc");
-            for (Element trophy : trophies) {
-                final Element a = trophy.select("a").first();
-                if (a == null) {
-                    continue;
-                }
-                final String taskUrl = a.attr("href") + "?l=english";
-                if (taskUrl.startsWith("https://store.steampowered.com/springcleaning/task")) {
-                    final String taskAppId = getDailyTaskAppId(taskUrl);
-                    if (!taskAppId.isEmpty()) {
-                        taskAppIds.add(taskAppId);
-                    }
-                }
-            }
-            return taskAppIds;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
-    }
-
-    private String getDailyTaskAppId(String taskUrl) {
-        final Pattern ptrn = Pattern.compile("^https://store.steampowered.com/app/(\\d+)/.+$");
-        try {
-            final Document doc = Jsoup.connect(taskUrl)
-                    .referrer(STEAM_STORE)
-                    .cookies(generateWebCookies())
-                    .get();
-            final Element springGame = doc.select("span.spring_game").first();
-            if (springGame == null) {
-                return "";
-            }
-            final Element springGameLink = springGame.select("a").first();
-            if (springGameLink == null) {
-                return "";
-            }
-            final Matcher m = ptrn.matcher(springGameLink.attr("href"));
-            if (!m.find()) {
-                return "";
-            }
-            return m.group(1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return "";
     }
 
     @ApiKeyState int updateApiKey() {
