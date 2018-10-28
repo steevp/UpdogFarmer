@@ -105,7 +105,7 @@
     <string name="discovery_error">Не вдалося проглянути Чергу Знахідок у цей час. Спробуйте ще раз пізніше</string>
     <string name="auto_vote">Авто Голос (Нагороди Steam)</string>
     <string name="vote_successful">Успішне голосування!</string>
-    <string name="vote_failed">Не вдалося проголосувати!</string>    
+    <string name="vote_failed">Не вдалося проголосувати!</string>
     <string name="summer_event">Гра Saliens</string>
     <string name="play_saliens">Грати Saliens заради карток</string>
     <string name="play_saliens_indefinitely">Грати Saliens Нескінченно</string>
@@ -116,7 +116,7 @@
     <string name="boss_hp">Життя Боса: %d</string>
     <string name="reporting_score">Фінальний рахунок…</string>
     <string name="success_check_inventory">Успіх! Перевірте нові картки в інвентарі.</string>
-    <string name="play_saliens_failed">Не вдається зіграти зараз у Saliens. Спробуйте пізніше.</string>    
+    <string name="play_saliens_failed">Не вдається зіграти зараз у Saliens. Спробуйте пізніше.</string>
     <string name="apikey_access_denied">Заборонено доступ ключу Steam API, використання вбудованого ключа.</string>
     <string name="apikey_register_failed">Не вдалося зареєструвати API ключ, використання вбудованого ключа.</string>
     <string name="english">Англійська</string>
