@@ -95,7 +95,8 @@
     <string name="logcat">Вислати log</string>
     <string name="sort">Сортування</string>
     <string name="sort_alphabetically">За назвою</string>
-    <string name="sort_hours_played">За часом у грі</string>
+    <string name="sort_hours_played">За часом</string>
+    <string name="sort_hours_played_reversed">За часом (навпаки)</string>
     <string name="auto_discovery_title">Авто Черга Знахідок</string>
     <string name="auto_discovery">Автоматичний перегляд продуктів у Черзі Знахідок. Під час Літніх та Зимових розпродажів ви можете отримати до 3 торгових карток за добу, переглядаючи чергу.</string>
     <string name="generating_discovery">Утворення нової Черги Знахідок…</string>
