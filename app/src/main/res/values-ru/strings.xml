@@ -95,7 +95,8 @@
     <string name="logcat">Отправить log</string>
     <string name="sort">Сортировка</string>
     <string name="sort_alphabetically">По названию</string>
-    <string name="sort_hours_played">По времени в игре</string>
+    <string name="sort_hours_played">По времени</string>
+    <string name="sort_hours_played_reversed">По времени (наоборот)</string>
     <string name="auto_discovery_title">Список Рекомендаций</string>
     <string name="auto_discovery">Автоматический просмотр продуктов в Списке Рекомендаций. Во время Летних и Зимних распродаж вы можете получить до 3 коллекционных карточек в сутки, просматривая список.</string>
     <string name="generating_discovery">Создание нового Списка Рекомендаций…</string>
@@ -162,7 +163,4 @@
     <string name="device_not_rooted">Устройство должно иметь рут-права, чтобы использовать эту опцию.</string>
     <string name="your_shared_secret">Ваш shared_secret: %s</string>
     <string name="import_shared_secret_failed">Не удалось импортировать shared_secret! Убедитесь, что вы используете мобильный аутентификатор Steam.</string>
-    <!-- Untranslated strings: -->
-    <string name="sort_hours_played_reversed">Hours Played (reversed)</string>
-    <!-- End untranslated strings -->
 </resources>
