@@ -91,11 +91,12 @@
     <string name="sum_use_custom_loginid">Idle Daddy ile diğer SteamKit uygulamalarını (Ice Client gibi) beraber çalıştırabilmek için bu ayarı açın. Eğer emin değilseniz, bu ayarı kapalı tutun. (Yeniden başlatma gerektirir)</string>
     <string name="gdpr_consent_not_needed">Gerekli değil. Idle Daddy Premium reklam içermez.</string>
     <string name="play_all">Hepsini çalıştır</string>
-    <string name="remove_ads">Reklemları kaldır</string>
+    <string name="remove_ads">Reklamları Kaldır</string>
     <string name="logcat">Log kayıtlarını gönder</string>
     <string name="sort">Sırala</string>
     <string name="sort_alphabetically">Alfabetik</string>
-    <string name="sort_hours_played">Oyun süresine göre</string>
+    <string name="sort_hours_played">Oynama süresine göre (Azalan)</string>
+    <string name="sort_hours_played_reversed">Oynama süresine göre (Artan)</string>
     <string name="auto_discovery_title">Otomatik Keşif Kuyruğu</string>
     <string name="auto_discovery">Keşif Kuyruğunu otomatik olarak yapar. Yaz ve Kış indirimlerinde, her gün Keşif Kuyruğunu tamamlayarak 3 takas kartı kazanabilirsin.</string>
     <string name="generating_discovery">Yeni keşif kuyruğu oluşturuluyor</string>
@@ -151,7 +152,7 @@
     <string name="complete_daily_tasks">Günlük Görevleri Tamamla</string>
     <string name="complete_projects">Proje Görevlerini Tamamla</string>
     <string name="daily_tasks_completed">Günlük Görevler tamamlandı. Yarın tekrar yapmayı unutma.</string>
-    <string name="project_tasks_completed">Proje Görevleri tamamlandı. Bunu bir kerede yapman yeterli.</string>
+    <string name="project_tasks_completed">Proje Görevleri tamamlandı. Bunu bir kere yapman yeterli.</string>
     <string name="shared_secret_desc">Mobil Kimlik Doğrulayıcıdan \'shared_secret\' kodunu al. Bu sayede Idle Daddy giriş anahtarının süresi dolduğu zaman otomatik olarak tekrar giriş yapar.</string>
     <string name="import_shared_secret">Doğrulayıcıdan shared_secret kodunu al</string>
     <string name="enter_manually">El ile gir</string>
@@ -162,7 +163,4 @@
     <string name="next_round_countdown">Bir sonraki raund: %02d:%02d</string>
     <string name="reporting_score">Skor hesaplanıyor</string>
     <string name="boss_hp">Boss\'un canı: %d</string>
-    <!-- Untranslated strings: -->
-    <string name="sort_hours_played_reversed">Hours Played (reversed)</string>
-    <!-- End untranslated strings -->
 </resources>
