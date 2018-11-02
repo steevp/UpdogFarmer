@@ -25,7 +25,7 @@
     <string name="sum_offline">Du wirst bei jedem als offline angezeigt, also sieht keiner das du inaktiv Spiele spielst.</string>
     <string name="pref_stay_awake">Gerät anlassen</string>
     <string name="sum_stay_awake">Aktiviere dies, wenn Idle Daddy bei ausgeschaltetem Bildschirm nicht mehr funktioniert. WARNUNG: Einige Geräte können die App nach kurzer Zeit automatisch beenden, wenn diese Option aktiviert ist.</string>
-    <string name="pref_minimize_data">Minimiere den Datenverbrauch</string>
+    <string name="pref_minimize_data">Datenverbrauch minimieren</string>
     <string name="sum_minimize_data">Lädt die Cover der Spiele nicht herunter.</string>
     <string name="pref_parental_pin">Familien PIN</string>
     <string name="sum_parental_pin">Gebe die Familien PIN ein, um die Familienansicht zu entsperren.</string>
@@ -39,7 +39,7 @@
     <string name="sum_language">Ändere die Sprache der App (Erfordert Neustart).</string>
     <string name="pref_gdpr_consent">Widerrufe die DSGVO Zustimmung</string>
     <string name="sum_gdpr_consent"> Gemäß der EU-Datenschutz-Grundverordnung (DSGVO) ist die Zustimmung eines Nutzers erforderlich, bevor Anzeigen geschaltet werden. Klicke hier, um deine Zustimmung zu widerrufen.</string>
-    <string name="pref_use_custom_loginid">Verwende die benutzerdefinierte Anmelde-ID</string>
+    <string name="pref_use_custom_loginid">Benutzerdefinierte Anmelde-ID verwenden</string>
     <string name="sum_use_custom_loginid">Wenn du diese Option aktivierst, können andere SteamKit-Apps (z.B. Ice Client) gleichzeitig mit Idle Daddy ausgeführt werden. Wenn du dir nicht sicher bist, lasse dies aus (Erfordert Neustart).</string>
     <string name="gdpr_consent_not_needed">Nicht erforderlich. Idle Daddy Premium zeigt keine Werbung an.</string>
     <string name="blacklist_hint">Gebe eine appid ein und klicke auf das +</string>
@@ -96,6 +96,7 @@
     <string name="sort">Sortieren</string>
     <string name="sort_alphabetically">Alphabetisch</string>
     <string name="sort_hours_played">Spielzeit</string>
+    <string name="sort_hours_played_reversed">Spielzeit (umgekehrt)</string>
     <string name="auto_discovery_title">Automatische Entdeckungsliste</string>
     <string name="auto_discovery">Dadurch wird die Entdeckungsliste automatisch abgearbeitet. Während der Sommer- und Winterverkäufe kannst du bis zu 3 Sammelkarten pro Tag bekommen, indem du deine Entdeckungsliste abarbeitest.</string>
     <string name="generating_discovery">Generiere neue Entdeckungsliste…</string>
@@ -112,6 +113,7 @@
     <string name="playing_saliens">Spiele Saliens (%d/%d)…</string>
     <string name="playing_saliens_indefinitely">Spiele Saliens…\nXP: %s/%s\nLevel: %s</string>
     <string name="next_round_countdown">Nächste Runde: %02d:%02d</string>
+    <string name="boss_hp">Boss HP: %d</string>
     <string name="reporting_score">Berichtsergebnis…</string>
     <string name="success_check_inventory">Erfolg! Überprüfe dein Inventar auf neue Sammelkarten.</string>
     <string name="play_saliens_failed">Saliens kann jetzt nicht automatisch gespielt werden. Versuche es später noch einmal.</string>
@@ -161,8 +163,4 @@
     <string name="device_not_rooted">Dein Gerät muss gerootet sein, um diese Option verwenden zu können.</string>
     <string name="your_shared_secret">Dein Wiederherstellungscode: %s</string>
     <string name="import_shared_secret_failed">Fehler beim Importieren des Wiederherstellungscodes! Stelle sicher, dass du den Steam Mobile Authentikator verwendest.</string>
-    <string name="boss_hp">Boss HP: %d</string>
-    <!-- Untranslated strings: -->
-    <string name="sort_hours_played_reversed">Hours Played (reversed)</string>
-    <!-- End untranslated strings -->
 </resources>
