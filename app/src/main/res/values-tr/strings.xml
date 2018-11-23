@@ -81,8 +81,8 @@
     <string name="last_session">Son Oturum</string>
     <string name="pref_hours_until">Kartların düşmeye başlaması için gereken süre</string>
     <string name="sum_hours_until">Kartların düşmesi için gerekli süreyi ifade eder. Kart düşürürken, Idle Daddy seçilen saate kadar oyunları birlikte rölantide çalıştırır. Çoğu kullanıcı için, 3 saat iyi bir seçenektir.</string>
-    <string name="pref_include_free_games">Oynaması üçretsiz oyunları dahil et</string>
-    <string name="sum_include_free_games">Varsayılan olarak, Team Fortress 2 gibi oynaması ücretsiz oyunlar dahil değildir (teknik olarak herkes onlara sahiptir). Bu seçenek seçilirse, eğer kullanıcı daha önce bu oyunları oynamış ise listeye dahil edilir.</string>
+    <string name="pref_include_free_games">Oynaması ücretsiz oyunları dahil et</string>
+    <string name="sum_include_free_games">Varsayılan olarak, Team Fortress 2 gibi oynaması ücretsiz oyunlar dahil değildir (teknik olarak herkes onlara sahiptir). Bu seçeneği seçerseniz ve bu tür oyunları daha önce oynamış iseniz listeye dahil edilir.</string>
     <string name="pref_language">Dil</string>
     <string name="sum_language">Uygulama\'nın dilini değiştir (Yeniden  başlatma gerektirir).</string>
     <string name="pref_gdpr_consent">GDPR iznini ver</string>
