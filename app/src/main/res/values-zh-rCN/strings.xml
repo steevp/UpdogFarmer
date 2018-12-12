@@ -113,7 +113,7 @@
     <string name="playing_saliens">正在进行特卖星人游戏（%d/%d）……</string>
     <string name="playing_saliens_indefinitely">正在进行特卖星人游戏……\n分数：%s/%s\n等级：%s</string>
     <string name="next_round_countdown">下一轮：%02d:%02d</string>
-    <string name="boss_hp">头目 HP：%d</string>
+    <string name="boss_hp">头目生命值：%d</string>
     <string name="reporting_score">正在报告分数……</string>
     <string name="success_check_inventory">成功！您可以在库存中看到新卡牌。</string>
     <string name="play_saliens_failed">目前无法自动游玩特卖星人游戏，请稍后重试。</string>
