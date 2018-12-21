@@ -163,4 +163,9 @@
     <string name="device_not_rooted">Dein Gerät muss gerootet sein, um diese Option verwenden zu können.</string>
     <string name="your_shared_secret">Dein Wiederherstellungscode: %s</string>
     <string name="import_shared_secret_failed">Fehler beim Importieren des Wiederherstellungscodes! Stelle sicher, dass du den Steam Mobile Authentikator verwendest.</string>
+    <!-- Untranslated strings: -->
+    <string name="door_open">Open Cottage Door (Winter Sale 2018)</string>
+    <string name="door_success">Door opened!</string>
+    <string name="door_fail">Unable to open any doors. Try again tomorrow</string>
+    <!-- End untranslated strings -->
 </resources>

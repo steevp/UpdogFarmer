@@ -166,5 +166,8 @@
     <string name="boss_hp">Punkty życia boss\'a: %d</string>
     <string name="sort_hours_played_reversed">Wg czasu gry (odwrócone)</string>
     <!-- Untranslated strings: -->
+    <string name="door_open">Open Cottage Door (Winter Sale 2018)</string>
+    <string name="door_success">Door opened!</string>
+    <string name="door_fail">Unable to open any doors. Try again tomorrow</string>
     <!-- End untranslated strings -->
 </resources>
