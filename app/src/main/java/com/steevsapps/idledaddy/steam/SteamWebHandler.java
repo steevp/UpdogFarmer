@@ -1,6 +1,7 @@
 package com.steevsapps.idledaddy.steam;
 
 import android.support.annotation.IntDef;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,9 +26,12 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -477,6 +481,52 @@ public class SteamWebHandler {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public boolean openCottageDoor() {
+        String url = STEAM_STORE + "promotion/cottage_2018/?l=english";
+        Document doc;
+        try {
+            doc = Jsoup.connect(url)
+                    .followRedirects(true)
+                    .referrer(STEAM_STORE)
+                    .cookies(generateWebCookies())
+                    .get();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to open door", e);
+            return false;
+        }
+
+        final Element door = doc.select("div[data-door-id]").not(".cottage_door_open").first();
+        if (door == null) {
+            Log.e(TAG, "Didn't find any doors to open");
+            return false;
+        }
+
+        final String doorId = door.attr("data-door-id");
+        Log.i(TAG, "Opening door " + doorId);
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
+        final String t = sdf.format(new Date());
+
+        url = STEAM_STORE + "promotion/opencottagedoorajax";
+        try {
+            Jsoup.connect(url)
+                    .ignoreContentType(true)
+                    .followRedirects(true)
+                    .referrer(url)
+                    .cookies(generateWebCookies())
+                    .data("sessionid", sessionId)
+                    .data("door_index", doorId)
+                    .data("t", t)
+                    .data("open_door", "true")
+                    .post();
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to open door " + doorId, e);
+            return false;
+        }
+
+        return true;
     }
 
     @IntDef({

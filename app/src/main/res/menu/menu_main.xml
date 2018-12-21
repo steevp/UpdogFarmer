@@ -25,6 +25,13 @@
         android:orderInCategory="101" />
 
     <item
+        android:id="@+id/door_open"
+        android:title="@string/door_open"
+        app:showAsAction="never"
+        android:visible="false"
+        android:orderInCategory="102" />
+
+    <item
         android:id="@+id/import_shared_secret"
         android:title="@string/import_shared_secret"
         app:showAsAction="never"
