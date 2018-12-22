@@ -1237,4 +1237,21 @@ public class SteamService extends Service {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Open a cottage door (Winter Sale 2018)
+     */
+    public void openCottageDoor() {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean result = webHandler.openCottageDoor();
+                if (result) {
+                    showToast(getString(R.string.door_success));
+                } else {
+                    showToast(getString(R.string.door_fail));
+                }
+            }
+        });
+    }
 }
