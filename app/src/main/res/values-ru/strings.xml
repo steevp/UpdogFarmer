@@ -163,9 +163,7 @@
     <string name="device_not_rooted">Устройство должно иметь рут-права, чтобы использовать эту опцию.</string>
     <string name="your_shared_secret">Ваш shared_secret: %s</string>
     <string name="import_shared_secret_failed">Не удалось импортировать shared_secret! Убедитесь, что вы используете мобильный аутентификатор Steam.</string>
-    <!-- Untranslated strings: -->
-    <string name="door_open">Open Cottage Door (Winter Sale 2018)</string>
-    <string name="door_success">Door opened!</string>
-    <string name="door_fail">Unable to open any doors. Try again tomorrow</string>
-    <!-- End untranslated strings -->
+    <string name="door_open">Открыть Двери Домика (Зимняя Распродажа 2018)</string>
+    <string name="door_success">Двери открыты!</string>
+    <string name="door_fail">Не удалось открыть двери. Попробуйте завтра</string>
 </resources>
