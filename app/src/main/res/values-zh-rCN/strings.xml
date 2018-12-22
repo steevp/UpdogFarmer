@@ -163,9 +163,7 @@
     <string name="device_not_rooted">若要使用该选项，您的设备必须已 root。</string>
     <string name="your_shared_secret">您的 shared_secret：%s</string>
     <string name="import_shared_secret_failed">导入 shared_secret失败！请确认您已启用 Steam 手机验证器。</string>
-    <!-- Untranslated strings: -->
-    <string name="door_open">Open Cottage Door (Winter Sale 2018)</string>
-    <string name="door_success">Door opened!</string>
-    <string name="door_fail">Unable to open any doors. Try again tomorrow</string>
-    <!-- End untranslated strings -->
+    <string name="door_open">开启惊喜小屋门（2018 年冬季特卖）</string>
+    <string name="door_success">已开启屋门！</string>
+    <string name="door_fail">无法开启屋门，请明天再试</string>
 </resources>
