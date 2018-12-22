@@ -28,7 +28,7 @@
     <string name="pref_minimize_data">Zminimalizuj użycie danych</string>
     <string name="sum_minimize_data">Nie pobiera grafik gier.</string>
     <string name="pref_parental_pin">PIN kontroli rodzicielskiej</string>
-    <string name="sum_parental_pin">Wpisz swój kod PIN kontroli rodzicielskiej, aby odblokować \'Widok rodzinny\'.</string>
+    <string name="sum_parental_pin">Wpisz swój kod PIN kontroli rodzicielskiej, aby odblokować \"Widok rodzinny\".</string>
     <string name="pref_blacklist">Gry wykluczone</string>
     <string name="sum_blacklist">Lista gier, dla których symulacja będzie pominięta.</string>
     <string name="pref_hours_until">Godziny równoczesnej symulacji</string>
@@ -99,7 +99,7 @@
     <string name="sort_alphabetically">Alfabetycznie</string>
     <string name="sort_hours_played">Wg czasu gry</string>
     <string name="auto_discovery_title">Automatyczna \"Kolejka Odkryć\"</string>
-    <string name="auto_discovery">Funkcja automatycznego przewijania twojej kolejki odkryć. Podczas letnich i zimowych wyprzedaży możesz otrzymać 3 karty kolekcjonerskie dziennie przez przeglądanie kolejki.</string>
+    <string name="auto_discovery">Funkcja automatycznego przewijania twojej kolejki odkryć. Podczas letnich i zimowych wyprzedaży możesz otrzymać maksymalnie 3 karty kolekcjonerskie dziennie przez przeglądanie kolejki.</string>
     <string name="generating_discovery">Generuję nową kolejkę odkryć…</string>
     <string name="discovering">Przeglądanie %s (%d/%d)</string>
     <string name="discovery_finished">Zakończono przeglądanie kolejki.</string>
@@ -110,7 +110,7 @@
     <string name="summer_event">Letnie wydarzenie (Saliens)</string>
     <string name="play_saliens">Graj w Saliens (tylko dla kart)</string>
     <string name="play_saliens_indefinitely">Graj w Saliens (symulacja bez końca)</string>
-    <string name="play_saliens_desc">Możesz uzyskać 3 karty maksymalnie dziennie grając w Saliens. Wydarzenie kończy się 4 lipca.</string>
+    <string name="play_saliens_desc">Możesz otrzymać maksymalnie 3 karty kolekcjonerskie dziennie grając w Saliens. Wydarzenie kończy się 4 lipca.</string>
     <string name="playing_saliens">Gram w Saliens (%d/%d)…</string>
     <string name="playing_saliens_indefinitely">Gram w Saliens…\nWynik: %s/%s\nPoziom: %s</string>
     <string name="next_round_countdown">Następna runda: %02d:%02d</string>
@@ -156,15 +156,18 @@
     <string name="complete_projects">Wykonaj projekty</string>
     <string name="daily_tasks_completed">Codzienne zadania wykonane. Wróc jutro, by ukończyć nową listę zadań.</string>
     <string name="project_tasks_completed">Projekty zostały wykonane. Wystarczyło je ukończyć tylko raz.</string>
-    <string name="shared_secret_desc">Importuje kod \'shared_secret\' z mobilnego tokenu uwierzytelniającego Steam. Opcja pozwala Idle Daddy automatyczne zalogowanie na konto, kiedy twój klucz logowania wygaśnie.</string>
+    <string name="shared_secret_desc">Importuje kod \"shared_secret\" z mobilnego tokenu uwierzytelniającego Steam. Opcja pozwala Idle Daddy automatyczne zalogowanie na konto, kiedy twój klucz logowania wygaśnie.</string>
     <string name="import_shared_secret">Importuj kod shared_secret</string>
     <string name="enter_manually">Wpisz kod ręcznie</string>
     <string name="enter_shared_secret">Wpisz kod shared_secret:</string>
     <string name="device_not_rooted">Twoje urządzenie potrzebuje dostępu do root\'a, aby używać tej funkcji.</string>
     <string name="your_shared_secret">Twój kod shared_secret: %s</string>
     <string name="import_shared_secret_failed">Błąd podczas importowania kodu shared_secret! Upewnij się, że używasz mobilnego tokenu uwierzytelniającego Steam.</string>
-    <string name="boss_hp">Boss HP: %d</string>
+    <string name="boss_hp">Punkty życia boss\'a: %d</string>
+    <string name="sort_hours_played_reversed">Wg czasu gry (odwrócone)</string>
     <!-- Untranslated strings: -->
-    <string name="sort_hours_played_reversed">Hours Played (reversed)</string>
+    <string name="door_open">Open Cottage Door (Winter Sale 2018)</string>
+    <string name="door_success">Door opened!</string>
+    <string name="door_fail">Unable to open any doors. Try again tomorrow</string>
     <!-- End untranslated strings -->
 </resources>
