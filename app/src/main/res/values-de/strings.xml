@@ -34,7 +34,7 @@
     <string name="pref_hours_until">Stunden bis die Karten im Inventar sind</string>
     <string name="sum_hours_until">Die Anzahl der Stunden die ein Spiel benötigt, um Karten im Inventar abzulegen. Während dem Sammeln der Karten wird Idle Daddy mehrere Spiele gleichzeitig, inaktiv im Hintergrund laufen lassen, bis die Karten im Inventar liegen. Für die meisten Benutzer sind hier drei Stunden die beste Wahl.</string>
     <string name="pref_include_free_games">Kostenlose Spiele anzeigen</string>
-    <string name="sum_include_free_games">Standardmäßig werden kostenlose Spiele wie Team Fortress 2 nicht angezeigt (da sie technisch jeder besitzt). Wenn diese Option aktiviert ist, sie aufgelistet, wenn man sie schon mal gespielt hat.</string>
+    <string name="sum_include_free_games">Standardmäßig werden kostenlose Spiele wie Team Fortress 2 nicht angezeigt (da sie technisch jeder besitzt). Wenn diese Option aktiviert ist, werden sie aufgelistet.</string>
     <string name="pref_language">Sprache</string>
     <string name="sum_language">Ändere die Sprache der App (Erfordert Neustart).</string>
     <string name="pref_gdpr_consent">Widerrufe die DSGVO Zustimmung</string>
@@ -163,9 +163,7 @@
     <string name="device_not_rooted">Dein Gerät muss gerootet sein, um diese Option verwenden zu können.</string>
     <string name="your_shared_secret">Dein Wiederherstellungscode: %s</string>
     <string name="import_shared_secret_failed">Fehler beim Importieren des Wiederherstellungscodes! Stelle sicher, dass du den Steam Mobile Authentikator verwendest.</string>
-    <!-- Untranslated strings: -->
-    <string name="door_open">Open Cottage Door (Winter Sale 2018)</string>
-    <string name="door_success">Door opened!</string>
-    <string name="door_fail">Unable to open any doors. Try again tomorrow</string>
-    <!-- End untranslated strings -->
+    <string name="door_open">Öffne Hüttentür (Winterverkauf 2018)</string>
+    <string name="door_success">Tür geöffnet!</string>
+    <string name="door_fail">Türen können nicht geöffnet werden. Versuche es morgen erneut</string>
 </resources>
