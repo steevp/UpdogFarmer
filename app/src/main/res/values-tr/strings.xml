@@ -163,9 +163,7 @@
     <string name="next_round_countdown">Bir sonraki raund: %02d:%02d</string>
     <string name="reporting_score">Skor hesaplanıyor</string>
     <string name="boss_hp">Boss\'un canı: %d</string>
-    <!-- Untranslated strings: -->
     <string name="door_open">Kır Evi Kapısını Aç (Kış Indirimleri 2018)</string>
     <string name="door_success">Kapı Açıldı!</string>
     <string name="door_fail">Şu anda açılabilecek bir kapı yok.Yarın tekrar dene</string>
-    <!-- End untranslated strings -->
 </resources>
