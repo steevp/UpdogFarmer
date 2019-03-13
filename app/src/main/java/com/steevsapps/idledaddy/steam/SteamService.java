@@ -31,7 +31,6 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.steevsapps.idledaddy.BuildConfig;
 import com.steevsapps.idledaddy.MainActivity;
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.Secrets;
 import com.steevsapps.idledaddy.handlers.PurchaseResponse;
 import com.steevsapps.idledaddy.handlers.callbacks.PurchaseResponseCallback;
 import com.steevsapps.idledaddy.listeners.AndroidLogListener;
@@ -101,6 +100,7 @@ public class SteamService extends Service {
     // Some Huawei phones reportedly kill apps when they hold a WakeLock for a long time.
     // This can be prevented by using a WakeLock tag from the PowerGenie whitelist.
     private final static String WAKELOCK_TAG = "LocationManagerService";
+    private final static int CUSTOM_OBFUSCATION_MASK = 0xF00DBAAD;
 
     // Events
     public final static String LOGIN_EVENT = "LOGIN_EVENT"; // Emitted on login
@@ -858,7 +858,7 @@ public class SteamService extends Service {
     private void doLogin() {
         if (PrefsManager.useCustomLoginId()) {
             final int localIp = NetHelpers.getIPAddress(steamClient.getLocalIP());
-            logOnDetails.setLoginID(localIp ^ Secrets.CUSTOM_OBFUSCATION_MASK);
+            logOnDetails.setLoginID(localIp ^ CUSTOM_OBFUSCATION_MASK);
         }
         steamUser.logOn(logOnDetails);
         logOnDetails = null; // No longer need this
@@ -880,7 +880,7 @@ public class SteamService extends Service {
         details.setClientOSType(EOSType.LinuxUnknown);
         if (PrefsManager.useCustomLoginId()) {
             final int localIp = NetHelpers.getIPAddress(steamClient.getLocalIP());
-            details.setLoginID(localIp ^ Secrets.CUSTOM_OBFUSCATION_MASK);
+            details.setLoginID(localIp ^ CUSTOM_OBFUSCATION_MASK);
         }
         try {
             final File sentryFile = new File(sentryFolder, username + ".sentry");

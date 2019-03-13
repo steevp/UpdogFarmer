@@ -710,7 +710,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         if (adView == null) {
             adView = (AdView) adInflater.inflate();
         }
-        MobileAds.initialize(this, "***REMOVED***");
+        MobileAds.initialize(this, BuildConfig.AdmobAppId);
         final AdRequest adRequest = new AdRequest.Builder()
                 .addNetworkExtrasBundle(AdMobAdapter.class, args)
                 .build();

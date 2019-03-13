@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.steevsapps.idledaddy.Secrets;
+import com.steevsapps.idledaddy.BuildConfig;
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.steam.converter.GamesOwnedResponseDeserializer;
 import com.steevsapps.idledaddy.steam.converter.VdfConverterFactory;
@@ -76,7 +76,7 @@ public class SteamWebHandler {
     private String token;
     private String tokenSecure;
     private String steamParental;
-    private String apiKey = Secrets.API_KEY;
+    private String apiKey = BuildConfig.SteamApiKey;
 
     private final SteamAPI api;
 
@@ -436,7 +436,7 @@ public class SteamWebHandler {
             final String title = titleNode.text().trim();
             if (title.toLowerCase().contains("access denied")) {
                 // Limited account, use the built-in API key
-                apiKey = Secrets.API_KEY;
+                apiKey = BuildConfig.SteamApiKey;
                 PrefsManager.writeApiKey(apiKey);
                 return ApiKeyState.ACCESS_DENIED;
             }

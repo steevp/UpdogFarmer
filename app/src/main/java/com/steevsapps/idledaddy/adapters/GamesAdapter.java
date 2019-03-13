@@ -33,7 +33,6 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private ArrayList<Game> currentGames;
     private boolean headerEnabled = false;
     private Deque<List<Game>> pendingUpdates = new ArrayDeque<>();
-    private boolean clearDataCopy = true;
     private GamesListUpdateListener updateListener;
 
     public final static int ITEM_HEADER = 1;
@@ -53,6 +52,13 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     public void setData(List<Game> games) {
+        dataSet.clear();
+        dataSetCopy.clear();
+        dataSetCopy.addAll(games);
+        updateData(games);
+    }
+
+    public void updateData(List<Game> games) {
         pendingUpdates.push(games);
         if (pendingUpdates.size() > 1) {
             return;
@@ -60,16 +66,17 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         updateDataInternal(games);
     }
 
-    private void updateDataInternal(final List<Game> games) {
+    private void updateDataInternal(final List<Game> newGames) {
+        final List<Game> oldGames = new ArrayList<>(dataSet);
         final Handler handler = new Handler(Looper.getMainLooper());
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new GamesDiffCallback(games, dataSet));
+                final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new GamesDiffCallback(newGames, oldGames));
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        applyDiffResult(games, diffResult);
+                        applyDiffResult(newGames, diffResult);
                     }
                 });
             }
@@ -83,38 +90,30 @@ public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             final List<Game> latest = pendingUpdates.pop();
             pendingUpdates.clear();
             updateDataInternal(latest);
-        } else {
-            // Finshed
-            clearDataCopy = true;
         }
     }
 
     private void dispatchUpdates(List<Game> games, DiffUtil.DiffResult diffResult) {
+        diffResult.dispatchUpdatesTo(new GamesListUpdateCallback(this, headerEnabled));
         dataSet.clear();
         dataSet.addAll(games);
-        if (clearDataCopy) {
-            dataSetCopy.clear();
-            dataSetCopy.addAll(games);
-        }
-        diffResult.dispatchUpdatesTo(new GamesListUpdateCallback(this, headerEnabled));
         if (updateListener != null) {
             updateListener.onGamesListUpdated();
         }
     }
 
     public void filter(String text) {
-        clearDataCopy = false;
         final List<Game> newGames = new ArrayList<>();
         if (text.isEmpty()) {
             newGames.addAll(dataSetCopy);
-            setData(newGames);
+            updateData(newGames);
         } else {
             for (Game game : dataSetCopy) {
                 if (game.name.toLowerCase().contains(text.toLowerCase())) {
                     newGames.add(game);
                 }
             }
-            setData(newGames);
+            updateData(newGames);
         }
     }
 

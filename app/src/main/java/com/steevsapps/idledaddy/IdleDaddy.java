@@ -1,13 +1,13 @@
 package com.steevsapps.idledaddy;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.support.multidex.MultiDexApplication;
 
 import com.steevsapps.idledaddy.preferences.PrefsManager;
 import com.steevsapps.idledaddy.utils.LocaleManager;
 
-public class IdleDaddy extends Application {
+public class IdleDaddy extends MultiDexApplication {
 
     @Override
     protected void attachBaseContext(Context base) {

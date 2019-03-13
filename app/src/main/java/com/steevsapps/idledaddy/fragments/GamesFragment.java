@@ -118,7 +118,7 @@ public class GamesFragment extends Fragment
         adapter.setListener(this);
         adapter.setCurrentGames(currentGames);
         adapter.setHeaderEnabled(currentTab == TAB_LAST);
-        layoutManager = new GridLayoutManager(recyclerView.getContext(), getResources().getInteger(R.integer.game_columns));
+        layoutManager = new GridLayoutManagerWrapper(recyclerView.getContext(), getResources().getInteger(R.integer.game_columns));
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {

@@ -17,7 +17,7 @@
     <string name="settings">Paramètres</string>
     <string name="logout">Se déconnecter</string>
     <string name="redeem">Activer un produit</string>
-    <string name="redeem_msg">Entrer un code produit ou l\'ID d'un jeu gratuit</string>
+    <string name="redeem_msg">Entrer un code produit ou l\'ID d\'un jeu gratuit</string>
     <string name="ok">OK</string>
     <string name="cat_idle">Farming des cartes</string>
     <string name="cat_general">Général</string>
@@ -92,7 +92,7 @@
     <string name="sort_alphabetically">Dans l\'ordre alphabétique</string>
     <string name="sort_hours_played">Heures jouées</string>
     <string name="auto_discovery_title">Lecture de la liste de découverte automatique</string>
-    <string name="auto_discovery">Cela va automatiquement regarder les jeux dans ta liste de découverte. Durant les soldes d\'été et d\'hiver, vous pouvez obtenir jusqu'à 3 cartes à échanger par jour en explorant votre liste de découvertes.</string>
+    <string name="auto_discovery">Cela va automatiquement regarder les jeux dans ta liste de découverte. Durant les soldes d\'été et d\'hiver, vous pouvez obtenir jusqu\'à 3 cartes à échanger par jour en explorant votre liste de découvertes.</string>
     <string name="generating_discovery">Génération d\'une nouvelle liste de découvertes</string>
     <string name="discovering">Découvertes %s (%d/%d)</string>
     <string name="discovery_finished">Liste de découvertes finie</string>
@@ -117,7 +117,7 @@
     <string name="french">Français</string>
     <string name="language_changed">Vous devez redémarrez l\'application pour que la langue se mette à jour.</string>
     <string name="pref_gdpr_consent">Révoquer le consentement GDPR</string>
-    <string name="sum_gdpr_consent">En dehors des EU, le GDPR (General Data Protection Regulation), le consentement de l\'utilisateur est requis avant d'afficher des publicités. Cliquez ici pour révoquer ce consentement.</string>
+    <string name="sum_gdpr_consent">En dehors des EU, le GDPR (General Data Protection Regulation), le consentement de l\'utilisateur est requis avant d\'afficher des publicités. Cliquez ici pour révoquer ce consentement.</string>
     <string name="pref_use_custom_loginid">Utiliser un nom d\'utilisateur customisé.</string>
     <string name="sum_use_custom_loginid">Activez cette option vous permettra d\'utiliser d\'autres applications SteamKit (comme Ice Client) au même moment que Idle Daddy. Si vous n\'êtes pas sûr, laissez cela éteint. (Requit un redémarrage)</string>
     <string name="gdpr_consent_not_needed">Pas besoin. Idle Daddy Premium n\'affiche pas de pubs.</string>
@@ -151,7 +151,7 @@
     <string name="complete_daily_tasks">Compléter les tâches quotidiennes</string>
     <string name="complete_projects">Compléter les tâches du projet</string>
     <string name="daily_tasks_completed">Tâches quotidiennes complétées. Revenez demain.</string>
-    <string name="project_tasks_completed">Tâches du projet complétées. Vous n\'avez besoin de faire ses tâches qu'une fois.</string>
+    <string name="project_tasks_completed">Tâches du projet complétées. Vous n\'avez besoin de faire ses tâches qu\'une fois.</string>
     <string name="shared_secret_desc">Importez le \'shared_secret\' code depuis ton authentificateur mobile. Cela permet à Idle Daddy de se connecter automatiquement quand la clé de connexion expire.</string>
     <string name="import_shared_secret">Importez shared_secret</string>
     <string name="enter_manually">Entrez manuellement</string>
