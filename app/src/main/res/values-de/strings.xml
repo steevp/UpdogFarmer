@@ -150,7 +150,7 @@
     <string name="non_steam_game">Steam-fremdes Spiel</string>
     <string name="playing_unknown_app">Unbekannte Anwendung: %d</string>
     <string name="playing_non_steam_game">In Steam-fremdem Spiel: %s</string>
-    <string name="spring_cleaning_title">Frühjahrsputzaktion (2018)</string>
+    <string name="spring_cleaning_title">Frühjahrsputzaktion</string>
     <string name="spring_cleaning_desc">Erfülle Aufgaben, um dein Frühjahrsputzaktions Abzeichen zu bekommen. Dieses Ereignis endet am 28. Mai.</string>
     <string name="complete_daily_tasks">Erledige tägliche Aufgaben</string>
     <string name="complete_projects">Erledige Projekt Aufgaben</string>

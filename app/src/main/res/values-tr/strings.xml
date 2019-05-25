@@ -147,7 +147,7 @@
     <string name="non_steam_game">Steam Dışı oyun</string>
     <string name="playing_unknown_app">Bilinmeyen Uygulama: %d</string>
     <string name="playing_non_steam_game">Steam Dışı Oyunda: %s</string>
-    <string name="spring_cleaning_title">Bahar Temizliği Etkinliği (2018)</string>
+    <string name="spring_cleaning_title">Bahar Temizliği Etkinliği</string>
     <string name="spring_cleaning_desc">Görevleri tamamlayarak Bahar Temizliği Etkinliği rozetinin seviyesini yükseltebilirsin. Bu etkinlik 28 Mayıs\'ta bitecek.</string>
     <string name="complete_daily_tasks">Günlük Görevleri Tamamla</string>
     <string name="complete_projects">Proje Görevlerini Tamamla</string>

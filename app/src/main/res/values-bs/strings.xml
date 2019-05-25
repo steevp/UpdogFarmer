@@ -136,7 +136,7 @@
     <string name="non_steam_game">Ime igre</string>
     <string name="playing_unknown_app">Nepoznata aplikacija: %d</string>
     <string name="playing_non_steam_game">Igra koja nije na Steamu: %s</string>
-    <string name="spring_cleaning_title">Proljetno cišcenje (2018)</string>
+    <string name="spring_cleaning_title">Proljetno cišcenje</string>
     <string name="spring_cleaning_desc">Završi zadatke da biste unaprijedili vašu znacku proljetnog cišcenja. Ovaj dogadaj se završava 28. maja.</string>
     <string name="complete_daily_tasks">Završi dnevne zadatke</string>
     <string name="complete_projects">Završi zadatke projekta</string>

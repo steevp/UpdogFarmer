@@ -150,7 +150,7 @@ Seteaza starea ta ca "Offline", astfel incat prietenii tai sa nu vada ca esti in
     <string name="play_saliens_failed">Unable to auto play Saliens right now. Try again later.</string>
     <string name="bosnian_croatian">Bosnian/Croatian</string>
     <string name="serbian">Serbian</string>
-    <string name="spring_cleaning_title">Spring Cleaning Event (2018)</string>
+    <string name="spring_cleaning_title">Spring Cleaning Event</string>
     <string name="spring_cleaning_desc">Complete tasks to level up your Spring Cleaning Event badge. This event ends May 28th.</string>
     <string name="complete_daily_tasks">Complete Daily Tasks</string>
     <string name="complete_projects">Complete Project Tasks</string>

@@ -28,11 +28,4 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp" />
 
-    <Button
-        android:id="@+id/btn_projects"
-        android:text="@string/complete_projects"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
 </LinearLayout>

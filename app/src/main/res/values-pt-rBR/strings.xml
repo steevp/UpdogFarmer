@@ -146,7 +146,7 @@
     <string name="non_steam_game">Jogo Não-Steam</string>
     <string name="playing_unknown_app">App Desconhecido: %d</string>
     <string name="playing_non_steam_game">Jogo Não-Steam: %s</string>
-    <string name="spring_cleaning_title">Spring Cleaning Event (2018)</string>
+    <string name="spring_cleaning_title">Spring Cleaning Event</string>
     <string name="spring_cleaning_desc">Complete tasks to level up your Spring Cleaning Event badge. This event ends May 28th.</string>
     <string name="complete_daily_tasks">Tarefas diárias completas</string>
     <string name="complete_projects">Tarefas completas do projeto</string>

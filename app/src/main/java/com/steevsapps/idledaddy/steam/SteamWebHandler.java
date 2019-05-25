@@ -483,6 +483,36 @@ public class SteamWebHandler {
         return false;
     }
 
+    /**
+     * Get a list of task appid for the Spring Cleaning Event
+     * @return
+     */
+    public List<String> getTaskAppIds() {
+        final String url = STEAM_STORE + "springcleaning?l=english";
+        final List<String> taskAppIds = new ArrayList<>();
+        try {
+            final Document doc = Jsoup.connect(url)
+                    .referrer(STEAM_STORE)
+                    .followRedirects(true)
+                    .cookies(generateWebCookies())
+                    .get();
+
+            final Elements tasks = doc.select("div.spring_cleaning_task_ctn");
+
+            for (Element task : tasks) {
+                final Element springGame = task.select("div.spring_game").first();
+                if (springGame == null || !springGame.hasAttr("data-sg-appid")) {
+                    Log.d(TAG, "Skipping spring game");
+                    continue;
+                }
+                taskAppIds.add(springGame.attr("data-sg-appid").trim());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return taskAppIds;
+    }
+
     public boolean openCottageDoor() {
         String url = STEAM_STORE + "promotion/cottage_2018/?l=english";
         Document doc;
