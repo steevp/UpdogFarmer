@@ -7,8 +7,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 27
         multiDexEnabled true
-        versionCode 83
-        versionName "2.0.43"
+        versionCode 84
+        versionName "2.0.44"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
