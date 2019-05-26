@@ -150,7 +150,7 @@
     <string name="non_steam_game">非 Steam 游戏</string>
     <string name="playing_unknown_app">未知 App：%d</string>
     <string name="playing_non_steam_game">非 Steam 游戏：%s</string>
-    <string name="spring_cleaning_title">年涤尘送春活动</string>
+    <string name="spring_cleaning_title">涤尘送春活动</string>
     <string name="spring_cleaning_desc">完成任务以升级您的涤尘送春活动徽章。该活动结束于 5 月 28 日。</string>
     <string name="complete_daily_tasks">完成每日任务</string>
     <string name="complete_projects">完成长期任务</string>
