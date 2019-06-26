@@ -46,12 +46,12 @@
     <string name="activation_failed">Aktivace selhala</string>
     <plurals name="games_left">
         <item quantity="one">%d hra zbývá k farmení</item>
-        <item quantity="few">%d hra zbývá k farmení</item>
+        <item quantity="few">%d hry zbývájí k farmení</item>
         <item quantity="other">%d her zbýva k farmení</item>
     </plurals>
     <plurals name="card_drops_remaining">
         <item quantity="one">%d karta zbývá</item>
-        <item quantity="few">%d karty zbývá</item>
+        <item quantity="few">%d karty zbývájí</item>
         <item quantity="other">%d karet zbývá</item>
     </plurals>
     <string name="logged_in_elsewhere">Steam je právě používán. Farmení bude pokračovat, jakmile to bude možné.</string>
