@@ -8,23 +8,22 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.FileProvider;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import com.google.android.material.navigation.NavigationView;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.core.content.FileProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,17 +31,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.billingclient.api.Purchase;
 import com.bumptech.glide.Glide;
-import com.google.ads.consent.ConsentStatus;
-import com.google.ads.mediation.admob.AdMobAdapter;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-import com.steevsapps.idledaddy.billing.BillingManager;
-import com.steevsapps.idledaddy.billing.BillingUpdatesListener;
-import com.steevsapps.idledaddy.consent.ConsentListener;
-import com.steevsapps.idledaddy.consent.ConsentManager;
 import com.steevsapps.idledaddy.dialogs.AboutDialog;
 import com.steevsapps.idledaddy.dialogs.AutoDiscoverDialog;
 import com.steevsapps.idledaddy.dialogs.CustomAppDialog;
@@ -68,8 +57,10 @@ import java.util.Locale;
 
 import in.dragonbra.javasteam.enums.EPersonaState;
 
-public class MainActivity extends BaseActivity implements BillingUpdatesListener, ConsentListener, DialogListener,
-        GamePickedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends BaseActivity implements
+    DialogListener,
+    GamePickedListener,
+    SharedPreferences.OnSharedPreferenceChangeListener {
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static String DRAWER_ITEM = "DRAWER_ITEM";
     private final static String TITLE = "TITLE";
@@ -89,11 +80,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
     private ImageView logoutToggle;
     private Spinner spinnerNav;
     private SearchView searchView;
-    private ViewStub adInflater;
-    private AdView adView;
-
-    private BillingManager billingManager;
-    private ConsentManager consentManager;
 
     private boolean logoutExpanded = false;
     private int drawerItemId;
@@ -194,10 +180,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
 
         mainContainer = findViewById(R.id.main_container);
 
-        // Setup Billing Manager & Consent Manager
-        billingManager = new BillingManager(this);
-        consentManager = new ConsentManager(this);
-
         // Setup the navigation spinner (Games fragment only)
         spinnerNav = findViewById(R.id.spinner_nav);
         final ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
@@ -246,10 +228,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                         AboutDialog.newInstance().show(getSupportFragmentManager(), AboutDialog.TAG);
                         closeDrawer();
                         break;
-                    case R.id.remove_ads:
-                        billingManager.launchPurchaseFlow();
-                        closeDrawer();
-                        break;
                     default:
                         // Go to page
                         selectItem(item.getItemId(), true);
@@ -283,9 +261,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
                 updateStatus();
             }
         });
-
-        // Ads
-        adInflater = findViewById(R.id.ad_inflater);
 
         if (savedInstanceState != null) {
             drawerItemId = savedInstanceState.getInt(DRAWER_ITEM);
@@ -430,7 +405,6 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
 
     @Override
     protected void onDestroy() {
-        billingManager.destroy();
         super.onDestroy();
     }
 
@@ -655,73 +629,5 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         } else if (key.equals("language")) {
             Toast.makeText(this, R.string.language_changed, Toast.LENGTH_LONG).show();
         }
-    }
-
-    @Override
-    public void onBillingClientSetupFinished() {
-        if (billingManager.shouldDisplayAds()) {
-            consentManager.requestConsentInfo();
-            drawerView.getMenu().findItem(R.id.remove_ads).setVisible(true);
-        }
-    }
-
-    @Override
-    public void onPurchasesUpdated(List<Purchase> purchases) {
-        if (!billingManager.shouldDisplayAds()) {
-            removeAds();
-            drawerView.getMenu().findItem(R.id.remove_ads).setVisible(false);
-        }
-    }
-
-    @Override
-    public void onPurchaseCanceled() {
-        if (billingManager.shouldDisplayAds()) {
-            consentManager.requestConsentInfo();
-        }
-    }
-
-    @Override
-    public void onConsentInfoUpdated(ConsentStatus consentStatus, boolean userPrefersAdFree) {
-        if (userPrefersAdFree) {
-            billingManager.launchPurchaseFlow();
-        } else {
-            final Bundle args = new Bundle();
-            if (consentStatus == ConsentStatus.NON_PERSONALIZED) {
-                args.putString("npa", "1");
-            }
-            loadAds(args);
-        }
-
-    }
-
-    @Override
-    public void onConsentRevoked() {
-        if (billingManager.shouldDisplayAds()) {
-            consentManager.revokeConsent();
-        } else {
-            // Consent not needed. No ads are shown in Idle Daddy Premium
-            Toast.makeText(this, R.string.gdpr_consent_not_needed, Toast.LENGTH_LONG).show();
-        }
-    }
-
-    /**
-     * Inflate adView and load the ad request
-     */
-    private void loadAds(Bundle args) {
-        if (adView == null) {
-            adView = (AdView) adInflater.inflate();
-        }
-        MobileAds.initialize(this, BuildConfig.AdmobAppId);
-        final AdRequest adRequest = new AdRequest.Builder()
-                .addNetworkExtrasBundle(AdMobAdapter.class, args)
-                .build();
-        adView.loadAd(adRequest);
-    }
-
-    /**
-     * Remove the adView
-     */
-    private void removeAds() {
-        mainContainer.removeView(adView);
     }
 }

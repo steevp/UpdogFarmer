@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
-
+def IdleDaddy_SteamApiKey = "\"641B8E3FD49B92825F414B56A506844B\""
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.steevsapps.idledaddy"
         minSdkVersion 15
-        targetSdkVersion 27
+        targetSdkVersion 29
         multiDexEnabled true
         versionCode 84
         versionName "2.0.44"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -17,17 +17,11 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'AdmobAppId', IdleDaddy_AdmobAppId
             buildConfigField 'String', 'SteamApiKey', IdleDaddy_SteamApiKey
-            resValue 'string', 'admob_app_id', IdleDaddy_AdmobAppId
-            resValue 'string', 'admob_ad_unit_Id', IdleDaddy_AdmobAdUnitId
         }
 
         debug {
-            buildConfigField 'String', 'AdmobAppId', IdleDaddy_AdmobAppId
             buildConfigField 'String', 'SteamApiKey', IdleDaddy_SteamApiKey
-            resValue 'string', 'admob_app_id', IdleDaddy_AdmobAppId
-            resValue 'string', 'admob_ad_unit_Id', IdleDaddy_AdmobAdUnitId
         }
     }
 
@@ -35,10 +29,11 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    buildToolsVersion = '28.0.3'
 }
 
 ext {
-    supportLibraryVersion = "27.1.1"
+    supportLibraryVersion = '28.0.0'
 }
 
 configurations.all {
@@ -48,32 +43,31 @@ configurations.all {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.2.0', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
-    implementation "com.android.support:customtabs:$supportLibraryVersion"
-    implementation "com.android.support:cardview-v7:$supportLibraryVersion"
-    implementation "com.android.support:design:$supportLibraryVersion"
-    implementation "com.android.support:preference-v7:$supportLibraryVersion"
-    implementation "com.android.support:preference-v14:$supportLibraryVersion"
-    implementation "com.android.support:support-media-compat:$supportLibraryVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.preference:preference:1.0.0'
+    implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
+    implementation 'androidx.media:media:1.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'com.madgag.spongycastle:prov:1.58.0.0'
     implementation ('in.dragonbra:javasteam:1.0.0-SNAPSHOT') {
         changing = true
     }
-    implementation 'org.jsoup:jsoup:1.10.3'
+    implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'com.github.bumptech.glide:glide:3.8.0'
-    implementation "com.android.support:support-v4:$supportLibraryVersion"
-    implementation 'com.google.android.gms:play-services-ads:17.1.3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.ads.consent:consent-library:1.0.7'
     implementation 'com.android.billingclient:billing:1.0'
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
-    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
-    implementation 'eu.chainfire:libsuperuser:1.0.0.+'
-    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
+    implementation 'eu.chainfire:libsuperuser:1.0.0.201811281328'
+    implementation 'androidx.multidex:multidex:2.0.1'
     testImplementation 'junit:junit:4.12'
 }

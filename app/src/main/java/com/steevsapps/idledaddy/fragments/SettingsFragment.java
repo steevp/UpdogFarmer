@@ -2,11 +2,10 @@ package com.steevsapps.idledaddy.fragments;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.steevsapps.idledaddy.R;
-import com.steevsapps.idledaddy.consent.ConsentListener;
 import com.steevsapps.idledaddy.preferences.BlacklistDialog;
 import com.steevsapps.idledaddy.preferences.BlacklistPreference;
 import com.steevsapps.idledaddy.preferences.NumPickerDialog;
@@ -27,33 +26,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        setupGdpr();
-    }
-
-    private void setupGdpr() {
-        findPreference("gdpr_consent").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                ((ConsentListener) getActivity()).onConsentRevoked();
-                return true;
-            }
-        });
-    }
-
-    @Override
     public void onDisplayPreferenceDialog(Preference preference) {
         if (preference instanceof BlacklistPreference) {
             // Show blacklist dialog
             final BlacklistDialog fragment = BlacklistDialog.newInstance(preference);
             fragment.setTargetFragment(this, 0);
-            fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+            fragment.show(getFragmentManager(), "androidx.preference.PreferenceFragment.DIALOG");
         } else if (preference instanceof NumPickerPreference) {
             final NumPickerDialog fragment = NumPickerDialog.newInstance(preference);
             fragment.setTargetFragment(this, 0);
-            fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+            fragment.show(getFragmentManager(), "androidx.preference.PreferenceFragment.DIALOG");
         } else {
             super.onDisplayPreferenceDialog(preference);
         }

@@ -1,6 +1,6 @@
 package com.steevsapps.idledaddy.steam.converter;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

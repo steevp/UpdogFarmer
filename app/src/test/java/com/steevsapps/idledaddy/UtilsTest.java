@@ -4,14 +4,14 @@ import com.steevsapps.idledaddy.utils.Utils;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class UtilsTest {
-    /**
-     * Test the removeSpecialChars method
-     */
-    @Test
-    public void removeSpecialChars_works() {
-        assertEquals("daddy123", Utils.removeSpecialChars("daಥd益dಥy123"));
-    }
+  /**
+   * Test the removeSpecialChars method
+   */
+  @Test
+  public void removeSpecialChars_works() {
+    assertEquals("daddy123", Utils.removeSpecialChars("daಥd益dಥy123"));
+  }
 }

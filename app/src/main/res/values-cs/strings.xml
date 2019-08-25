@@ -152,7 +152,7 @@
     <string name="project_tasks_completed">Project tasks completed. You only need to do this once.</string>
     <string name="shared_secret_desc">Import the \'shared_secret\' code from your mobile authenticator. This allows Idle Daddy to automatically log in again when the login key expires.</string>
     <string name="import_shared_secret">Importovat shared_secret</string>
-    <string name="enter_manually"Zadat manuálně</string>
+    <string name="enter_manually">Zadat manuálně</string>
     <string name="enter_shared_secret">Zadej tvé shared_secret:</string>
     <string name="device_not_rooted">Tvé zařízení vyžaduje root práva pro tuto akci.</string>
     <string name="your_shared_secret">Your shared_secret: %s</string>

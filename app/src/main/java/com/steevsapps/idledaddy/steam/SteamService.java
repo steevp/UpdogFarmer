@@ -17,11 +17,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
-import android.support.v4.media.app.NotificationCompat.MediaStyle;
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.media.app.NotificationCompat.MediaStyle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -99,7 +99,7 @@ public class SteamService extends Service {
     private final static String CHANNEL_ID = "idle_channel"; // Notification channel
     // Some Huawei phones reportedly kill apps when they hold a WakeLock for a long time.
     // This can be prevented by using a WakeLock tag from the PowerGenie whitelist.
-    private final static String WAKELOCK_TAG = "LocationManagerService";
+    private final static String WAKELOCK_TAG = "Steam:LocationManagerService";
     private final static int CUSTOM_OBFUSCATION_MASK = 0xF00DBAAD;
 
     // Events
@@ -523,7 +523,7 @@ public class SteamService extends Service {
      * Get the games we're currently idling
      */
     public ArrayList<Game> getCurrentGames() {
-        return  new ArrayList<>(currentGames);
+        return new ArrayList<>(currentGames);
     }
 
     public int getGameCount() {
@@ -551,6 +551,7 @@ public class SteamService extends Service {
         if (wakeLock == null) {
             Log.i(TAG, "Acquiring WakeLock");
             final PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            assert pm != null;
             wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, WAKELOCK_TAG);
             wakeLock.acquire();
         }

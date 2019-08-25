@@ -3,8 +3,8 @@ package com.steevsapps.idledaddy.adapters;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
 
-import static android.support.v7.widget.RecyclerView.NO_POSITION;
+import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 
 public class GamesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Game> dataSet = new ArrayList<>();
