@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-def IdleDaddy_SteamApiKey = "\"641B8E3FD49B92825F414B56A506844B\""
 android {
     compileSdkVersion 29
     defaultConfig {
@@ -10,6 +9,7 @@ android {
         versionCode 84
         versionName "2.0.44"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField 'String', 'SteamApiKey', "\"${SteamApiKey}\""
     }
 
     buildTypes {
@@ -17,11 +17,9 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            buildConfigField 'String', 'SteamApiKey', IdleDaddy_SteamApiKey
         }
 
         debug {
-            buildConfigField 'String', 'SteamApiKey', IdleDaddy_SteamApiKey
         }
     }
 
