@@ -114,8 +114,8 @@
     <string name="playing_saliens_indefinitely">Saliens oynanıyor\nPuan: %s/%s\nSeviye: %s</string>
     <string name="success_check_inventory">Başarılı! Yeni takas kartlarını Envanterinden kontrol et.</string>
     <string name="play_saliens_failed">Şu anda Saliens oynanamadı. Daha sonra tekrar dene.</string>
-    <string name="apikey_access_denied">Steam API kodu erişimi engellendi, using a built-in key.</string>
-    <string name="apikey_register_failed">API kodu kaydı başarısız, using a built-in key.</string>
+    <string name="apikey_access_denied">Steam API kodu erişimi engellendi, dahili anahtarı kullanın.</string>
+    <string name="apikey_register_failed">API kodu kaydı başarısız, dahili anahtarı kullanın.</string>
     <string name="english">İngilizce</string>
     <string name="german">Almanca</string>
     <string name="russian">Rusça</string>
