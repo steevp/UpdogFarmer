@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.steevsapps.idledaddy"
         minSdkVersion 15
-        targetSdkVersion 27
+        targetSdkVersion 29
         multiDexEnabled true
-        versionCode 84
-        versionName "2.0.44"
+        versionCode 85
+        versionName "2.0.45"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
