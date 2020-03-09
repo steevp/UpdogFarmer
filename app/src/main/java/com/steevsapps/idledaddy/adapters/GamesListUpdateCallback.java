@@ -1,6 +1,6 @@
 package com.steevsapps.idledaddy.adapters;
 
-import android.support.v7.util.ListUpdateCallback;
+import androidx.recyclerview.widget.ListUpdateCallback;
 
 /**
  * This ListUpdateCallback considers that when the list header is enabled,

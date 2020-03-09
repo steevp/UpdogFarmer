@@ -1,6 +1,6 @@
 package com.steevsapps.idledaddy.steam;
 
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 import android.util.Log;
 
 import com.google.gson.Gson;

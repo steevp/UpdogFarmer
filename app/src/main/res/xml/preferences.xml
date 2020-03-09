@@ -2,68 +2,80 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="@string/cat_general">
+    <PreferenceCategory android:title="@string/cat_general"
+        app:iconSpaceReserved="false" >
         <SwitchPreference
             android:key="minimize_data"
             android:title="@string/pref_minimize_data"
             android:summary="@string/sum_minimize_data"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
 
         <SwitchPreference
             android:key="stay_awake"
             android:title="@string/pref_stay_awake"
             android:summary="@string/sum_stay_awake"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
 
         <SwitchPreference
             android:key="include_free_games"
             android:title="@string/pref_include_free_games"
             android:summary="@string/sum_include_free_games"
-            android:defaultValue="true" />
+            android:defaultValue="true"
+            app:iconSpaceReserved="false" />
 
         <SwitchPreference
             android:key="use_custom_loginid"
             android:title="@string/pref_use_custom_loginid"
             android:summary="@string/sum_use_custom_loginid"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
 
         <EditTextPreference
             android:key="parental_pin"
             android:title="@string/pref_parental_pin"
-            android:summary="@string/sum_parental_pin" />
+            android:summary="@string/sum_parental_pin"
+            app:iconSpaceReserved="false" />
 
         <ListPreference
             android:key="language"
             android:title="@string/pref_language"
             android:summary="@string/sum_language"
             android:entries="@array/language_options"
-            android:entryValues="@array/language_option_values" />
+            android:entryValues="@array/language_option_values"
+            app:iconSpaceReserved="false" />
 
         <Preference
             android:key="gdpr_consent"
             android:title="@string/pref_gdpr_consent"
-            android:summary="@string/sum_gdpr_consent" />
+            android:summary="@string/sum_gdpr_consent"
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/cat_idle">
+    <PreferenceCategory android:title="@string/cat_idle"
+        app:iconSpaceReserved="false" >
 
         <SwitchPreference
             android:key="offline"
             android:title="@string/pref_offline"
             android:summary="@string/sum_offline"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:iconSpaceReserved="false" />
 
         <com.steevsapps.idledaddy.preferences.NumPickerPreference
             android:key="hours_until_drops"
             android:title="@string/pref_hours_until"
             android:summary="@string/sum_hours_until"
-            android:defaultValue="3" />
+            android:defaultValue="3"
+            app:iconSpaceReserved="false" />
 
         <com.steevsapps.idledaddy.preferences.BlacklistPreference
             android:key="blacklist"
             android:title="@string/pref_blacklist"
             android:summary="@string/sum_blacklist"
-            android:defaultValue="" />
+            android:defaultValue=""
+            app:iconSpaceReserved="false" />
     </PreferenceCategory>
 
 </PreferenceScreen>

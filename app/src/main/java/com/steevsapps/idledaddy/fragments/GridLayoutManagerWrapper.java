@@ -1,7 +1,7 @@
 package com.steevsapps.idledaddy.fragments;
 
 import android.content.Context;
-import android.support.v7.widget.GridLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import android.util.AttributeSet;
 
 public class GridLayoutManagerWrapper extends GridLayoutManager {
