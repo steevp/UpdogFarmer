@@ -442,7 +442,7 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
         menu.findItem(R.id.custom_app).setVisible(loggedIn);
         menu.findItem(R.id.import_shared_secret).setVisible(loggedIn);
         //menu.findItem(R.id.auto_vote).setVisible(loggedIn);
-        menu.findItem(R.id.spring_cleaning_event).setVisible(loggedIn);
+        //menu.findItem(R.id.spring_cleaning_event).setVisible(loggedIn);
         menu.findItem(R.id.search).setVisible(drawerItemId == R.id.games);
         return super.onPrepareOptionsMenu(menu);
     }
@@ -483,9 +483,9 @@ public class MainActivity extends BaseActivity implements BillingUpdatesListener
             case R.id.import_shared_secret:
                 SharedSecretDialog.newInstance(steamService.getSteamId()).show(getSupportFragmentManager(), SharedSecretDialog.TAG);
                 return true;
-            case R.id.spring_cleaning_event:
-                SpringCleaningDialog.newInstance().show(getSupportFragmentManager(), SpringCleaningDialog.TAG);
-                return true;
+            //case R.id.spring_cleaning_event:
+            //    SpringCleaningDialog.newInstance().show(getSupportFragmentManager(), SpringCleaningDialog.TAG);
+            //    return true;
             //case R.id.auto_vote:
             //    steamService.autoVote();
             //    return true;
