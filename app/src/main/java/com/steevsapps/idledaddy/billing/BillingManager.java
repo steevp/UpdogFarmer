@@ -1,15 +1,24 @@
 package com.steevsapps.idledaddy.billing;
 
 import android.app.Activity;
-import androidx.annotation.Nullable;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.android.billingclient.api.AcknowledgePurchaseParams;
+import com.android.billingclient.api.AcknowledgePurchaseResponseListener;
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.BillingClientStateListener;
 import com.android.billingclient.api.BillingFlowParams;
+import com.android.billingclient.api.BillingResult;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
+import com.android.billingclient.api.SkuDetails;
+import com.android.billingclient.api.SkuDetailsParams;
+import com.android.billingclient.api.SkuDetailsResponseListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BillingManager implements PurchasesUpdatedListener {
@@ -31,7 +40,10 @@ public class BillingManager implements PurchasesUpdatedListener {
         }
 
         // Setup the billing client
-        billingClient = BillingClient.newBuilder(activity).setListener(this).build();
+        billingClient = BillingClient.newBuilder(activity)
+                .enablePendingPurchases()
+                .setListener(this)
+                .build();
 
         // Start the setup asynchronously.
         // The specified listener is called once setup completes.
@@ -51,10 +63,10 @@ public class BillingManager implements PurchasesUpdatedListener {
     private void startServiceConnection(final Runnable executeOnSuccess) {
         billingClient.startConnection(new BillingClientStateListener() {
             @Override
-            public void onBillingSetupFinished(int responseCode) {
-                Log.i(TAG, "Billing setup finished. Response code: " + responseCode);
+            public void onBillingSetupFinished(@NonNull BillingResult billingResult) {
+                Log.i(TAG, "Billing setup finished. Response code: " + billingResult.getResponseCode());
 
-                if (responseCode == BillingClient.BillingResponse.OK) {
+                if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                     serviceConnected = true;
                     if (executeOnSuccess != null) {
                         executeOnSuccess.run();
@@ -79,37 +91,57 @@ public class BillingManager implements PurchasesUpdatedListener {
         }
     }
 
-    private void queryPurchases() {
-        final Purchase.PurchasesResult result = billingClient.queryPurchases(BillingClient.SkuType.INAPP);
-        final List<Purchase> purchases = result.getPurchasesList();
-        if (purchases != null) {
-            for (Purchase purchase : purchases) {
-                handlePurchase(purchase);
+    public void queryPurchases() {
+        if (billingClient != null && billingClient.isReady()) {
+            final Purchase.PurchasesResult result = billingClient.queryPurchases(BillingClient.SkuType.INAPP);
+            final List<Purchase> purchases = result.getPurchasesList();
+
+            if (purchases != null) {
+                for (Purchase purchase : purchases) {
+                    handlePurchase(purchase);
+                }
             }
         }
     }
 
     @Override
-    public void onPurchasesUpdated(int responseCode, @Nullable List<Purchase> purchases) {
-        if (responseCode == BillingClient.BillingResponse.OK && purchases != null) {
+    public void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> purchases) {
+        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && purchases != null) {
             for (Purchase purchase : purchases) {
                 handlePurchase(purchase);
             }
             Log.i(TAG, "Purchases updated.");
             listener.onPurchasesUpdated(purchases);
-        } else if (responseCode == BillingClient.BillingResponse.USER_CANCELED) {
+        } else if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.USER_CANCELED) {
             // Handle an error caused by a user canceling the purchase flow.
             Log.i(TAG, "Purchase canceled.");
             listener.onPurchaseCanceled();
         } else {
             // Handle any other error codes.
-            Log.i(TAG, "Unknown error. Response code: " + responseCode);
+            Log.e(TAG, billingResult.getDebugMessage());
         }
     }
 
     private void handlePurchase(Purchase purchase) {
-        if ("remove_ads".equals(purchase.getSku())) {
+        if ("remove_ads".equals(purchase.getSku()) && purchase.getPurchaseState() == Purchase.PurchaseState.PURCHASED) {
             displayAds = false;
+
+            if (!purchase.isAcknowledged()) {
+                // Acknowledge the purchase
+                final AcknowledgePurchaseParams acknowledgePurchaseParams = AcknowledgePurchaseParams.newBuilder()
+                        .setPurchaseToken(purchase.getPurchaseToken())
+                        .build();
+                billingClient.acknowledgePurchase(acknowledgePurchaseParams, new AcknowledgePurchaseResponseListener() {
+                    @Override
+                    public void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult) {
+                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
+                            Log.i(TAG, "Purchase acknowledged");
+                        } else {
+                            Log.e(TAG, billingResult.getDebugMessage());
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -128,11 +160,25 @@ public class BillingManager implements PurchasesUpdatedListener {
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                final BillingFlowParams params = BillingFlowParams.newBuilder()
-                        .setSku("remove_ads")
+                final List<String> skuList = new ArrayList<>();
+                skuList.add("remove_ads");
+                final SkuDetailsParams skuParams = SkuDetailsParams.newBuilder()
+                        .setSkusList(skuList)
                         .setType(BillingClient.SkuType.INAPP)
                         .build();
-                billingClient.launchBillingFlow(activity, params);
+                billingClient.querySkuDetailsAsync(skuParams, new SkuDetailsResponseListener() {
+                    @Override
+                    public void onSkuDetailsResponse(@NonNull BillingResult billingResult, @Nullable List<SkuDetails> skuDetails) {
+                        if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK && skuDetails != null) {
+                            final BillingFlowParams billingFlowParams = BillingFlowParams.newBuilder()
+                                    .setSkuDetails(skuDetails.get(0))
+                                    .build();
+                            billingClient.launchBillingFlow(activity, billingFlowParams);
+                        } else {
+                            Log.e(TAG, billingResult.getDebugMessage());
+                        }
+                    }
+                });
             }
         };
         executeServiceRequest(runnable);
